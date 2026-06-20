@@ -39,7 +39,9 @@ Run these before opening a pull request:
 npm run verify
 ```
 
-The GitHub `Quality Checks` workflow runs the same verification on every pull request.
+GitHub Actions are currently disabled because this GitHub account has billing removed. Until
+Actions are re-enabled, contributors should paste their local `npm run verify` result in the
+pull request.
 
 ## Pull Request Rules
 

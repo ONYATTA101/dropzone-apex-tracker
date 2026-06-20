@@ -50,8 +50,10 @@ folder:
 The recommended public setup is GitHub plus Vercel:
 
 - GitHub stores the code, issues, pull requests, and releases.
-- GitHub Actions runs `npm run lint` and `npm run build` on pull requests.
 - Vercel deploys previews for branches and production from `main`.
+
+GitHub Actions are currently disabled because this GitHub account has billing removed. Until
+Actions are re-enabled, run `npm run verify` locally before pushing updates.
 
 Follow [Publishing guide](documentation/publishing-guide.md) before sharing the app with users.
 

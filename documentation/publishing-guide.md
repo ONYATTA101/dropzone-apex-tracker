@@ -10,9 +10,12 @@ Use GitHub for the source code and Vercel for the live Next.js app.
 Why this setup works well:
 
 - GitHub gives you issues, pull requests, branches, reviews, and releases.
-- GitHub Actions checks every pull request before it is merged.
 - Vercel creates preview links for branches and production deployments from `main`.
 - The private `APEX_API_KEY` stays on the server as an environment variable.
+
+GitHub Actions are currently disabled because this GitHub account has billing removed. The app
+can still be published and updated through Vercel, but checks must be run locally with
+`npm run verify`.
 
 References:
 
@@ -68,10 +71,11 @@ Use this flow for normal feature work:
 2. Create a branch from `main`.
 3. Make the change.
 4. Open a pull request.
-5. Wait for `Quality Checks` to pass.
-6. Test the Vercel preview link.
-7. Merge into `main`.
-8. Vercel deploys the new production version.
+5. Run `npm run verify` locally.
+6. Paste the verification result in the pull request.
+7. Test the Vercel preview link.
+8. Merge into `main`.
+9. Vercel deploys the new production version.
 
 ## Publishing A Stable Version
 
@@ -92,8 +96,8 @@ git push origin main
 git push origin v1.0.0
 ```
 
-The `Release` GitHub Action will run `npm run lint`, run `npm run build`, and create a GitHub
-Release if the tag passes.
+Until GitHub Actions are re-enabled, create the GitHub Release manually from the tag page or
+with `gh release create`.
 
 ## Rollback Plan
 

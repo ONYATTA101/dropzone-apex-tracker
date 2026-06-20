@@ -17,6 +17,7 @@ This project follows semantic versioning:
 - Added Dependabot configuration for dependency update pull requests.
 - Added GitHub release-task issue template.
 - Added `npm run verify` for local release checks.
+- Documented the manual verification and deployment workflow while GitHub Actions billing is blocked.
 
 ## v0.1.0
 

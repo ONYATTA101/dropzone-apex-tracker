@@ -8,10 +8,14 @@ features, bug fixes, testing, and documentation.
 The project uses this path:
 
 ```text
-issue -> branch -> pull request -> GitHub Actions -> Vercel preview -> review -> merge -> production deploy -> release tag
+issue -> branch -> pull request -> local verify -> Vercel preview -> review -> merge -> production deploy -> release tag
 ```
 
 `main` is the production branch. Keep it stable.
+
+GitHub Actions are currently disabled because this GitHub account has billing removed. When
+billing is fixed, re-enable the `Quality Checks` and `Release` workflows in the GitHub Actions
+tab.
 
 ## One-Time Setup
 
@@ -79,7 +83,7 @@ npm run verify
 
 Before merging a pull request:
 
-- GitHub `Quality Checks` must pass.
+- The contributor must run `npm run verify` and paste the result.
 - UI changes should include screenshots.
 - Published apps should include the Vercel preview link.
 - API-key or deployment changes should get extra review.
@@ -87,17 +91,17 @@ Before merging a pull request:
 
 ## Automated Checks
 
-The `.github/workflows/quality-checks.yml` workflow runs on pull requests and pushes to
-`main`.
+The `.github/workflows/quality-checks.yml` workflow is ready for future use, but it is disabled
+while GitHub Actions billing is blocked.
 
-It checks:
+When enabled, it checks:
 
 - Dependency installation with `npm ci`.
 - Code style with `npm run lint`.
 - Production compilation with `npm run build`.
 
-Dependabot opens weekly dependency update pull requests using `.github/dependabot.yml`.
-Review those like normal pull requests.
+Dependabot is configured with `.github/dependabot.yml`, but dependency automation may also be
+blocked while the account billing issue remains.
 
 ## Vercel Deployment Flow
 
@@ -127,7 +131,7 @@ Use semantic versioning:
 5. Commit the release changes.
 6. Create a version tag.
 7. Push `main` and the tag.
-8. Confirm the `Release` GitHub Action passes.
+8. Create the GitHub Release manually.
 9. Confirm Vercel production deployment is healthy.
 
 Example:
@@ -145,8 +149,8 @@ git push origin main
 git push origin v1.0.0
 ```
 
-Pushing the tag starts `.github/workflows/release.yml`, which verifies the app and creates a
-GitHub Release.
+When GitHub Actions are enabled, pushing the tag starts `.github/workflows/release.yml`, which
+verifies the app and creates a GitHub Release.
 
 ## Suggested Labels
 
