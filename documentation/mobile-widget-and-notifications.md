@@ -66,6 +66,15 @@ Daily net RP uses the user's local calendar day:
 current RP - first RP seen today
 ```
 
+Important testing behavior:
+
+- If the app opens for the first time today, the baseline is set to the current RP and the
+  widget shows `0`.
+- If the same browser already saved an earlier baseline today, the widget can show gain or
+  loss immediately.
+- The dashboard widget preview and `/widget` test page include Daily RP test buttons so you
+  can confirm the green gain and red loss states without waiting for a real RP change.
+
 Daily net styling:
 
 - Positive value: green.

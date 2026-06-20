@@ -23,6 +23,7 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { createRankLabel } from "@/domain/apex-ranked/rank-calculations/rank-progress-calculator";
 import {
@@ -32,7 +33,11 @@ import {
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
 import { CompactRankPulseWidget } from "@/features/mobile-rank-widget/components/compact-rank-pulse-widget";
-import { MOBILE_WIDGET_REFRESH_INTERVAL_HOURS } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
+import {
+  MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
+  MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
+} from "@/features/mobile-rank-widget/config/mobile-widget-settings";
+import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import { FriendRankCard } from "@/features/tracker-dashboard/components/friend-rank-card";
 import { RankBadge } from "@/features/tracker-dashboard/components/rank-badge";
 import {
@@ -93,6 +98,7 @@ export default function ApexTrackerDashboard() {
   const [friendQuery, setFriendQuery] = useState("");
   const [darkThemeEnabled, setDarkThemeEnabled] = useState(true);
   const [themeLoaded, setThemeLoaded] = useState(false);
+  const [widgetBaselineRefreshToken, setWidgetBaselineRefreshToken] = useState(0);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -215,6 +221,11 @@ export default function ApexTrackerDashboard() {
     [friends, friendQuery],
   );
 
+  const widgetPlayers = useMemo(
+    () => (me ? [me, ...friends].slice(0, MOBILE_WIDGET_MAX_TRACKED_PLAYERS) : []),
+    [me, friends],
+  );
+
   // Profile and friend handlers persist only the small identities needed for future lookups.
   function updateProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -270,6 +281,22 @@ export default function ApexTrackerDashboard() {
     window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
     setFriendIds(updated);
   }, [friendIds]);
+
+  function testWidgetDailyRpChange(dailyChange: number) {
+    if (widgetPlayers.length === 0) {
+      setToast({ message: "Load widget data before testing daily RP change.", kind: "error" });
+      return;
+    }
+
+    setWidgetDailyChangeForTesting(widgetPlayers, dailyChange);
+    setWidgetBaselineRefreshToken((token) => token + 1);
+    setToast({
+      message: dailyChange === 0
+        ? "Daily RP baseline reset to current RP."
+        : `Daily RP test set to ${dailyChange > 0 ? "+" : ""}${dailyChange} RP.`,
+      kind: "success",
+    });
+  }
 
   const label = me ? createRankLabel(me.rankName, me.rankDivision) : "Loading rank";
   // Demo mode is visible so you can quickly tell whether the live API key is being used.
@@ -344,9 +371,15 @@ export default function ApexTrackerDashboard() {
             <span className="eyebrow">Phone widget preview</span>
             <h2>Rank Pulse</h2>
             <p>Shows you plus two friends, daily net RP, and refreshes every {MOBILE_WIDGET_REFRESH_INTERVAL_HOURS} hours while open.</p>
-            <a className="widget-test-link" href="/widget">Open phone test view</a>
+            <div className="widget-baseline-tools compact" aria-label="Dashboard daily RP test controls">
+              <span>Daily RP test</span>
+              <button onClick={() => testWidgetDailyRpChange(250)} type="button">+250</button>
+              <button onClick={() => testWidgetDailyRpChange(-250)} type="button">-250</button>
+              <button onClick={() => testWidgetDailyRpChange(0)} type="button">Reset</button>
+            </div>
+            <Link className="widget-test-link" href="/widget">Open phone test view</Link>
           </div>
-          <CompactRankPulseWidget owner={me} friends={friends} />
+          <CompactRankPulseWidget owner={me} friends={friends} baselineRefreshToken={widgetBaselineRefreshToken} />
         </section>
 
         <section className="hero-grid">

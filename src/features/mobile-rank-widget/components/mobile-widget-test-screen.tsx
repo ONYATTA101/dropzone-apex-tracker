@@ -5,7 +5,7 @@
 
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ApexPlatform,
@@ -17,6 +17,7 @@ import {
   MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
+import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import { DEFAULT_FRIENDS, DEFAULT_PROFILE } from "@/features/tracker-dashboard/config/dashboard-defaults";
 import { DASHBOARD_STORAGE_KEYS } from "@/features/tracker-dashboard/config/dashboard-storage-keys";
 import { fetchPlayerRankStatuses } from "@/features/tracker-dashboard/data-access/tracker-api-client";
@@ -80,6 +81,12 @@ export function MobileWidgetTestScreen() {
   const [status, setStatus] = useState("Loading your widget preview...");
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [darkThemeEnabled, setDarkThemeEnabled] = useState(true);
+  const [baselineRefreshToken, setBaselineRefreshToken] = useState(0);
+
+  const widgetPlayers = useMemo(
+    () => (owner ? [owner, ...friends].slice(0, MOBILE_WIDGET_MAX_TRACKED_PLAYERS) : []),
+    [owner, friends],
+  );
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -175,6 +182,21 @@ export function MobileWidgetTestScreen() {
     setStatus("Saved this phone's widget roster.");
   }
 
+  function testDailyRpChange(dailyChange: number) {
+    if (widgetPlayers.length === 0) {
+      setStatus("Load widget data before testing daily RP change.");
+      return;
+    }
+
+    setWidgetDailyChangeForTesting(widgetPlayers, dailyChange);
+    setBaselineRefreshToken((token) => token + 1);
+    setStatus(
+      dailyChange === 0
+        ? "Daily RP baseline reset to current RP."
+        : `Daily RP test set to ${dailyChange > 0 ? "+" : ""}${dailyChange} RP.`,
+    );
+  }
+
   return (
     <main className="widget-test-shell">
       <section className="widget-test-hero">
@@ -211,8 +233,14 @@ export function MobileWidgetTestScreen() {
 
         <div className="widget-phone-frame" aria-label="Phone widget preview frame">
           <div className="widget-phone-notch" />
-          <CompactRankPulseWidget owner={owner} friends={friends} />
+          <CompactRankPulseWidget owner={owner} friends={friends} baselineRefreshToken={baselineRefreshToken} />
           <small>Preview size: under one quarter of the phone screen.</small>
+          <div className="widget-baseline-tools" aria-label="Daily RP test controls">
+            <span>Daily RP test</span>
+            <button onClick={() => testDailyRpChange(250)} type="button">Show +250</button>
+            <button onClick={() => testDailyRpChange(-250)} type="button">Show -250</button>
+            <button onClick={() => testDailyRpChange(0)} type="button">Reset 0</button>
+          </div>
         </div>
       </section>
 

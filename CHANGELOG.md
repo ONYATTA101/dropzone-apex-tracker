@@ -11,6 +11,7 @@ This project follows semantic versioning:
 ## Unreleased
 
 - Added dedicated `/widget` phone test page for the Rank Pulse widget preview.
+- Added Daily RP baseline test controls to the dashboard and phone widget preview.
 - Added collaboration workflow documentation.
 - Added GitHub issue and pull request templates.
 - Added publishing guide for GitHub and Vercel deployment.

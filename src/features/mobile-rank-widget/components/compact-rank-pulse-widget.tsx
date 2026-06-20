@@ -11,28 +11,14 @@ import { PlayerRankStatus } from "@/domain/apex-ranked/types/apex-tracker-types"
 import {
   MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
-  MOBILE_WIDGET_STORAGE_KEYS,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
+import {
+  DailyBaselineStore,
+  ensureWidgetDailyBaselines,
+  getWidgetPlayerStorageKey,
+  saveLatestWidgetSnapshot,
+} from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import { formatNumber } from "@/features/tracker-dashboard/utilities/dashboard-display-formatters";
-
-type DailyBaseline = {
-  date: string;
-  rp: number;
-};
-
-type DailyBaselineStore = Record<string, DailyBaseline>;
-
-function todayKey() {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function playerStorageKey(player: PlayerRankStatus) {
-  return `${player.platform}:${player.id || player.name}`;
-}
 
 function shortRankLabel(player: PlayerRankStatus) {
   return createRankLabel(player.rankName, player.rankDivision)
@@ -55,9 +41,11 @@ function formatDailyChange(change: number, featured: boolean) {
 export function CompactRankPulseWidget({
   owner,
   friends,
+  baselineRefreshToken = 0,
 }: {
   owner: PlayerRankStatus | null;
   friends: PlayerRankStatus[];
+  baselineRefreshToken?: number;
 }) {
   const [dailyBaselines, setDailyBaselines] = useState<DailyBaselineStore>({});
 
@@ -70,43 +58,11 @@ export function CompactRankPulseWidget({
   useEffect(() => {
     if (players.length === 0) return;
 
-    const currentDate = todayKey();
-    const saved = window.localStorage.getItem(MOBILE_WIDGET_STORAGE_KEYS.dailyBaseline);
-    let parsed: DailyBaselineStore = {};
-    try {
-      parsed = saved ? (JSON.parse(saved) as DailyBaselineStore) : {};
-    } catch {
-      window.localStorage.removeItem(MOBILE_WIDGET_STORAGE_KEYS.dailyBaseline);
-    }
-    let changed = false;
-
-    for (const player of players) {
-      const key = playerStorageKey(player);
-      if (!parsed[key] || parsed[key].date !== currentDate) {
-        parsed[key] = { date: currentDate, rp: player.rankScore };
-        changed = true;
-      }
-    }
-
-    window.localStorage.setItem(
-      MOBILE_WIDGET_STORAGE_KEYS.latestSnapshot,
-      JSON.stringify({
-        checkedAt: new Date().toISOString(),
-        players: players.map((player) => ({
-          key: playerStorageKey(player),
-          rankScore: player.rankScore,
-          rankName: player.rankName,
-          rankDivision: player.rankDivision,
-        })),
-      }),
-    );
-
-    if (changed) {
-      window.localStorage.setItem(MOBILE_WIDGET_STORAGE_KEYS.dailyBaseline, JSON.stringify(parsed));
-    }
+    const parsed = ensureWidgetDailyBaselines(players);
+    saveLatestWidgetSnapshot(players);
     const timer = window.setTimeout(() => setDailyBaselines(parsed), 0);
     return () => window.clearTimeout(timer);
-  }, [players]);
+  }, [players, baselineRefreshToken]);
 
   if (players.length === 0) {
     return (
@@ -129,7 +85,7 @@ export function CompactRankPulseWidget({
 
       <div className="rank-pulse-players">
         {players.map((player, index) => {
-          const key = playerStorageKey(player);
+          const key = getWidgetPlayerStorageKey(player);
           const baseline = dailyBaselines[key]?.rp ?? player.rankScore;
           const dailyChange = player.rankScore - baseline;
           const featured = index === 0;

@@ -103,6 +103,7 @@ home-screen widget.
 | `components/mobile-widget-test-screen.tsx` | Renders the dedicated `/widget` phone test screen. |
 | `config/mobile-widget-settings.ts` | Stores planned widget limits, refresh timing, and storage keys. |
 | `config/rank-notification-messages.ts` | Stores editable rank/RP notification message templates. |
+| `utilities/widget-daily-rp-baselines.ts` | Stores and tests local daily RP baselines for net gain/loss display. |
 
 ### `src/styles`: Visual Design
 

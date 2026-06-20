@@ -224,6 +224,12 @@ The widget is capped at 3 players by:
 src/features/mobile-rank-widget/config/mobile-widget-settings.ts
 ```
 
+Daily RP baseline storage and testing helpers live here:
+
+```text
+src/features/mobile-rank-widget/utilities/widget-daily-rp-baselines.ts
+```
+
 The visual style is in:
 
 ```text
