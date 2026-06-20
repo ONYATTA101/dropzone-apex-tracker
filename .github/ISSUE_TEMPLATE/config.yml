@@ -1,0 +1,6 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Apex API status
+    url: https://apexlegendsapi.com/
+    about: Check the external Apex Legends Status API.
+
