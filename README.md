@@ -17,6 +17,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Live App
+
+Production URL: [https://dropzone-apex-tracker.vercel.app](https://dropzone-apex-tracker.vercel.app)
+
 Without an API key, the application uses predictable demo data. For live data, create a
 free key at [apexlegendsapi.com](https://apexlegendsapi.com/) and set it in `.env.local`:
 
