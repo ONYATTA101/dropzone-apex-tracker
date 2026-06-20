@@ -5,6 +5,16 @@
 The dashboard now includes a live in-app preview of the compact Rank Pulse widget. It is not
 yet a native phone home-screen widget, but it shows the design and behavior inside the web app.
 
+Open the dedicated phone test page on a real phone:
+
+```text
+https://dropzone-apex-tracker.vercel.app/widget
+```
+
+The test page loads the roster saved on that phone. Friends added on a PC do not automatically
+copy to the phone because the current app stores the roster in each browser's local storage.
+Use the form on `/widget` to add your phone test roster.
+
 The mobile widget should occupy no more than one quarter of a phone screen.
 
 Visual style:

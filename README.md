@@ -21,6 +21,9 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Production URL: [https://dropzone-apex-tracker.vercel.app](https://dropzone-apex-tracker.vercel.app)
 
+Phone widget test URL:
+[https://dropzone-apex-tracker.vercel.app/widget](https://dropzone-apex-tracker.vercel.app/widget)
+
 Without an API key, the application uses predictable demo data. For live data, create a
 free key at [apexlegendsapi.com](https://apexlegendsapi.com/) and set it in `.env.local`:
 

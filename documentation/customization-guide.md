@@ -194,6 +194,18 @@ The widget preview component lives here:
 src/features/mobile-rank-widget/components/compact-rank-pulse-widget.tsx
 ```
 
+The dedicated phone test screen lives here:
+
+```text
+src/features/mobile-rank-widget/components/mobile-widget-test-screen.tsx
+```
+
+Open the public phone test page here:
+
+```text
+https://dropzone-apex-tracker.vercel.app/widget
+```
+
 The dashboard renders it here:
 
 ```text

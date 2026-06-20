@@ -58,6 +58,7 @@ purpose-named parent folders and header comments explain what they do.
 | --- | --- |
 | `src/app/layout.tsx` | Creates the shared HTML shell, metadata, fonts, and global styles. |
 | `src/app/page.tsx` | Renders the tracker dashboard at `/`. |
+| `src/app/widget/page.tsx` | Renders the dedicated phone widget test page at `/widget`. |
 | `src/app/api/_shared/api-request-guard.ts` | Provides same-origin and rate-limit protection for API routes. |
 | `src/app/api/apex/player-rank-status/route.ts` | Protects the API key and returns player rank data. |
 | `src/app/api/apex/player-rank-statuses/route.ts` | Protects the API key and returns a batched roster of player rank data. |
@@ -99,6 +100,7 @@ home-screen widget.
 | Path | Purpose |
 | --- | --- |
 | `components/compact-rank-pulse-widget.tsx` | Renders the compact live widget preview. |
+| `components/mobile-widget-test-screen.tsx` | Renders the dedicated `/widget` phone test screen. |
 | `config/mobile-widget-settings.ts` | Stores planned widget limits, refresh timing, and storage keys. |
 | `config/rank-notification-messages.ts` | Stores editable rank/RP notification message templates. |
 

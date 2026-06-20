@@ -40,6 +40,7 @@ import {
   DEFAULT_PROFILE,
   PLATFORM_DISPLAY_NAME,
 } from "@/features/tracker-dashboard/config/dashboard-defaults";
+import { DASHBOARD_STORAGE_KEYS } from "@/features/tracker-dashboard/config/dashboard-storage-keys";
 import {
   fetchPlayerRankStatuses,
   fetchRankedMapRotation,
@@ -51,10 +52,6 @@ import {
 } from "@/features/tracker-dashboard/utilities/dashboard-display-formatters";
 
 type Toast = { message: string; kind: "success" | "error" } | null;
-
-const PROFILE_STORAGE_KEY = "dropzone-profile";
-const FRIENDS_STORAGE_KEY = "dropzone-friends";
-const THEME_STORAGE_KEY = "dropzone-theme-mode";
 
 function normalizePlatformInput(value: string): ApexPlatform {
   const platform = value.trim().toUpperCase();
@@ -99,7 +96,7 @@ export default function ApexTrackerDashboard() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      setDarkThemeEnabled(window.localStorage.getItem(THEME_STORAGE_KEY) !== "light");
+      setDarkThemeEnabled(window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.theme) !== "light");
       setThemeLoaded(true);
     }, 0);
     return () => window.clearTimeout(timer);
@@ -109,7 +106,7 @@ export default function ApexTrackerDashboard() {
   useEffect(() => {
     document.documentElement.dataset.theme = darkThemeEnabled ? "dark" : "light";
     if (themeLoaded) {
-      window.localStorage.setItem(THEME_STORAGE_KEY, darkThemeEnabled ? "dark" : "light");
+      window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.theme, darkThemeEnabled ? "dark" : "light");
     }
   }, [darkThemeEnabled, themeLoaded]);
 
@@ -117,14 +114,14 @@ export default function ApexTrackerDashboard() {
   // If you change storage keys, update the constants above and clear old browser storage.
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      const savedProfile = window.localStorage.getItem(PROFILE_STORAGE_KEY);
-      const savedFriends = window.localStorage.getItem(FRIENDS_STORAGE_KEY);
+      const savedProfile = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.profile);
+      const savedFriends = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.friends);
       try {
         if (savedProfile) setProfile(JSON.parse(savedProfile));
         if (savedFriends) setFriendIds(JSON.parse(savedFriends));
       } catch {
-        window.localStorage.removeItem(PROFILE_STORAGE_KEY);
-        window.localStorage.removeItem(FRIENDS_STORAGE_KEY);
+        window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.profile);
+        window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.friends);
       }
     }, 0);
     return () => window.clearTimeout(timer);
@@ -227,7 +224,7 @@ export default function ApexTrackerDashboard() {
       platform: String(form.get("platform")) as ApexPlatform,
     };
     if (!next.name) return;
-    window.localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(next));
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.profile, JSON.stringify(next));
     setProfile(next);
     setShowProfile(false);
   }
@@ -257,7 +254,7 @@ export default function ApexTrackerDashboard() {
     }
 
     const updated = [...friendIds, ...newFriends];
-    window.localStorage.setItem(FRIENDS_STORAGE_KEY, JSON.stringify(updated));
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
     setFriendIds(updated);
     setShowFriendForm(false);
     setToast({
@@ -270,7 +267,7 @@ export default function ApexTrackerDashboard() {
     const updated = friendIds.filter(
       (friend) => !(friend.name.toLowerCase() === player.name.toLowerCase() && friend.platform === player.platform),
     );
-    window.localStorage.setItem(FRIENDS_STORAGE_KEY, JSON.stringify(updated));
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
     setFriendIds(updated);
   }, [friendIds]);
 
@@ -347,6 +344,7 @@ export default function ApexTrackerDashboard() {
             <span className="eyebrow">Phone widget preview</span>
             <h2>Rank Pulse</h2>
             <p>Shows you plus two friends, daily net RP, and refreshes every {MOBILE_WIDGET_REFRESH_INTERVAL_HOURS} hours while open.</p>
+            <a className="widget-test-link" href="/widget">Open phone test view</a>
           </div>
           <CompactRankPulseWidget owner={me} friends={friends} />
         </section>

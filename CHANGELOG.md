@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added dedicated `/widget` phone test page for the Rank Pulse widget preview.
 - Added collaboration workflow documentation.
 - Added GitHub issue and pull request templates.
 - Added publishing guide for GitHub and Vercel deployment.
