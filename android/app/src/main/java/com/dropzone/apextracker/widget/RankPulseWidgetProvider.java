@@ -24,7 +24,7 @@ import java.net.URL;
  * Updates the native Android Rank Pulse home-screen widget.
  *
  * The widget reads a mobile-safe server summary instead of storing the Apex API key on-device.
- * If the phone is offline, it reuses the last cached summary or the local preview rows.
+ * If the phone is offline, it reuses the last cached summary or hides empty rows.
  */
 public class RankPulseWidgetProvider extends AppWidgetProvider {
     private static final String WIDGET_SUMMARY_URL =
@@ -33,11 +33,6 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     private static final String WIDGET_PREFS_SUMMARY_JSON = "latest_summary_json";
     private static final int TREND_THRESHOLD_RP = 150;
     private static final int STRONG_TREND_THRESHOLD_RP = 300;
-    private static final RankPulseRow[] PREVIEW_ROWS = new RankPulseRow[] {
-        new RankPulseRow("PL", "blumoat_onyatta", "Plat II", 9820, 76, 220, true),
-        new RankPulseRow("GD", "Friend One", "Gold I", 7290, 58, -160, false),
-        new RankPulseRow("PL", "Friend Two", "Plat IV", 8200, 8, 0, false),
-    };
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -133,39 +128,62 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
         String summaryJson = prefs.getString(WIDGET_PREFS_SUMMARY_JSON, null);
         if (summaryJson == null) {
-            return PREVIEW_ROWS;
+            return createEmptyRows();
         }
 
         try {
             return parseRows(summaryJson);
         } catch (Exception ignored) {
-            return PREVIEW_ROWS;
+            return createEmptyRows();
         }
     }
 
     private static RankPulseRow[] parseRows(String summaryJson) throws Exception {
-        RankPulseRow[] rows = PREVIEW_ROWS.clone();
+        RankPulseRow[] rows = createEmptyRows();
         JSONArray players = new JSONObject(summaryJson).optJSONArray("players");
         if (players == null) {
             return rows;
         }
 
-        int rowCount = Math.min(rows.length, players.length());
-        for (int index = 0; index < rowCount; index += 1) {
-            JSONObject player = players.getJSONObject(index);
-            String rankName = player.optString("rank", rows[index].rankName);
-            rows[index] = new RankPulseRow(
+        int rowIndex = 0;
+        for (int playerIndex = 0; playerIndex < players.length() && rowIndex < rows.length; playerIndex += 1) {
+            JSONObject player = players.getJSONObject(playerIndex);
+            String playerName = player.optString("name", "");
+            String platform = player.optString("platform", "");
+            if (isLegacyDemoPlayer(playerName, platform)) {
+                continue;
+            }
+
+            String rankName = player.optString("rank", "");
+            rows[rowIndex] = new RankPulseRow(
                 player.optString("badgeLabel", createBadgeLabel(rankName)),
-                player.optString("name", rows[index].playerName),
+                playerName,
                 rankName,
-                player.optInt("currentRp", rows[index].currentRp),
-                player.optInt("progressPercent", rows[index].progressPercent),
+                player.optInt("currentRp", 0),
+                player.optInt("progressPercent", 0),
                 player.optInt("dailyNetRp", 0),
-                player.optBoolean("hasHeatStreak", false)
+                player.optBoolean("hasHeatStreak", false),
+                true
             );
+            rowIndex += 1;
         }
 
         return rows;
+    }
+
+    private static RankPulseRow[] createEmptyRows() {
+        return new RankPulseRow[] {
+            RankPulseRow.empty(),
+            RankPulseRow.empty(),
+            RankPulseRow.empty(),
+        };
+    }
+
+    private static boolean isLegacyDemoPlayer(String playerName, String platform) {
+        String key = platform.trim().toLowerCase() + ":" + playerName.trim().toLowerCase();
+        return "pc:nightshift".equals(key)
+            || "ps4:novapulse".equals(key)
+            || "x1:staticviper".equals(key);
     }
 
     private static String createBadgeLabel(String rankName) {
@@ -188,6 +206,11 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     }
 
     private static void bindRow(RemoteViews views, RankPulseRow row, RowViews rowViews) {
+        views.setViewVisibility(rowViews.rowRootId, row.isVisible ? View.VISIBLE : View.GONE);
+        if (!row.isVisible) {
+            return;
+        }
+
         views.setTextViewText(rowViews.badgeTextId, row.badgeText);
         views.setTextViewText(rowViews.playerNameId, row.playerName);
         views.setTextViewText(rowViews.rankTextId, row.rankName);
@@ -252,6 +275,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         final int progressPercent;
         final int dailyNetRp;
         final boolean hasHeatStreak;
+        final boolean isVisible;
 
         RankPulseRow(
             String badgeText,
@@ -260,7 +284,8 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
             int currentRp,
             int progressPercent,
             int dailyNetRp,
-            boolean hasHeatStreak
+            boolean hasHeatStreak,
+            boolean isVisible
         ) {
             this.badgeText = badgeText;
             this.playerName = playerName;
@@ -269,11 +294,17 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
             this.progressPercent = progressPercent;
             this.dailyNetRp = dailyNetRp;
             this.hasHeatStreak = hasHeatStreak;
+            this.isVisible = isVisible;
+        }
+
+        static RankPulseRow empty() {
+            return new RankPulseRow("", "", "", 0, 0, 0, false, false);
         }
     }
 
     private static final class RowViews {
         static final RowViews PLAYER_ONE = new RowViews(
+            R.id.player_one_row,
             R.id.player_one_badge,
             R.id.player_one_name,
             R.id.player_one_rank,
@@ -288,6 +319,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         );
 
         static final RowViews PLAYER_TWO = new RowViews(
+            R.id.player_two_row,
             R.id.player_two_badge,
             R.id.player_two_name,
             R.id.player_two_rank,
@@ -302,6 +334,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         );
 
         static final RowViews PLAYER_THREE = new RowViews(
+            R.id.player_three_row,
             R.id.player_three_badge,
             R.id.player_three_name,
             R.id.player_three_rank,
@@ -315,6 +348,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
             R.id.player_three_heat_icon
         );
 
+        final int rowRootId;
         final int badgeTextId;
         final int playerNameId;
         final int rankTextId;
@@ -328,6 +362,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         final int heatIconId;
 
         RowViews(
+            int rowRootId,
             int badgeTextId,
             int playerNameId,
             int rankTextId,
@@ -340,6 +375,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
             int strongRedProgressId,
             int heatIconId
         ) {
+            this.rowRootId = rowRootId;
             this.badgeTextId = badgeTextId;
             this.playerNameId = playerNameId;
             this.rankTextId = rankTextId;

@@ -36,7 +36,7 @@ Open:
 src/features/tracker-dashboard/config/dashboard-defaults.ts
 ```
 
-Edit `DEFAULT_FRIENDS`.
+Edit `DEFAULT_FRIENDS`. It starts empty so Dropzone only tracks players you add yourself.
 
 The full dashboard can show more than 3 friends, but the planned mobile widget will show only
 3 total players: you plus 2 friends.
@@ -56,9 +56,9 @@ Use the dashboard instead:
 Example:
 
 ```text
-NovaPulse
-StaticViper, Xbox
-FriendName, PlayStation
+FriendApexID
+ConsoleFriend, Xbox
+PSFriend, PlayStation
 ```
 
 Saved friends are stored in browser localStorage under `dropzone-friends`.

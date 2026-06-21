@@ -24,9 +24,9 @@ Instead, the dashboard provides a manual roster tool:
 Examples:
 
 ```text
-NovaPulse
-StaticViper, Xbox
-FriendName, PlayStation
+FriendApexID
+ConsoleFriend, Xbox
+PSFriend, PlayStation
 ```
 
 Once saved, those friends are stored locally in the browser and their live ranks are fetched
@@ -98,8 +98,8 @@ The roster comes from `DROPZONE_MOBILE_WIDGET_PLAYERS` when configured:
 DROPZONE_MOBILE_WIDGET_PLAYERS=PS4:blumoat_onyatta,PC:FriendOne,PS4:FriendTwo
 ```
 
-If that variable is missing, the endpoint uses the default dashboard profile plus the first two
-starter friends.
+If that variable is missing, the endpoint uses the default dashboard profile plus any configured
+starter friends. The starter friend list is empty by default so demo friends do not appear.
 
 Daily RP baselines are stored in server memory using `DROPZONE_WIDGET_TIME_ZONE`, which defaults
 to `Africa/Nairobi`. For production-grade tracking that survives server restarts, move these

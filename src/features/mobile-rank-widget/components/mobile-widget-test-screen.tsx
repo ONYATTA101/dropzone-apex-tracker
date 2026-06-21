@@ -24,6 +24,7 @@ import {
   DEFAULT_FRIENDS,
   DEFAULT_PROFILE,
   PLATFORM_DISPLAY_NAME,
+  removeLegacyDemoFriends,
 } from "@/features/tracker-dashboard/config/dashboard-defaults";
 import { DASHBOARD_STORAGE_KEYS } from "@/features/tracker-dashboard/config/dashboard-storage-keys";
 import { fetchPlayerRankStatuses } from "@/features/tracker-dashboard/data-access/tracker-api-client";
@@ -49,7 +50,16 @@ function readStoredFriends() {
   if (!saved) return DEFAULT_FRIENDS;
   try {
     const parsed = JSON.parse(saved) as TrackedPlayerIdentity[];
-    return Array.isArray(parsed) ? parsed : DEFAULT_FRIENDS;
+    const validFriends = Array.isArray(parsed)
+      ? parsed.filter((friend) => friend.name && friend.platform)
+      : DEFAULT_FRIENDS;
+    const cleanedFriends = removeLegacyDemoFriends(validFriends);
+
+    if (cleanedFriends.length !== validFriends.length) {
+      window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(cleanedFriends));
+    }
+
+    return cleanedFriends;
   } catch {
     window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.friends);
     return DEFAULT_FRIENDS;

@@ -45,6 +45,7 @@ import {
   DEFAULT_FRIENDS,
   DEFAULT_PROFILE,
   PLATFORM_DISPLAY_NAME,
+  removeLegacyDemoFriends,
 } from "@/features/tracker-dashboard/config/dashboard-defaults";
 import { DASHBOARD_STORAGE_KEYS } from "@/features/tracker-dashboard/config/dashboard-storage-keys";
 import {
@@ -98,12 +99,41 @@ function readStoredTrackedHistory() {
 
   try {
     const parsed = JSON.parse(saved) as TrackedPlayerHistoryItem[];
-    return Array.isArray(parsed)
+    const validHistory = Array.isArray(parsed)
       ? parsed.filter((item) => item.name && item.platform)
       : [];
+    const cleanedHistory = removeLegacyDemoFriends(validHistory);
+
+    if (cleanedHistory.length !== validHistory.length) {
+      window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.trackedHistory, JSON.stringify(cleanedHistory));
+    }
+
+    return cleanedHistory;
   } catch {
     window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.trackedHistory);
     return [];
+  }
+}
+
+function readStoredFriends() {
+  const saved = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.friends);
+  if (!saved) return DEFAULT_FRIENDS;
+
+  try {
+    const parsed = JSON.parse(saved) as TrackedPlayerIdentity[];
+    const validFriends = Array.isArray(parsed)
+      ? parsed.filter((friend) => friend.name && friend.platform)
+      : DEFAULT_FRIENDS;
+    const cleanedFriends = removeLegacyDemoFriends(validFriends);
+
+    if (cleanedFriends.length !== validFriends.length) {
+      window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(cleanedFriends));
+    }
+
+    return cleanedFriends;
+  } catch {
+    window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.friends);
+    return DEFAULT_FRIENDS;
   }
 }
 
@@ -145,10 +175,9 @@ export default function ApexTrackerDashboard() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const savedProfile = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.profile);
-      const savedFriends = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.friends);
       try {
         if (savedProfile) setProfile(JSON.parse(savedProfile));
-        if (savedFriends) setFriendIds(JSON.parse(savedFriends));
+        setFriendIds(readStoredFriends());
         setTrackedHistory(readStoredTrackedHistory());
       } catch {
         window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.profile);
@@ -644,7 +673,7 @@ export default function ApexTrackerDashboard() {
               {showProfile ? (
                 <label>Apex ID<input name="name" defaultValue={profile.name} autoFocus placeholder="Enter player name" /></label>
               ) : (
-                <label>Friend Apex IDs<textarea name="names" autoFocus placeholder={"NovaPulse\nStaticViper, Xbox\nFriendName, PlayStation"} /></label>
+                <label>Friend Apex IDs<textarea name="names" autoFocus placeholder={"FriendApexID\nConsoleFriend, Xbox\nPSFriend, PlayStation"} /></label>
               )}
               <label>Platform<select name="platform" defaultValue={showProfile ? profile.platform : "PC"}><option value="PC">PC</option><option value="PS4">PlayStation</option><option value="X1">Xbox</option></select></label>
               <button className="primary-button" type="submit">{showProfile ? "Update profile" : "Track friend"}<ChevronRight size={17} /></button>

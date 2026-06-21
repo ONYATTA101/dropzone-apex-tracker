@@ -12,13 +12,22 @@ export const DEFAULT_PROFILE: TrackedPlayerIdentity = {
   platform: "PS4",
 };
 
-// These are the starter friend cards. Users can still add/remove friends in the browser.
-// Keep this list short for the dashboard; the planned phone widget will display only 2 friends plus you.
-export const DEFAULT_FRIENDS: TrackedPlayerIdentity[] = [
-  { name: "NightShift", platform: "PC" },
-  { name: "NovaPulse", platform: "PS4" },
-  { name: "StaticViper", platform: "X1" },
-];
+// Starter friend cards are empty so the app only tracks people the user actually adds.
+// The phone widget will display at most 2 friends plus the main profile.
+export const DEFAULT_FRIENDS: TrackedPlayerIdentity[] = [];
+
+const LEGACY_DEMO_FRIEND_KEYS = new Set([
+  "pc:nightshift",
+  "ps4:novapulse",
+  "x1:staticviper",
+]);
+
+// Older builds saved demo friends locally. Keep this migration until most testers update.
+export function removeLegacyDemoFriends<T extends TrackedPlayerIdentity>(friends: T[]) {
+  return friends.filter((friend) => (
+    !LEGACY_DEMO_FRIEND_KEYS.has(`${friend.platform}:${friend.name.trim().toLowerCase()}`)
+  ));
+}
 
 // Change only the right-hand labels if you want different wording in the UI.
 export const PLATFORM_DISPLAY_NAME: Record<ApexPlatform, string> = {
