@@ -1157,53 +1157,6 @@ button {
   text-align: right;
 }
 
-/* Compact summary cards below the hero area. */
-.stat-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.stat-card {
-  min-height: 78px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 11px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: rgba(16, 21, 31, 0.75);
-}
-
-.stat-icon {
-  width: 37px;
-  height: 37px;
-  display: grid;
-  place-items: center;
-  border-radius: 7px;
-  background: rgba(98, 213, 219, 0.08);
-  color: var(--cyan);
-}
-
-.stat-card span,
-.stat-card strong {
-  display: block;
-}
-
-.stat-card div span,
-.stat-card small {
-  color: var(--muted);
-  font-size: 8px;
-}
-
-.stat-card div strong {
-  margin-top: 2px;
-  font-family: var(--font-display), sans-serif;
-  font-size: 22px;
-}
-
 /* Friend list and friend cards. */
 .friends-section {
   margin-top: 31px;
@@ -1509,7 +1462,6 @@ html[data-theme] .app-shell {
 html[data-theme] .sidebar,
 html[data-theme] .topbar,
 html[data-theme] .panel,
-html[data-theme] .stat-card,
 html[data-theme] .friend-card,
 html[data-theme] .empty-friend,
 html[data-theme] .widget-preview-copy,
@@ -1527,7 +1479,6 @@ html[data-theme] .toast {
 }
 
 html[data-theme] .panel,
-html[data-theme] .stat-card,
 html[data-theme] .friend-card,
 html[data-theme] .empty-friend,
 html[data-theme] .widget-preview-copy,
@@ -1611,8 +1562,7 @@ html[data-theme] .section-heading h2,
 html[data-theme] .widget-preview-copy h2,
 html[data-theme] .rank-copy h3,
 html[data-theme] .map-content h3,
-html[data-theme] .friend-rank strong,
-html[data-theme] .stat-card div strong {
+html[data-theme] .friend-rank strong {
   font-family: var(--font-body), sans-serif;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -1654,8 +1604,7 @@ html[data-theme] .primary-button {
   border-radius: var(--radius-control);
 }
 
-html[data-theme] .avatar,
-html[data-theme] .stat-icon {
+html[data-theme] .avatar {
   border-radius: 14px;
   background: rgba(10, 132, 255, 0.14);
   color: #8fc8ff;
@@ -1679,7 +1628,6 @@ html[data-theme] .demo-banner {
 
 html[data-theme] .widget-preview-section,
 html[data-theme] .hero-grid,
-html[data-theme] .stat-row,
 html[data-theme] .friends-grid {
   gap: 18px;
 }
@@ -1733,8 +1681,7 @@ html[data-theme] .live-tag span {
 }
 
 html[data-theme] .rp-target strong,
-html[data-theme] .countdown,
-html[data-theme] .stat-icon {
+html[data-theme] .countdown {
   color: #8fc8ff;
 }
 
@@ -1809,7 +1756,6 @@ html[data-theme] .toast.error {
 
 /* Rendering optimizations: isolate expensive cards and let offscreen friend content wait. */
 .panel,
-.stat-card,
 .friend-card,
 .empty-friend,
 .rank-pulse-widget {
@@ -2013,10 +1959,6 @@ html[data-theme] .toast.error {
     border-left: 0;
     border-top: 1px solid var(--line);
     grid-column: 1 / -1;
-  }
-
-  .stat-row {
-    grid-template-columns: 1fr;
   }
 
   .widget-preview-copy {

@@ -10,14 +10,12 @@ import {
   ChevronRight,
   Clock3,
   Crosshair,
-  Gamepad2,
   MapPinned,
   Moon,
   Plus,
   RefreshCw,
   Search,
   Settings2,
-  Target,
   Trophy,
   Users,
   X,
@@ -437,25 +435,6 @@ export default function ApexTrackerDashboard() {
                 <ChevronRight size={18} />
               </div>
             </div>
-          </article>
-        </section>
-
-        <section className="stat-row">
-          {/* Stat cards are quick summaries; add or remove cards here if you want more dashboard metrics. */}
-          <article className="stat-card">
-            <span className="stat-icon"><Target size={18} /></span>
-            <div><span>RP to next rank</span><strong>{me?.progress.remaining === null ? "Top tier" : formatNumber(me?.progress.remaining ?? 0)}</strong></div>
-            <small>{me?.progress.nextLabel ?? "..."}</small>
-          </article>
-          <article className="stat-card">
-            <span className="stat-icon"><Users size={18} /></span>
-            <div><span>Squad tracked</span><strong>{friends.length}</strong></div>
-            <small>{friends.filter((friend) => friend.rankName === me?.rankName).length} in your tier</small>
-          </article>
-          <article className="stat-card">
-            <span className="stat-icon"><Gamepad2 size={18} /></span>
-            <div><span>Account level</span><strong>{formatNumber(me?.level ?? 0)}</strong></div>
-            <small>Playing {me?.legend ?? "..."}</small>
           </article>
         </section>
 
