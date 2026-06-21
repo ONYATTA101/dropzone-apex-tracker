@@ -174,6 +174,7 @@ export default function ApexTrackerDashboard() {
     activeFriends: TrackedPlayerIdentity[],
     quiet = false,
     showSuccessToast = false,
+    forceRefresh = false,
   ) => {
     await Promise.resolve();
     if (!quiet) setLoading(true);
@@ -187,7 +188,7 @@ export default function ApexTrackerDashboard() {
         })),
       ];
       const [rosterResponse, mapResponse] = await Promise.all([
-        fetchPlayerRankStatuses(trackedPlayers),
+        fetchPlayerRankStatuses(trackedPlayers, { forceRefresh }),
         fetchRankedMapRotation(),
       ]);
       const ownerKey = trackedIdentityKey(activeProfile);
@@ -229,7 +230,7 @@ export default function ApexTrackerDashboard() {
   useEffect(() => {
     const refreshMs = MOBILE_WIDGET_REFRESH_INTERVAL_HOURS * 60 * 60 * 1000;
     const interval = window.setInterval(
-      () => void loadData(profile, friendIds, true),
+      () => void loadData(profile, friendIds, true, false, true),
       refreshMs,
     );
     return () => window.clearInterval(interval);
@@ -244,7 +245,7 @@ export default function ApexTrackerDashboard() {
       const now = Date.now();
       if (now - lastResumeRefresh < resumeRefreshCooldownMs) return;
       lastResumeRefresh = now;
-      void loadData(profile, friendIds, true);
+      void loadData(profile, friendIds, true, false, true);
     };
 
     window.addEventListener("focus", refreshAfterReturn);
@@ -490,7 +491,7 @@ export default function ApexTrackerDashboard() {
               <Moon size={15} />
               <span>{darkThemeEnabled ? "Dark" : "Light"}</span>
             </button>
-            <button className="icon-button" onClick={() => void loadData(profile, friendIds, true, true)} aria-label="Refresh" disabled={loading}>
+            <button className="icon-button" onClick={() => void loadData(profile, friendIds, true, true, true)} aria-label="Refresh" disabled={loading}>
               <RefreshCw size={18} className={loading ? "spin" : ""} />
             </button>
             {renderAccountMenu("topbar")}

@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
 
   const roster = getMobileWidgetRoster();
   const settled = await Promise.allSettled(
-    roster.map((player, index) => getPlayerRankStatus(player, index === 0)),
+    roster.map((player, index) => getPlayerRankStatus(player, index === 0, { forceRefresh: true })),
   );
 
   const players = settled.map((result, index) => (

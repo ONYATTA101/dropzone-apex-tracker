@@ -104,6 +104,7 @@ export function MobileWidgetTestScreen() {
     activeProfile: TrackedPlayerIdentity,
     activeFriends: TrackedPlayerIdentity[],
     quiet = false,
+    forceRefresh = false,
   ) => {
     if (!quiet) {
       setLoading(true);
@@ -120,7 +121,7 @@ export function MobileWidgetTestScreen() {
           requestKey: trackedIdentityKey(friend),
         })),
       ];
-      const rosterResponse = await fetchPlayerRankStatuses(trackedPlayers);
+      const rosterResponse = await fetchPlayerRankStatuses(trackedPlayers, { forceRefresh });
       const ownerKey = trackedIdentityKey(activeProfile);
       const ownerResult = rosterResponse.results.find((result) => result.requestKey === ownerKey)?.player;
 
@@ -154,7 +155,7 @@ export function MobileWidgetTestScreen() {
 
   useEffect(() => {
     const refreshMs = MOBILE_WIDGET_REFRESH_INTERVAL_HOURS * 60 * 60 * 1000;
-    const interval = window.setInterval(() => void loadWidgetData(profile, friendIds, true), refreshMs);
+    const interval = window.setInterval(() => void loadWidgetData(profile, friendIds, true, true), refreshMs);
     return () => window.clearInterval(interval);
   }, [profile, friendIds, loadWidgetData]);
 
@@ -167,7 +168,7 @@ export function MobileWidgetTestScreen() {
       const now = Date.now();
       if (now - lastResumeRefresh < resumeRefreshCooldownMs) return;
       lastResumeRefresh = now;
-      void loadWidgetData(profile, friendIds, true);
+      void loadWidgetData(profile, friendIds, true, true);
     };
 
     window.addEventListener("focus", refreshAfterReturn);

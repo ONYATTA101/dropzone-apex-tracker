@@ -74,6 +74,7 @@ function writeCachedPlayerRank(cacheKey: string, value: PlayerRankStatus) {
 export async function getPlayerRankStatus(
   identity: TrackedPlayerIdentity,
   primary = false,
+  options: { forceRefresh?: boolean } = {},
 ): Promise<PlayerRankStatus> {
   const apiKey = process.env.APEX_API_KEY;
   const player = identity.name.trim();
@@ -89,8 +90,10 @@ export async function getPlayerRankStatus(
   }
 
   const cacheKey = getPlayerRankCacheKey(player, platform);
-  const freshCachedPlayer = readCachedPlayerRank(cacheKey, PLAYER_RANK_FRESH_CACHE_MS);
-  if (freshCachedPlayer) return freshCachedPlayer;
+  if (!options.forceRefresh) {
+    const freshCachedPlayer = readCachedPlayerRank(cacheKey, PLAYER_RANK_FRESH_CACHE_MS);
+    if (freshCachedPlayer) return freshCachedPlayer;
+  }
 
   const params = new URLSearchParams({ player, platform });
   let response: Response;

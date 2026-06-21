@@ -14,12 +14,14 @@ import {
 export async function fetchPlayerRankStatus(
   identity: TrackedPlayerIdentity,
   primary = false,
+  options: { forceRefresh?: boolean } = {},
 ): Promise<PlayerRankStatus> {
   // If you rename the server route folder, update this internal URL too.
   const params = new URLSearchParams({
     player: identity.name,
     platform: identity.platform,
     primary: String(primary),
+    forceRefresh: String(Boolean(options.forceRefresh)),
     refresh: String(Date.now()),
   });
   const response = await fetch(`/api/apex/player-rank-status?${params}`, { cache: "no-store" });
@@ -30,13 +32,14 @@ export async function fetchPlayerRankStatus(
 
 export async function fetchPlayerRankStatuses(
   players: PlayerRankBatchRequest[],
+  options: { forceRefresh?: boolean } = {},
 ): Promise<PlayerRankBatchResponse> {
   // One browser request for the full roster is faster than one request per friend.
   const response = await fetch("/api/apex/player-rank-statuses", {
     method: "POST",
     cache: "no-store",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ players }),
+    body: JSON.stringify({ forceRefresh: Boolean(options.forceRefresh), players }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? "Could not load player roster.");

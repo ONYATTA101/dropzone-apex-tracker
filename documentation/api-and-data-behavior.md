@@ -85,6 +85,11 @@ The internal Apex proxy routes use:
 This protects casual public abuse, but a production deployment with many users should add
 durable rate limiting at the hosting or database layer.
 
+Player rank lookups use a short in-memory cache to avoid hitting provider limits. Manual refresh,
+return-to-app refresh, and native widget refresh bypass that short cache so Dropzone asks Apex
+Legends Status for the newest value it has. If the provider still returns an older RP than the
+in-game lobby, the app cannot see the newer RP until the provider updates its data.
+
 ### `GET /api/mobile/rank-pulse-summary`
 
 Returns the mobile-safe summary used by the native Android home-screen widget. It does not

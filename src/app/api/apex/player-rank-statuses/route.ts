@@ -29,10 +29,11 @@ export async function POST(request: NextRequest) {
   if (guarded) return guarded;
 
   const body = (await request.json().catch(() => null)) as
-    | { players?: PlayerRankBatchRequest[] }
+    | { forceRefresh?: boolean; players?: PlayerRankBatchRequest[] }
     | null;
 
   const requestedPlayers = Array.isArray(body?.players) ? body.players : [];
+  const forceRefresh = Boolean(body?.forceRefresh);
   const players = requestedPlayers
     .slice(0, MAX_BATCH_PLAYERS)
     .map((player) => ({
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
   }
 
   const settled = await Promise.allSettled(
-    players.map((player) => getPlayerRankStatus(player, player.primary)),
+    players.map((player) => getPlayerRankStatus(player, player.primary, { forceRefresh })),
   );
 
   const response: PlayerRankBatchResponse = {

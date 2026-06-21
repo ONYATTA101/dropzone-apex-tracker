@@ -29,13 +29,14 @@ export async function GET(request: NextRequest) {
   const player = request.nextUrl.searchParams.get("player")?.trim();
   const platform = normalizeApexPlatform(request.nextUrl.searchParams.get("platform"));
   const primary = request.nextUrl.searchParams.get("primary") === "true";
+  const forceRefresh = request.nextUrl.searchParams.get("forceRefresh") === "true";
 
   if (!player) {
     return NextResponse.json({ error: "Player name is required." }, { status: 400 });
   }
 
   try {
-    return NextResponse.json(await getPlayerRankStatus({ name: player, platform }, primary));
+    return NextResponse.json(await getPlayerRankStatus({ name: player, platform }, primary, { forceRefresh }));
   } catch (error) {
     if (error instanceof ApexPlayerRankError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
