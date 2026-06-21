@@ -34,8 +34,9 @@ The dashboard stores these values in browser `localStorage`:
 
 - `dropzone-profile`: the main player's name and platform.
 - `dropzone-friends`: the list of tracked friends and platforms.
+- `dropzone-tracked-player-history`: recently removed tracked players and their last known rank.
 
-No account password, API key, or live API response is stored there.
+No account password or API key is stored there.
 
 ## Security Boundary
 

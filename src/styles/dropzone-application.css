@@ -782,7 +782,7 @@ button {
   min-width: 0;
 }
 
-.rank-pulse-name span,
+.rank-pulse-role,
 .rank-pulse-footer {
   display: block;
   color: #8f98a6;
@@ -792,7 +792,15 @@ button {
   text-transform: uppercase;
 }
 
+.rank-pulse-name-row {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .rank-pulse-name strong {
+  min-width: 0;
   display: block;
   overflow: hidden;
   color: #f8fafc;
@@ -801,6 +809,18 @@ button {
   letter-spacing: 0.01em;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.rank-pulse-heat-streak {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(145deg, rgba(255, 214, 10, 0.24), rgba(255, 59, 48, 0.2));
+  color: #ffb020;
+  filter: drop-shadow(0 0 8px rgba(255, 122, 24, 0.42));
 }
 
 .rank-pulse-player.featured .rank-pulse-name strong {
@@ -861,6 +881,26 @@ button {
   border-radius: inherit;
   background: linear-gradient(90deg, #0a84ff, #69c4ff);
   box-shadow: 0 0 12px rgba(10, 132, 255, 0.38);
+}
+
+.rank-pulse-track.loss span {
+  background: linear-gradient(90deg, #ff8a80, #ff453a);
+  box-shadow: 0 0 12px rgba(255, 69, 58, 0.38);
+}
+
+.rank-pulse-track.loss-strong span {
+  background: linear-gradient(90deg, #ff453a, #8f1118);
+  box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+}
+
+.rank-pulse-track.gain span {
+  background: linear-gradient(90deg, #8dffae, #30d158);
+  box-shadow: 0 0 12px rgba(48, 209, 88, 0.38);
+}
+
+.rank-pulse-track.gain-strong span {
+  background: linear-gradient(90deg, #30d158, #0b7a2d);
+  box-shadow: 0 0 15px rgba(48, 209, 88, 0.52);
 }
 
 .rank-pulse-footer {
@@ -1314,6 +1354,112 @@ button {
   margin-top: 7px;
 }
 
+.friend-remove-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 69, 58, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 69, 58, 0.1);
+  color: #ff9a94;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.friend-remove-button:hover {
+  border-color: rgba(255, 69, 58, 0.5);
+  background: rgba(255, 69, 58, 0.18);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.tracked-history-panel {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(19, 25, 37, 0.86), rgba(12, 16, 24, 0.78));
+}
+
+.tracked-history-heading,
+.tracked-history-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tracked-history-heading {
+  margin-bottom: 12px;
+  color: var(--muted);
+}
+
+.tracked-history-heading h3 {
+  margin: 2px 0 0;
+  font-size: 14px;
+}
+
+.tracked-history-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tracked-history-card {
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.tracked-history-card strong,
+.tracked-history-card span,
+.tracked-history-card small {
+  display: block;
+}
+
+.tracked-history-card strong {
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracked-history-card span,
+.tracked-history-card small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.tracked-history-card button {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 9px;
+  border: 1px solid rgba(10, 132, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(10, 132, 255, 0.1);
+  color: #8fc8ff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.tracked-history-card button:hover {
+  border-color: rgba(10, 132, 255, 0.54);
+  background: rgba(10, 132, 255, 0.18);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .empty-friend {
   min-height: 184px;
   display: grid;
@@ -1578,7 +1724,7 @@ html[data-theme] .friend-rank strong {
 
 html[data-theme] .eyebrow,
 html[data-theme] .rank-pulse-header strong,
-html[data-theme] .rank-pulse-name span,
+html[data-theme] .rank-pulse-role,
 html[data-theme] .rank-pulse-footer {
   font-family: var(--font-body), sans-serif;
   font-weight: 800;
@@ -1636,7 +1782,8 @@ html[data-theme] .demo-banner {
 
 html[data-theme] .widget-preview-section,
 html[data-theme] .hero-grid,
-html[data-theme] .friends-grid {
+html[data-theme] .friends-grid,
+html[data-theme] .tracked-history-list {
   gap: 18px;
 }
 
@@ -1661,7 +1808,7 @@ html[data-theme="light"] .rank-pulse-rp {
 }
 
 html[data-theme="light"] .rank-pulse-rank,
-html[data-theme="light"] .rank-pulse-name span,
+html[data-theme="light"] .rank-pulse-role,
 html[data-theme="light"] .rank-pulse-footer {
   color: #667085;
 }
@@ -1671,6 +1818,26 @@ html[data-theme] .progress-track span,
 html[data-theme] .mini-progress span {
   background: linear-gradient(90deg, #0a84ff, #69c4ff);
   box-shadow: 0 0 12px rgba(10, 132, 255, 0.38);
+}
+
+html[data-theme] .rank-pulse-track.loss span {
+  background: linear-gradient(90deg, #ff8a80, #ff453a);
+  box-shadow: 0 0 12px rgba(255, 69, 58, 0.38);
+}
+
+html[data-theme] .rank-pulse-track.loss-strong span {
+  background: linear-gradient(90deg, #ff453a, #8f1118);
+  box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+}
+
+html[data-theme] .rank-pulse-track.gain span {
+  background: linear-gradient(90deg, #8dffae, #30d158);
+  box-shadow: 0 0 12px rgba(48, 209, 88, 0.38);
+}
+
+html[data-theme] .rank-pulse-track.gain-strong span {
+  background: linear-gradient(90deg, #30d158, #0b7a2d);
+  box-shadow: 0 0 15px rgba(48, 209, 88, 0.52);
 }
 
 html[data-theme] .panel-heading {
@@ -1786,6 +1953,10 @@ html[data-theme] .toast.error {
   }
 
   .friends-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tracked-history-list {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -2062,6 +2233,10 @@ html[data-theme] .toast.error {
   }
 
   .friends-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracked-history-list {
     grid-template-columns: 1fr;
   }
 

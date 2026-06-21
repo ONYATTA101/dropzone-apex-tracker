@@ -54,6 +54,10 @@ function FriendRankCardComponent({
         </span>
         <span>{player.legend}</span>
       </div>
+      <button className="friend-remove-button" onClick={() => onRemove(player)} type="button">
+        <Trash2 size={13} />
+        Remove player
+      </button>
     </article>
   );
 }

@@ -10,10 +10,12 @@ import {
   ChevronRight,
   Clock3,
   Crosshair,
+  History,
   MapPinned,
   Moon,
   Plus,
   RefreshCw,
+  RotateCcw,
   Search,
   Settings2,
   Trophy,
@@ -57,6 +59,13 @@ import {
 
 type Toast = { message: string; kind: "success" | "error" } | null;
 
+type TrackedPlayerHistoryItem = TrackedPlayerIdentity & {
+  removedAt: string;
+  lastRankName?: string;
+  lastRankDivision?: number;
+  lastRankScore?: number;
+};
+
 function normalizePlatformInput(value: string): ApexPlatform {
   const platform = value.trim().toUpperCase();
   if (["PLAYSTATION", "PS", "PS4", "PS5"].includes(platform)) return "PS4";
@@ -83,9 +92,25 @@ function trackedIdentityKey(identity: TrackedPlayerIdentity) {
   return `${identity.platform}:${identity.name.toLowerCase()}`;
 }
 
+function readStoredTrackedHistory() {
+  const saved = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.trackedHistory);
+  if (!saved) return [];
+
+  try {
+    const parsed = JSON.parse(saved) as TrackedPlayerHistoryItem[];
+    return Array.isArray(parsed)
+      ? parsed.filter((item) => item.name && item.platform)
+      : [];
+  } catch {
+    window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.trackedHistory);
+    return [];
+  }
+}
+
 export default function ApexTrackerDashboard() {
   const [profile, setProfile] = useState<TrackedPlayerIdentity>(DEFAULT_PROFILE);
   const [friendIds, setFriendIds] = useState<TrackedPlayerIdentity[]>(DEFAULT_FRIENDS);
+  const [trackedHistory, setTrackedHistory] = useState<TrackedPlayerHistoryItem[]>([]);
   const [me, setMe] = useState<PlayerRankStatus | null>(null);
   const [friends, setFriends] = useState<PlayerRankStatus[]>([]);
   const [rankedMap, setRankedMap] = useState<RankedMapRotation | null>(null);
@@ -124,9 +149,11 @@ export default function ApexTrackerDashboard() {
       try {
         if (savedProfile) setProfile(JSON.parse(savedProfile));
         if (savedFriends) setFriendIds(JSON.parse(savedFriends));
+        setTrackedHistory(readStoredTrackedHistory());
       } catch {
         window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.profile);
         window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.friends);
+        window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.trackedHistory);
       }
     }, 0);
     return () => window.clearTimeout(timer);
@@ -245,6 +272,19 @@ export default function ApexTrackerDashboard() {
     [me, friends],
   );
 
+  const inactiveTrackedHistory = useMemo(() => {
+    const activeKeys = new Set(friendIds.map(trackedIdentityKey));
+    return trackedHistory
+      .filter((item) => !activeKeys.has(trackedIdentityKey(item)))
+      .slice(0, 6);
+  }, [friendIds, trackedHistory]);
+
+  const saveTrackedHistory = useCallback((history: TrackedPlayerHistoryItem[]) => {
+    const limitedHistory = history.slice(0, 24);
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.trackedHistory, JSON.stringify(limitedHistory));
+    setTrackedHistory(limitedHistory);
+  }, []);
+
   // Profile and friend handlers persist only the small identities needed for future lookups.
   function updateProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -297,8 +337,37 @@ export default function ApexTrackerDashboard() {
     const updated = friendIds.filter(
       (friend) => !(friend.name.toLowerCase() === player.name.toLowerCase() && friend.platform === player.platform),
     );
+    const removedIdentity: TrackedPlayerHistoryItem = {
+      name: player.name,
+      platform: player.platform,
+      removedAt: new Date().toISOString(),
+      lastRankName: player.rankName,
+      lastRankDivision: player.rankDivision,
+      lastRankScore: player.rankScore,
+    };
+    const removedKey = trackedIdentityKey(removedIdentity);
+    const nextHistory = [
+      removedIdentity,
+      ...trackedHistory.filter((item) => trackedIdentityKey(item) !== removedKey),
+    ];
+
     window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
     setFriendIds(updated);
+    saveTrackedHistory(nextHistory);
+    setToast({ message: `${player.name} removed. You can track them again from history.`, kind: "success" });
+  }, [friendIds, saveTrackedHistory, trackedHistory]);
+
+  const retrackHistoryPlayer = useCallback((identity: TrackedPlayerIdentity) => {
+    const identityKey = trackedIdentityKey(identity);
+    if (friendIds.some((friend) => trackedIdentityKey(friend) === identityKey)) {
+      setToast({ message: `${identity.name} is already tracked.`, kind: "error" });
+      return;
+    }
+
+    const updated = [...friendIds, { name: identity.name, platform: identity.platform }];
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
+    setFriendIds(updated);
+    setToast({ message: `${identity.name} is back on your tracked squad.`, kind: "success" });
   }, [friendIds]);
 
   function testWidgetDailyRpChange(dailyChange: number) {
@@ -478,6 +547,37 @@ export default function ApexTrackerDashboard() {
               <button className="empty-friend" onClick={() => setShowFriendForm(true)}><Plus size={22} /><strong>Track a squadmate</strong><span>Add their Apex ID and platform</span></button>
             )}
           </div>
+          {inactiveTrackedHistory.length > 0 && (
+            <section className="tracked-history-panel" aria-label="Previously tracked players">
+              <div className="tracked-history-heading">
+                <div>
+                  <span className="eyebrow">Saved roster</span>
+                  <h3>Previously tracked</h3>
+                </div>
+                <History size={18} />
+              </div>
+              <div className="tracked-history-list">
+                {inactiveTrackedHistory.map((item) => (
+                  <article className="tracked-history-card" key={trackedIdentityKey(item)}>
+                    <div>
+                      <strong>{item.name}</strong>
+                      <span>
+                        {PLATFORM_DISPLAY_NAME[item.platform]}
+                        {item.lastRankName
+                          ? ` | ${createRankLabel(item.lastRankName, item.lastRankDivision ?? 4)}`
+                          : ""}
+                      </span>
+                      {typeof item.lastRankScore === "number" && <small>{formatNumber(item.lastRankScore)} RP when removed</small>}
+                    </div>
+                    <button onClick={() => retrackHistoryPlayer(item)} type="button">
+                      <RotateCcw size={13} />
+                      Track again
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
         </section>
       </section>
 

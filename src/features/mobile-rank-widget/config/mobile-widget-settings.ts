@@ -12,6 +12,14 @@ export const MOBILE_WIDGET_REFRESH_INTERVAL_HOURS = 2;
 // Returning to the app can fire multiple focus events; this protects the Apex API key from spikes.
 export const MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES = 10;
 
+// Rank Pulse bar colors react to daily net RP once the player crosses these breakpoints.
+export const MOBILE_WIDGET_TREND_THRESHOLD_RP = 150;
+export const MOBILE_WIDGET_STRONG_TREND_THRESHOLD_RP = 300;
+
+// The Apex API does not provide match history, so heat streaks use tracked RP jumps.
+export const MOBILE_WIDGET_HEAT_STREAK_GAIN_RP = 100;
+export const MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES = 3;
+
 // Use this to keep the widget inside roughly the top quarter of a phone screen.
 export const MOBILE_WIDGET_MAX_SCREEN_HEIGHT_RATIO = 0.25;
 

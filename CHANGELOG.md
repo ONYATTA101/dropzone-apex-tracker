@@ -10,6 +10,8 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added dashboard player removal history with quick re-track actions.
+- Added Rank Pulse trend gradients and heat-streak indicators for strong positive RP movement.
 - Added provider-side player-rank caching and resume-refresh cooldowns to prevent Apex API limit spikes.
 - Improved daily net RP tracking with fresh player-rank fetches and refresh-on-return behavior.
 - Added visible dashboard remove buttons and rank badges inside each Rank Pulse tracked-player row.

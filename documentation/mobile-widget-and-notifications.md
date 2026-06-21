@@ -89,9 +89,22 @@ Important testing behavior:
 
 Daily net styling:
 
-- Positive value: green.
-- Zero: gray.
-- Negative value: red.
+- Daily net RP between -149 and +149: blue progress bar.
+- Daily net RP of -150 or worse: lighter red progress bar.
+- Daily net RP of -300 or worse: darker red progress bar.
+- Daily net RP of +150 or better: lighter green progress bar.
+- Daily net RP of +300 or better: darker green progress bar.
+- Positive daily RP capsule: green.
+- Zero daily RP capsule: gray.
+- Negative daily RP capsule: red.
+
+Heat streak behavior:
+
+- The Apex API returns current RP, not individual match history.
+- Because of that, the app treats each observed RP jump of +100 or more as a hot update.
+- Three hot updates in a row shows the flame-style heat streak icon beside the player name.
+- If a single refresh sees a +300 RP jump, it counts as three hot updates because the app
+  cannot split that total into exact match results.
 
 ## Notification System
 

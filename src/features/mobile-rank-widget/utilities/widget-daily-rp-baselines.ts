@@ -4,7 +4,11 @@
  */
 
 import { PlayerRankStatus } from "@/domain/apex-ranked/types/apex-tracker-types";
-import { MOBILE_WIDGET_STORAGE_KEYS } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
+import {
+  MOBILE_WIDGET_HEAT_STREAK_GAIN_RP,
+  MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES,
+  MOBILE_WIDGET_STORAGE_KEYS,
+} from "@/features/mobile-rank-widget/config/mobile-widget-settings";
 
 export type DailyBaseline = {
   date: string;
@@ -21,12 +25,22 @@ type LatestWidgetSnapshotPlayer = {
   rankScore: number;
   rankName: string;
   rankDivision: number;
+  lastDelta?: number;
+  heatStreakCount?: number;
 };
 
 type LatestWidgetSnapshot = {
   checkedAt: string;
   players: LatestWidgetSnapshotPlayer[];
 };
+
+export type WidgetPlayerMomentum = {
+  lastDelta: number;
+  heatStreakCount: number;
+  hasHeatStreak: boolean;
+};
+
+export type WidgetMomentumStore = Record<string, WidgetPlayerMomentum>;
 
 function getWidgetDateKey(date: Date) {
   const year = date.getFullYear();
@@ -160,21 +174,54 @@ export function ensureWidgetDailyBaselines(players: PlayerRankStatus[]) {
 }
 
 export function saveLatestWidgetSnapshot(players: PlayerRankStatus[]) {
+  const currentDate = getWidgetTodayKey();
+  const previousSnapshot = readLatestWidgetSnapshot();
+  const previousSnapshotDate = previousSnapshot?.checkedAt
+    ? getWidgetDateKey(new Date(previousSnapshot.checkedAt))
+    : null;
+  const momentum: WidgetMomentumStore = {};
+  const snapshotPlayers = players.map((player) => {
+    const key = getWidgetPlayerStorageKey(player);
+    const previousPlayer = previousSnapshotDate === currentDate
+      ? findSnapshotPlayer(previousSnapshot, player)
+      : undefined;
+    const lastDelta = previousPlayer ? player.rankScore - previousPlayer.rankScore : 0;
+    const previousStreakCount = previousPlayer?.heatStreakCount ?? 0;
+    const earnedHeatSteps = Math.floor(Math.max(0, lastDelta) / MOBILE_WIDGET_HEAT_STREAK_GAIN_RP);
+    const heatStreakCount = earnedHeatSteps > 0
+      ? previousStreakCount + earnedHeatSteps
+      : lastDelta === 0
+        ? previousStreakCount
+        : 0;
+
+    momentum[key] = {
+      lastDelta,
+      heatStreakCount,
+      hasHeatStreak: heatStreakCount >= MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES,
+    };
+
+    return {
+      key,
+      id: player.id,
+      name: player.name,
+      platform: player.platform,
+      rankScore: player.rankScore,
+      rankName: player.rankName,
+      rankDivision: player.rankDivision,
+      lastDelta,
+      heatStreakCount,
+    };
+  });
+
   window.localStorage.setItem(
     MOBILE_WIDGET_STORAGE_KEYS.latestSnapshot,
     JSON.stringify({
       checkedAt: new Date().toISOString(),
-      players: players.map((player) => ({
-        key: getWidgetPlayerStorageKey(player),
-        id: player.id,
-        name: player.name,
-        platform: player.platform,
-        rankScore: player.rankScore,
-        rankName: player.rankName,
-        rankDivision: player.rankDivision,
-      })),
+      players: snapshotPlayers,
     }),
   );
+
+  return momentum;
 }
 
 export function setWidgetDailyChangeForTesting(players: PlayerRankStatus[], dailyChange: number) {

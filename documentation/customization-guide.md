@@ -62,6 +62,8 @@ FriendName, PlayStation
 ```
 
 Saved friends are stored in browser localStorage under `dropzone-friends`.
+Removed friends are saved under `dropzone-tracked-player-history` so the **Previously tracked**
+panel can restore them without the user typing their Apex ID again.
 
 ## Change Rank Colors
 
