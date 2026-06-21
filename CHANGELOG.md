@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Improved daily net RP tracking with fresh player-rank fetches and refresh-on-return behavior.
 - Added visible dashboard remove buttons and rank badges inside each Rank Pulse tracked-player row.
 - Removed the repeated dashboard stat cards for RP to next rank, squad tracked, and account level.
 - Added removable tracked-player chips and a one-screen phone widget control layout.

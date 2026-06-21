@@ -55,8 +55,8 @@ export async function getPlayerRankStatus(
   const params = new URLSearchParams({ player, platform });
   const response = await fetch(`https://api.apexlegendsstatus.com/bridge?${params}`, {
     headers: { Authorization: apiKey },
-    // Provider data is cached server-side for one minute to reduce duplicate requests.
-    next: { revalidate: 60 },
+    // Player RP must be fresh so the daily net change can react after matches.
+    cache: "no-store",
   });
 
   if (!response.ok) {

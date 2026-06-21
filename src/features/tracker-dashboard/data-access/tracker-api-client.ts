@@ -20,8 +20,9 @@ export async function fetchPlayerRankStatus(
     player: identity.name,
     platform: identity.platform,
     primary: String(primary),
+    refresh: String(Date.now()),
   });
-  const response = await fetch(`/api/apex/player-rank-status?${params}`);
+  const response = await fetch(`/api/apex/player-rank-status?${params}`, { cache: "no-store" });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? "Could not load player.");
   return data as PlayerRankStatus;
@@ -33,6 +34,7 @@ export async function fetchPlayerRankStatuses(
   // One browser request for the full roster is faster than one request per friend.
   const response = await fetch("/api/apex/player-rank-statuses", {
     method: "POST",
+    cache: "no-store",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ players }),
   });

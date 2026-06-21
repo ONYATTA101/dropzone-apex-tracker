@@ -198,6 +198,25 @@ export default function ApexTrackerDashboard() {
     return () => window.clearInterval(interval);
   }, [profile, friendIds, loadData]);
 
+  // When the user comes back after matches, refresh immediately so daily RP loss/gain updates quickly.
+  useEffect(() => {
+    let lastResumeRefresh = 0;
+    const refreshAfterReturn = () => {
+      if (document.visibilityState === "hidden") return;
+      const now = Date.now();
+      if (now - lastResumeRefresh < 15_000) return;
+      lastResumeRefresh = now;
+      void loadData(profile, friendIds, true);
+    };
+
+    window.addEventListener("focus", refreshAfterReturn);
+    document.addEventListener("visibilitychange", refreshAfterReturn);
+    return () => {
+      window.removeEventListener("focus", refreshAfterReturn);
+      document.removeEventListener("visibilitychange", refreshAfterReturn);
+    };
+  }, [profile, friendIds, loadData]);
+
   // Keep the ranked-map countdown moving without making another API request each second.
   useEffect(() => {
     if (!rankedMap) return;

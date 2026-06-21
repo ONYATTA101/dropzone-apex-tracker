@@ -147,6 +147,25 @@ export function MobileWidgetTestScreen() {
     return () => window.clearInterval(interval);
   }, [profile, friendIds, loadWidgetData]);
 
+  // Refresh when this phone preview becomes active again after matches.
+  useEffect(() => {
+    let lastResumeRefresh = 0;
+    const refreshAfterReturn = () => {
+      if (document.visibilityState === "hidden") return;
+      const now = Date.now();
+      if (now - lastResumeRefresh < 15_000) return;
+      lastResumeRefresh = now;
+      void loadWidgetData(profile, friendIds, true);
+    };
+
+    window.addEventListener("focus", refreshAfterReturn);
+    document.addEventListener("visibilitychange", refreshAfterReturn);
+    return () => {
+      window.removeEventListener("focus", refreshAfterReturn);
+      document.removeEventListener("visibilitychange", refreshAfterReturn);
+    };
+  }, [profile, friendIds, loadWidgetData]);
+
   function updateTestRoster(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);

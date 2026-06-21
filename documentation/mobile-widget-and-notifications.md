@@ -52,10 +52,11 @@ Each row shows:
 - Progress bar toward next rank or division.
 - Net RP change for the day.
 
-## Two-Hour Refresh Logic
+## Daily RP Refresh Logic
 
 The tracker refreshes player RP every 2 hours when the app is open. It also refreshes when
-the user opens or manually refreshes the dashboard.
+the user opens the dashboard, manually taps refresh, or returns to the app after playing.
+Player-rank requests bypass app-level caches so the daily RP number reacts to fresh provider data.
 
 The widget preview stores:
 
@@ -64,7 +65,8 @@ The widget preview stores:
 - The previous rank and latest rank.
 - The timestamp of the last refresh.
 
-Daily net RP uses the user's local calendar day:
+Daily net RP uses the user's local calendar day and the first RP value the app saw for that
+player today:
 
 ```text
 current RP - first RP seen today
@@ -76,6 +78,8 @@ Important testing behavior:
   widget shows `0`.
 - If the same browser already saved an earlier baseline today, the widget can show gain or
   loss immediately.
+- If the player key changes because the stats provider changes casing or ID details, the app
+  tries to recover today's baseline from the latest saved snapshot before falling back to `0`.
 - The dashboard widget preview and `/widget` test page include Daily RP test buttons so you
   can confirm the green gain and red loss states without waiting for a real RP change.
 

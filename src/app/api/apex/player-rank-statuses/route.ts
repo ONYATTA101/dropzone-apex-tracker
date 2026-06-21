@@ -15,6 +15,9 @@ import {
   normalizeApexPlatform,
 } from "@/integrations/apex-legends-status/player-rank-service";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const MAX_BATCH_PLAYERS = 12;
 
 export async function POST(request: NextRequest) {
