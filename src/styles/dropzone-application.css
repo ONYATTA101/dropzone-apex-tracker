@@ -68,10 +68,12 @@ html[data-theme="light"] {
 
 html {
   background: var(--bg);
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 70% -20%, rgba(10, 132, 255, 0.16), transparent 30%),
     radial-gradient(circle at 15% 5%, rgba(255, 59, 48, 0.08), transparent 28%),
@@ -426,20 +428,44 @@ button {
 
 .widget-test-shell {
   min-height: 100vh;
-  padding: 26px;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip;
+  padding: 20px;
   background:
     radial-gradient(circle at 18% 12%, rgba(10, 132, 255, 0.22), transparent 30%),
     radial-gradient(circle at 84% 20%, rgba(48, 209, 88, 0.1), transparent 26%),
     var(--bg);
 }
 
+.widget-mobile-topbar {
+  width: min(1080px, 100%);
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.widget-mobile-topbar div {
+  display: grid;
+  gap: 2px;
+}
+
+.widget-mobile-topbar strong {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
 .widget-test-hero {
   width: min(1080px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(330px, 0.7fr);
-  gap: 22px;
-  align-items: center;
+  grid-template-columns: minmax(0, 0.42fr) minmax(330px, 0.58fr);
+  gap: 14px;
+  align-items: stretch;
 }
 
 .widget-test-copy,
@@ -452,7 +478,9 @@ button {
 }
 
 .widget-test-copy {
-  padding: 28px;
+  padding: 16px;
+  display: grid;
+  align-content: center;
 }
 
 .widget-test-copy h1,
@@ -480,10 +508,10 @@ button {
 }
 
 .widget-test-actions {
-  margin: 20px 0 12px;
+  margin: 0 0 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -497,8 +525,9 @@ button {
 
 .widget-phone-frame {
   position: relative;
-  min-height: min(720px, 86vh);
-  padding: 68px 18px 24px;
+  min-width: 0;
+  min-height: min(650px, 78vh);
+  padding: 58px 14px 18px;
   display: grid;
   align-content: start;
   justify-items: center;
@@ -512,11 +541,11 @@ button {
 
 .widget-phone-frame .rank-pulse-widget {
   width: min(100%, 390px);
-  max-height: 25vh;
+  max-height: none;
 }
 
 .widget-phone-frame small {
-  margin-top: 14px;
+  margin-top: 10px;
   color: var(--muted);
   font-size: 10px;
   letter-spacing: 0.06em;
@@ -536,11 +565,11 @@ button {
 
 .widget-test-panel {
   width: min(1080px, 100%);
-  margin: 22px auto 0;
-  padding: 24px;
+  margin: 14px auto 0;
+  padding: 16px;
   display: grid;
-  grid-template-columns: minmax(0, 0.7fr) minmax(320px, 0.9fr);
-  gap: 22px;
+  grid-template-columns: minmax(0, 0.46fr) minmax(0, 0.54fr);
+  gap: 14px;
   align-items: start;
 }
 
@@ -586,6 +615,7 @@ button {
   position: relative;
   overflow: hidden;
   width: min(100%, 460px);
+  min-width: 0;
   min-height: 202px;
   max-height: 25vh;
   padding: 14px;
@@ -652,7 +682,7 @@ button {
 }
 
 .rank-pulse-player-line {
-  grid-template-columns: minmax(0, 1.25fr) 50px 72px auto;
+  grid-template-columns: minmax(0, 1fr) minmax(38px, 0.36fr) minmax(58px, 0.5fr) minmax(42px, auto);
   gap: 8px;
 }
 
@@ -1728,33 +1758,104 @@ html[data-theme] .toast.error {
 /* Phone/tablet navigation breakpoint. Sidebar becomes a top bar. */
 @media (max-width: 820px) {
   .widget-test-shell {
-    padding: 16px;
+    min-height: 100svh;
+    padding: 12px;
+  }
+
+  .widget-mobile-topbar,
+  .widget-test-hero,
+  .widget-test-panel {
+    width: 100%;
+    max-width: 430px;
+  }
+
+  .widget-mobile-topbar {
+    margin-bottom: 10px;
   }
 
   .widget-test-hero,
   .widget-test-panel {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .widget-test-copy,
   .widget-test-panel {
-    border-radius: 24px;
-    padding: 18px;
+    border-radius: 22px;
+    padding: 12px;
+  }
+
+  .widget-test-copy {
+    order: 2;
+  }
+
+  .widget-test-actions {
+    margin-bottom: 8px;
+    gap: 7px;
+  }
+
+  .widget-test-actions .primary-button,
+  .widget-test-actions .theme-mode-button {
+    min-height: 34px;
+    padding: 0 11px;
+  }
+
+  .widget-test-status {
+    min-height: 0;
+    font-size: 11px;
+    line-height: 1.45;
   }
 
   .widget-phone-frame {
-    min-height: 62vh;
-    padding: 56px 12px 20px;
-    border-radius: 36px;
+    width: 100%;
+    min-height: auto;
+    padding: 46px 10px 14px;
+    border-radius: 32px;
+    order: 1;
   }
 
   .widget-phone-frame .rank-pulse-widget {
     width: 100%;
-    max-height: 25vh;
+    max-height: none;
+  }
+
+  .widget-phone-frame small {
+    margin-top: 8px;
+    font-size: 8px;
+    text-align: center;
+  }
+
+  .widget-phone-notch {
+    top: 14px;
+    width: 72px;
+    height: 18px;
+  }
+
+  .widget-baseline-tools {
+    margin-top: 9px;
+    gap: 6px;
+  }
+
+  .widget-baseline-tools button {
+    padding: 6px 8px;
+    font-size: 8px;
   }
 
   .widget-test-form {
     grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .widget-test-form input,
+  .widget-test-form select,
+  .widget-test-form textarea {
+    min-width: 0;
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .widget-test-form textarea {
+    min-height: 76px;
   }
 
   .sidebar {
@@ -1830,6 +1931,34 @@ html[data-theme] .toast.error {
 
 /* Small phone breakpoint. The dashboard becomes one-column and hides non-essential controls. */
 @media (max-width: 600px) {
+  .widget-test-shell {
+    padding: 10px;
+  }
+
+  .widget-mobile-topbar {
+    align-items: flex-start;
+  }
+
+  .widget-mobile-topbar .widget-test-link {
+    margin-top: 3px;
+    font-size: 8px;
+  }
+
+  .widget-test-copy,
+  .widget-test-panel {
+    padding: 10px;
+  }
+
+  .widget-test-panel h2 {
+    margin-bottom: 5px;
+    font-size: 24px;
+  }
+
+  .widget-test-panel p {
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
   .brand {
     padding: 0 12px;
     font-size: 0;
@@ -1899,32 +2028,38 @@ html[data-theme] .toast.error {
   }
 
   .rank-pulse-widget {
-    min-height: 186px;
-    padding: 12px;
-    border-radius: 24px;
+    min-height: 164px;
+    padding: 10px;
+    border-radius: 22px;
   }
 
   .rank-pulse-player-line {
-    grid-template-columns: minmax(0, 1.12fr) 42px 66px auto;
-    gap: 6px;
+    grid-template-columns: minmax(0, 1fr) 37px 56px 42px;
+    gap: 5px;
   }
 
   .rank-pulse-header strong {
-    font-size: 11px;
+    font-size: 10px;
+  }
+
+  .rank-pulse-header span {
+    padding: 3px 6px;
+    font-size: 7px;
   }
 
   .rank-pulse-name strong,
   .rank-pulse-player.featured .rank-pulse-name strong {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .rank-pulse-rank,
   .rank-pulse-rp {
-    font-size: 8px;
+    font-size: 7px;
   }
 
   .rank-pulse-change {
-    padding: 4px 6px;
-    font-size: 7px;
+    min-width: 0;
+    padding: 4px 5px;
+    font-size: 6px;
   }
 }

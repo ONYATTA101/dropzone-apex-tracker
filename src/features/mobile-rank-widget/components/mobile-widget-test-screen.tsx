@@ -199,14 +199,16 @@ export function MobileWidgetTestScreen() {
 
   return (
     <main className="widget-test-shell">
+      <header className="widget-mobile-topbar">
+        <div>
+          <span className="eyebrow">Rank Pulse</span>
+          <strong>Phone widget test</strong>
+        </div>
+        <Link className="widget-test-link" href="/">Dashboard</Link>
+      </header>
+
       <section className="widget-test-hero">
         <div className="widget-test-copy">
-          <span className="eyebrow">Phone test mode</span>
-          <h1>Rank Pulse Widget</h1>
-          <p>
-            Open this page on your phone to test the compact widget layout. It uses this phone&apos;s
-            saved roster and refreshes every {MOBILE_WIDGET_REFRESH_INTERVAL_HOURS} hours while open.
-          </p>
           <div className="widget-test-actions">
             <button
               className="primary-button"
@@ -223,7 +225,6 @@ export function MobileWidgetTestScreen() {
             >
               {darkThemeEnabled ? "Dark" : "Light"}
             </button>
-            <Link className="widget-test-link" href="/">Dashboard</Link>
           </div>
           <p className="widget-test-status">
             {status}
@@ -247,11 +248,8 @@ export function MobileWidgetTestScreen() {
       <section className="widget-test-panel">
         <div>
           <span className="eyebrow">This phone&apos;s roster</span>
-          <h2>Test your Apex account and two friends</h2>
-          <p>
-            Friends added on your PC do not automatically copy to your phone. Add them here once,
-            or open the dashboard on this phone and use the normal friend tracker.
-          </p>
+          <h2>Roster</h2>
+          <p>You plus two friends.</p>
         </div>
 
         <form className="widget-test-form" onSubmit={updateTestRoster}>
