@@ -12,6 +12,8 @@ This project follows semantic versioning:
 
 - Added an Android-first native app scaffold with a compact Rank Pulse home-screen widget.
 - Added Android widget documentation and file-purpose notes.
+- Added local Android command-line build requirements for SDK 36.
+- Added a Gradle wrapper for repeatable Android command-line builds.
 - Made the phone dashboard header name smaller and more minimal.
 - Added a DROPZONE account dropdown with Account, History, Widget, and Settings actions.
 - Added dashboard player removal history with quick re-track actions.

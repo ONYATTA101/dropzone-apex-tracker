@@ -21,10 +21,11 @@ be inspected, so the Apex API key must stay on the server, never inside the phon
 - Android Studio with the Android SDK installed.
 - JDK 17. Android Studio normally bundles this.
 - Android Gradle plugin 9.2.0 support.
-- Gradle 9.4.1. Android Studio can download and sync it for this project.
+- Gradle 9.4.1, or the checked-in `gradlew.bat` wrapper.
+- Android SDK Platform 36 and Build-Tools 36.1.0 for command-line builds.
 
-This workspace did not have Java, Gradle, Android SDK, or `adb` installed when the scaffold was
-created, so native Android builds still need to be verified after Android Studio is installed.
+This workspace uses local command-line Android tools when Android Studio is not available.
+Android Studio is still the easiest way to install emulators and visually inspect the widget.
 
 ## How To Open
 
@@ -34,6 +35,19 @@ created, so native Android builds still need to be verified after Android Studio
 4. Let Android Studio sync the Gradle project.
 5. Connect an Android phone or start an emulator.
 6. Run the `app` configuration.
+
+## How To Build From Terminal
+
+```powershell
+cd android
+.\gradlew.bat assembleDebug
+```
+
+The debug APK is created at:
+
+```text
+android/app/build/outputs/apk/debug/app-debug.apk
+```
 
 ## How To Test The Widget
 

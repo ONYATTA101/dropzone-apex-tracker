@@ -20,7 +20,7 @@ RemoteViews layout.
 | `android/settings.gradle.kts` | Names the Android project and includes the `app` module. |
 | `android/build.gradle.kts` | Pins the Android Gradle plugin used by the native project. |
 | `android/gradle.properties` | Stores Gradle and Android build settings. |
-| `android/app/build.gradle.kts` | Configures package name, SDK levels, and version numbers. |
+| `android/app/build.gradle.kts` | Configures package name, Android SDK 36 levels, and version numbers. |
 | `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
 | `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Opens the live web dashboard from the native shell. |
 | `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Updates the native home-screen Rank Pulse widget. |

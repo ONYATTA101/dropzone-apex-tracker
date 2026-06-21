@@ -50,11 +50,18 @@ production compilation and TypeScript checking.
 
 ## Native Android Verification
 
-The Android scaffold lives in `android/`. To verify it, open that folder in Android Studio and
-let Gradle sync, then run the `app` configuration on an emulator or real Android phone.
+The Android scaffold lives in `android/`. To verify it from the terminal, use local JDK 17,
+Android SDK Platform 36, Android Build-Tools 36.1.0, and Gradle 9.4.1.
 
-This workspace currently does not have Java, Gradle, Android SDK, or `adb` available from the
-terminal, so native Android builds cannot be run here yet.
+```powershell
+cd android
+.\gradlew.bat assembleDebug
+```
+
+You can also open the `android` folder in Android Studio and let Gradle sync, then run the
+`app` configuration on an emulator or real Android phone.
+
+Android Studio is still recommended for emulator setup and visual widget testing.
 
 ## Common Setup Problems
 
