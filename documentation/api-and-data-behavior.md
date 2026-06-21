@@ -87,6 +87,24 @@ The internal Apex proxy routes use:
 This protects casual public abuse, but a production deployment with many users should add
 durable rate limiting at the hosting or database layer.
 
+### `GET /api/mobile/rank-pulse-summary`
+
+Returns the mobile-safe summary used by the native Android home-screen widget. It does not
+accept arbitrary player names from the phone, and it does not expose `APEX_API_KEY`.
+
+The roster comes from `DROPZONE_MOBILE_WIDGET_PLAYERS` when configured:
+
+```env
+DROPZONE_MOBILE_WIDGET_PLAYERS=PS4:blumoat_onyatta,PC:FriendOne,PS4:FriendTwo
+```
+
+If that variable is missing, the endpoint uses the default dashboard profile plus the first two
+starter friends.
+
+Daily RP baselines are stored in server memory using `DROPZONE_WIDGET_TIME_ZONE`, which defaults
+to `Africa/Nairobi`. For production-grade tracking that survives server restarts, move these
+baselines to Redis or a database and refresh them with Vercel Cron.
+
 ### `GET /api/apex/ranked-map-rotation`
 
 Returns the `RankedMapRotation` contract containing current map, next map, optional image,

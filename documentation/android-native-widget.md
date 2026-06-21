@@ -22,9 +22,9 @@ RemoteViews layout.
 | `android/gradle.properties` | Stores Gradle and Android build settings. |
 | `android/app/build.gradle.kts` | Configures package name, Android SDK 36 levels, and version numbers. |
 | `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
-| `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Opens the live web dashboard from the native shell. |
-| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Updates the native home-screen Rank Pulse widget. |
-| `android/app/src/main/res/layout/activity_main.xml` | Native landing screen layout. |
+| `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Shows the live web dashboard inside the native shell. |
+| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches the server widget summary and updates the native home-screen widget. |
+| `android/app/src/main/res/layout/activity_main.xml` | Native in-app dashboard WebView layout. |
 | `android/app/src/main/res/layout/rank_pulse_widget.xml` | Compact widget layout with three tracked-player rows. |
 | `android/app/src/main/res/xml/rank_pulse_widget_info.xml` | Android widget sizing, category, layout, and update metadata. |
 | `android/app/src/main/res/values/colors.xml` | Native color tokens for app and widget styling. |
@@ -40,15 +40,15 @@ Android apps can be inspected after installation, so any bundled API key should 
 public. The Android app should call a Dropzone server endpoint that already has the data
 prepared. The server keeps the real Apex key in Vercel environment variables.
 
-## Planned Live Data Contract
+## Live Data Contract
 
-Later, the Android widget should call a server endpoint similar to:
+The Android widget calls this server endpoint:
 
 ```text
 GET /api/mobile/rank-pulse-summary
 ```
 
-That endpoint should return no secrets, only the small widget summary:
+That endpoint returns no secrets, only the small widget summary:
 
 ```json
 {
@@ -73,17 +73,18 @@ friends.
 
 ## Daily RP Plan
 
-The current web preview calculates daily RP from the first RP value the browser saw today.
-That is useful for local testing, but it still depends on the app being opened.
+The current mobile endpoint calculates daily RP from the first RP value the server saw for that
+player on the current day. That removes the browser from the calculation, but server memory can
+reset during deploys or platform restarts.
 
-For real Android widget behavior, use Option 2 from the earlier discussion:
+For stronger production behavior, use Option 2 from the earlier discussion:
 
 - Vercel Cron refreshes tracked players on the server.
 - Redis or a small database stores the first RP snapshot of the day and the latest RP.
 - Daily net RP is calculated as `latest RP - first RP snapshot of the day`.
 - The Android widget reads the server summary every two hours.
 
-This is the path that lets the widget update even when the app was not opened that day.
+This is the path that lets the widget update reliably even when the app was not opened that day.
 
 ## Native Refresh Notes
 
@@ -102,8 +103,8 @@ WorkManager and let it fetch the server summary, then update the widget.
 
 ## What To Build Next
 
-1. Install Android Studio and verify the scaffold on a real Android phone.
-2. Add the secure server summary endpoint.
-3. Replace preview rows in the widget provider with fetched server data.
+1. Store the user's selected roster on the server instead of only browser local storage.
+2. Add Redis or database-backed daily RP history with Vercel Cron.
+3. Add Android background refresh with WorkManager.
 4. Add Android notifications for rank-up, rank-down, RP gain, and RP loss.
 5. Add release signing and a Play Store publishing checklist.

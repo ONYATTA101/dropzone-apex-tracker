@@ -10,6 +10,9 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added a mobile-safe Rank Pulse summary API for the native Android widget.
+- Changed the Android app and widget taps to open Dropzone inside the app instead of a browser.
+- Updated the Android widget to fetch and cache server Rank Pulse data.
 - Added an Android-first native app scaffold with a compact Rank Pulse home-screen widget.
 - Added Android widget documentation and file-purpose notes.
 - Added local Android command-line build requirements for SDK 36.

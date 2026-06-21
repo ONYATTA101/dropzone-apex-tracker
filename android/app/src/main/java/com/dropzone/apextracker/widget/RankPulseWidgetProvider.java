@@ -5,38 +5,57 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.dropzone.apextracker.MainActivity;
 import com.dropzone.apextracker.R;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * Updates the native Android Rank Pulse home-screen widget.
  *
- * The first version uses local preview data so the Apex API key stays off the device. When the
- * server snapshot endpoint exists, replace buildPreviewRows() with a cached server summary read
- * and keep the API key protected inside the Next.js/Vercel backend.
+ * The widget reads a mobile-safe server summary instead of storing the Apex API key on-device.
+ * If the phone is offline, it reuses the last cached summary or the local preview rows.
  */
 public class RankPulseWidgetProvider extends AppWidgetProvider {
-    private static final String DASHBOARD_URL = "https://dropzone-apex-tracker.vercel.app";
+    private static final String WIDGET_SUMMARY_URL =
+        "https://dropzone-apex-tracker.vercel.app/api/mobile/rank-pulse-summary";
+    private static final String WIDGET_PREFS_NAME = "dropzone_rank_pulse_widget";
+    private static final String WIDGET_PREFS_SUMMARY_JSON = "latest_summary_json";
     private static final int TREND_THRESHOLD_RP = 150;
     private static final int STRONG_TREND_THRESHOLD_RP = 300;
+    private static final RankPulseRow[] PREVIEW_ROWS = new RankPulseRow[] {
+        new RankPulseRow("PL", "blumoat_onyatta", "Plat II", 9820, 76, 220, true),
+        new RankPulseRow("GD", "Friend One", "Gold I", 7290, 58, -160, false),
+        new RankPulseRow("PL", "Friend Two", "Plat IV", 8200, 8, 0, false),
+    };
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        RankPulseRow[] cachedRows = readCachedRows(context);
         for (int appWidgetId : appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId);
+            updateWidget(context, appWidgetManager, appWidgetId, cachedRows);
         }
+
+        fetchServerSummary(context, appWidgetManager, appWidgetIds);
     }
 
     private static void updateWidget(
         Context context,
         AppWidgetManager appWidgetManager,
-        int appWidgetId
+        int appWidgetId,
+        RankPulseRow[] rows
     ) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.rank_pulse_widget);
-        RankPulseRow[] rows = buildPreviewRows();
 
         bindOpenDashboardTap(context, views);
         bindRow(views, rows[0], RowViews.PLAYER_ONE);
@@ -47,7 +66,8 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     }
 
     private static void bindOpenDashboardTap(Context context, RemoteViews views) {
-        Intent openDashboardIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DASHBOARD_URL));
+        Intent openDashboardIntent = new Intent(context, MainActivity.class);
+        openDashboardIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(
             context,
             0,
@@ -56,6 +76,115 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         );
 
         views.setOnClickPendingIntent(R.id.rank_pulse_widget_root, pendingIntent);
+    }
+
+    private static void fetchServerSummary(
+        Context context,
+        AppWidgetManager appWidgetManager,
+        int[] appWidgetIds
+    ) {
+        new Thread(() -> {
+            try {
+                String summaryJson = fetchSummaryJson();
+                RankPulseRow[] rows = parseRows(summaryJson);
+                SharedPreferences prefs = context.getSharedPreferences(
+                    WIDGET_PREFS_NAME,
+                    Context.MODE_PRIVATE
+                );
+                prefs.edit().putString(WIDGET_PREFS_SUMMARY_JSON, summaryJson).apply();
+
+                for (int appWidgetId : appWidgetIds) {
+                    updateWidget(context, appWidgetManager, appWidgetId, rows);
+                }
+            } catch (Exception ignored) {
+                // Keep the last rendered rows when the phone is offline or the server is busy.
+            }
+        }).start();
+    }
+
+    private static String fetchSummaryJson() throws Exception {
+        HttpURLConnection connection = (HttpURLConnection) new URL(WIDGET_SUMMARY_URL).openConnection();
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setRequestProperty("User-Agent", "DropzoneAndroidWidget/0.1");
+
+        int statusCode = connection.getResponseCode();
+        if (statusCode < 200 || statusCode >= 300) {
+            throw new IllegalStateException("Widget summary request failed: " + statusCode);
+        }
+
+        try (BufferedReader reader = new BufferedReader(
+            new InputStreamReader(connection.getInputStream())
+        )) {
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            return builder.toString();
+        } finally {
+            connection.disconnect();
+        }
+    }
+
+    private static RankPulseRow[] readCachedRows(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
+        String summaryJson = prefs.getString(WIDGET_PREFS_SUMMARY_JSON, null);
+        if (summaryJson == null) {
+            return PREVIEW_ROWS;
+        }
+
+        try {
+            return parseRows(summaryJson);
+        } catch (Exception ignored) {
+            return PREVIEW_ROWS;
+        }
+    }
+
+    private static RankPulseRow[] parseRows(String summaryJson) throws Exception {
+        RankPulseRow[] rows = PREVIEW_ROWS.clone();
+        JSONArray players = new JSONObject(summaryJson).optJSONArray("players");
+        if (players == null) {
+            return rows;
+        }
+
+        int rowCount = Math.min(rows.length, players.length());
+        for (int index = 0; index < rowCount; index += 1) {
+            JSONObject player = players.getJSONObject(index);
+            String rankName = player.optString("rank", rows[index].rankName);
+            rows[index] = new RankPulseRow(
+                player.optString("badgeLabel", createBadgeLabel(rankName)),
+                player.optString("name", rows[index].playerName),
+                rankName,
+                player.optInt("currentRp", rows[index].currentRp),
+                player.optInt("progressPercent", rows[index].progressPercent),
+                player.optInt("dailyNetRp", 0),
+                player.optBoolean("hasHeatStreak", false)
+            );
+        }
+
+        return rows;
+    }
+
+    private static String createBadgeLabel(String rankName) {
+        if (rankName == null || rankName.trim().isEmpty()) {
+            return "--";
+        }
+
+        String[] parts = rankName.trim().split("\\s+");
+        StringBuilder label = new StringBuilder();
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                label.append(part.charAt(0));
+            }
+            if (label.length() >= 2) {
+                break;
+            }
+        }
+
+        return label.length() == 0 ? "--" : label.toString().toUpperCase();
     }
 
     private static void bindRow(RemoteViews views, RankPulseRow row, RowViews rowViews) {
@@ -105,14 +234,6 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         }
 
         return TrendStyle.BLUE;
-    }
-
-    private static RankPulseRow[] buildPreviewRows() {
-        return new RankPulseRow[] {
-            new RankPulseRow("PL", "blumoat_onyatta", "Plat II", 9820, 76, 220, true),
-            new RankPulseRow("GD", "NightShift", "Gold I", 7290, 58, -160, false),
-            new RankPulseRow("PL", "NovaPulse", "Plat IV", 8200, 8, 0, false),
-        };
     }
 
     private enum TrendStyle {

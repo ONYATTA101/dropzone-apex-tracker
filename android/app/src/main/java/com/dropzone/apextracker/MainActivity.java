@@ -1,31 +1,46 @@
 package com.dropzone.apextracker;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
- * Small native launcher screen for the Android app.
+ * Native Android shell for the Dropzone dashboard.
  *
- * The full tracker still lives in the Next.js web app. This activity keeps the Android build
- * simple for the first native milestone and gives the widget a real app to open when tapped.
+ * This keeps the experience inside the installed app instead of opening the user's browser.
+ * Later, this screen can become fully native while the widget keeps using server summaries.
  */
 public class MainActivity extends Activity {
     private static final String DASHBOARD_URL = "https://dropzone-apex-tracker.vercel.app";
+    private WebView dashboardWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button openDashboardButton = findViewById(R.id.open_dashboard_button);
-        openDashboardButton.setOnClickListener(view -> openLiveDashboard());
+        dashboardWebView = findViewById(R.id.dashboard_web_view);
+        WebSettings settings = dashboardWebView.getSettings();
+
+        // The Next.js dashboard needs JavaScript and local storage for the roster UI.
+        settings.setDomStorageEnabled(true);
+        settings.setJavaScriptEnabled(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+
+        dashboardWebView.setWebViewClient(new WebViewClient());
+        dashboardWebView.loadUrl(DASHBOARD_URL);
     }
 
-    private void openLiveDashboard() {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DASHBOARD_URL));
-        startActivity(browserIntent);
+    @Override
+    public void onBackPressed() {
+        if (dashboardWebView != null && dashboardWebView.canGoBack()) {
+            dashboardWebView.goBack();
+            return;
+        }
+
+        super.onBackPressed();
     }
 }

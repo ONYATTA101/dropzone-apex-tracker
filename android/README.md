@@ -7,14 +7,15 @@ Weather-style Android widget by itself.
 ## What Exists Now
 
 - A native Android project that Android Studio can open from this `android` folder.
-- A small launcher activity that opens the live Dropzone dashboard.
+- A small launcher activity that opens the live Dropzone dashboard inside the app.
 - A native `AppWidgetProvider` named `RankPulseWidgetProvider`.
 - A compact dark Rank Pulse widget layout with three tracked-player rows.
 - Commented Java, XML, and Gradle files so you can see where to change labels, colors, and
   refresh behavior later.
 
-The widget currently uses safe placeholder squad data. This is intentional: an Android APK can
-be inspected, so the Apex API key must stay on the server, never inside the phone app.
+The widget reads a safe server summary from `/api/mobile/rank-pulse-summary`. This is
+intentional: an Android APK can be inspected, so the Apex API key must stay on the server,
+never inside the phone app.
 
 ## Requirements
 
@@ -62,11 +63,10 @@ preview: owner plus two friends, rank text, current RP, daily net RP, and a tren
 
 ## Next Android Milestones
 
-1. Add a secure server summary endpoint for the widget.
+1. Store the user's selected roster on the server instead of only browser local storage.
 2. Add Android background refresh with WorkManager.
-3. Store the user's selected roster on the server instead of only browser local storage.
-4. Connect rank-up, rank-down, RP gain, and RP loss notifications.
-5. Add Play Store signing and release build steps.
+3. Connect rank-up, rank-down, RP gain, and RP loss notifications.
+4. Add Play Store signing and release build steps.
 
 ## Important Backend Reminder
 

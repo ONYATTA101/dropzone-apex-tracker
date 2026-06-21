@@ -45,18 +45,23 @@ The browser calls only internal Next.js API routes. `APEX_API_KEY` is read exclu
 server route files, preventing it from being included in browser JavaScript.
 
 The Android app follows the same rule. Do not place `APEX_API_KEY` in Android source, XML,
-Gradle files, or packaged assets. The native widget should eventually read a safe server summary
-that contains only display data.
+Gradle files, or packaged assets. The native widget reads a safe server summary that contains
+only display data.
 
 ## Android Widget Data Flow
 
-The current native widget uses placeholder preview rows so it can be designed and tested before
-server-side roster storage exists.
+The native widget renders cached server rows first so it can appear quickly on the home screen.
+It then refreshes from the mobile summary endpoint in the background and stores the latest JSON
+for offline use.
 
-The planned live flow is:
+The current live flow is:
 
-1. Vercel Cron refreshes tracked player RP on the server.
-2. Redis or a small database stores the first RP snapshot of the day and latest snapshot.
-3. A mobile-safe server endpoint returns only the three-player Rank Pulse summary.
-4. Android WorkManager refreshes the summary roughly every two hours.
-5. `RankPulseWidgetProvider.java` renders the latest cached summary into the home-screen widget.
+1. Android asks `/api/mobile/rank-pulse-summary` for the three-player Rank Pulse summary.
+2. The server route uses the private `APEX_API_KEY` to load rank data.
+3. The server keeps an in-memory first RP snapshot for the current day.
+4. The response includes current RP, daily net RP, rank label, progress percentage, and heat streak state.
+5. `RankPulseWidgetProvider.java` caches the response and renders it into the home-screen widget.
+
+The later production-grade version should move the daily snapshot from server memory into Redis
+or a small database and refresh it with Vercel Cron, so daily RP changes do not depend on widget
+refresh timing.

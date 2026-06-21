@@ -11,6 +11,7 @@ type RateLimitBucket = {
 };
 
 type GuardOptions = {
+  allowPublicMobileClient?: boolean;
   limit: number;
   routeKey: string;
   windowMs: number;
@@ -97,7 +98,7 @@ function rateLimit(request: NextRequest, options: GuardOptions) {
 }
 
 export function guardApiRequest(request: NextRequest, options: GuardOptions) {
-  if (!hasTrustedOrigin(request)) {
+  if (!options.allowPublicMobileClient && !hasTrustedOrigin(request)) {
     return NextResponse.json(
       { error: "This tracker endpoint only accepts same-origin app requests." },
       { status: 403 },
