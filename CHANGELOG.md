@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Made the phone dashboard header name smaller and more minimal.
 - Added a DROPZONE account dropdown with Account, History, Widget, and Settings actions.
 - Added dashboard player removal history with quick re-track actions.
 - Added Rank Pulse trend gradients and heat-streak indicators for strong positive RP movement.

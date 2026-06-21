@@ -2238,8 +2238,8 @@ html[data-theme] .toast.error {
   }
 
   html[data-theme] .topbar {
-    min-height: 58px;
-    margin: 0 -12px 12px;
+    min-height: 48px;
+    margin: 0 -12px 10px;
     padding: 0 12px;
     backdrop-filter: blur(22px) saturate(1.25);
   }
@@ -2254,11 +2254,20 @@ html[data-theme] .toast.error {
 
   .topbar h1 {
     overflow: hidden;
-    max-width: 48vw;
+    max-width: 34vw;
     margin: 0;
-    font-size: 18px;
-    letter-spacing: 0.01em;
+    padding: 5px 8px;
+    border: 1px solid rgba(10, 132, 255, 0.16);
+    border-radius: 999px;
+    background: rgba(10, 132, 255, 0.08);
+    color: #cfe7ff;
+    font-family: var(--font-display), sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 1;
     text-overflow: ellipsis;
+    text-transform: uppercase;
     white-space: nowrap;
   }
 
@@ -2272,6 +2281,15 @@ html[data-theme] .toast.error {
 
   .topbar-account-menu .account-menu-panel {
     right: 0;
+  }
+
+  .topbar-account-menu .account-menu-trigger {
+    min-height: 32px;
+    padding-right: 6px;
+  }
+
+  .topbar-account-menu .account-trigger-label {
+    display: none;
   }
 
   .topbar-actions .theme-mode-button {
@@ -2343,20 +2361,20 @@ html[data-theme] .toast.error {
   }
 
   .topbar {
-    min-height: 54px;
+    min-height: 46px;
   }
 
   .topbar h1 {
-    max-width: 58vw;
-    font-size: 17px;
+    max-width: 38vw;
+    padding: 5px 7px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
   }
 
-  .profile-pill {
-    min-width: 0;
+  .topbar-actions .theme-mode-button {
+    display: none;
   }
 
-  .profile-pill > span:nth-child(2),
-  .profile-pill > svg,
   .icon-button {
     display: none;
   }
