@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added visible dashboard remove buttons and rank badges inside each Rank Pulse tracked-player row.
 - Removed the repeated dashboard stat cards for RP to next rank, squad tracked, and account level.
 - Added removable tracked-player chips and a one-screen phone widget control layout.
 - Simplified the mobile dashboard header to a single sticky name-only bar.

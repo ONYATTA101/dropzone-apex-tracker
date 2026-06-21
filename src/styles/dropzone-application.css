@@ -767,8 +767,15 @@ button {
 }
 
 .rank-pulse-player-line {
-  grid-template-columns: minmax(0, 1fr) minmax(38px, 0.36fr) minmax(58px, 0.5fr) minmax(42px, auto);
-  gap: 8px;
+  grid-template-columns: 28px minmax(0, 1fr) minmax(38px, 0.36fr) minmax(58px, 0.5fr) minmax(42px, auto);
+  gap: 7px;
+}
+
+.rank-pulse-player-line .rank-badge {
+  width: 26px;
+  height: 26px;
+  padding: 2px;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--rank-color) 34%, transparent));
 }
 
 .rank-pulse-name {
@@ -1264,13 +1271,14 @@ button {
 .quiet-button {
   width: 27px;
   height: 27px;
-  opacity: 0;
-  background: transparent;
-  color: var(--muted);
+  opacity: 1;
+  background: rgba(255, 69, 58, 0.1);
+  color: #ff8b84;
 }
 
-.friend-card:hover .quiet-button {
-  opacity: 1;
+.quiet-button:hover {
+  background: rgba(255, 69, 58, 0.18);
+  color: #fff;
 }
 
 .friend-rank {
@@ -2072,8 +2080,14 @@ html[data-theme] .toast.error {
   }
 
   .rank-pulse-player-line {
-    grid-template-columns: minmax(0, 1fr) 37px 56px 42px;
+    grid-template-columns: 22px minmax(0, 1fr) 32px 47px 35px;
     gap: 5px;
+  }
+
+  .rank-pulse-player-line .rank-badge {
+    width: 21px;
+    height: 21px;
+    padding: 1px;
   }
 
   .rank-pulse-header strong {

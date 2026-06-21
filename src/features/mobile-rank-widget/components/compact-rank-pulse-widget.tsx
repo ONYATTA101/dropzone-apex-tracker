@@ -18,6 +18,7 @@ import {
   getWidgetPlayerStorageKey,
   saveLatestWidgetSnapshot,
 } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
+import { RankBadge } from "@/features/tracker-dashboard/components/rank-badge";
 import { formatNumber } from "@/features/tracker-dashboard/utilities/dashboard-display-formatters";
 
 function shortRankLabel(player: PlayerRankStatus) {
@@ -93,6 +94,7 @@ export function CompactRankPulseWidget({
           return (
             <article className={`rank-pulse-player ${featured ? "featured" : ""}`} key={key}>
               <div className="rank-pulse-player-line">
+                <RankBadge player={player} />
                 <div className="rank-pulse-name">
                   {featured && <span>YOU</span>}
                   <strong>{player.name}</strong>
