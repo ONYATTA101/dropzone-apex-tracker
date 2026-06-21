@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Small rounded label used for the widget refresh text. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="999dp" />
+    <solid android:color="@color/dropzone_pill" />
+</shape>

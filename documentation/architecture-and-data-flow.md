@@ -9,6 +9,7 @@ The source is separated by responsibility:
 3. `src/domain/apex-ranked` contains Apex Ranked rules, contracts, and demo data.
 4. `src/integrations/apex-legends-status` translates external API responses.
 5. `src/styles` contains application-wide styling.
+6. `android` contains the native Android app and home-screen widget scaffold.
 
 ## Player Rank Data Flow
 
@@ -42,3 +43,20 @@ No account password or API key is stored there.
 
 The browser calls only internal Next.js API routes. `APEX_API_KEY` is read exclusively by
 server route files, preventing it from being included in browser JavaScript.
+
+The Android app follows the same rule. Do not place `APEX_API_KEY` in Android source, XML,
+Gradle files, or packaged assets. The native widget should eventually read a safe server summary
+that contains only display data.
+
+## Android Widget Data Flow
+
+The current native widget uses placeholder preview rows so it can be designed and tested before
+server-side roster storage exists.
+
+The planned live flow is:
+
+1. Vercel Cron refreshes tracked player RP on the server.
+2. Redis or a small database stores the first RP snapshot of the day and latest snapshot.
+3. A mobile-safe server endpoint returns only the three-player Rank Pulse summary.
+4. Android WorkManager refreshes the summary roughly every two hours.
+5. `RankPulseWidgetProvider.java` renders the latest cached summary into the home-screen widget.

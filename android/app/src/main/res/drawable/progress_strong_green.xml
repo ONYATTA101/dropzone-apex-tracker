@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Darker green RP bar for strong upward daily trends of at least 300 RP. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="999dp" />
+            <solid android:color="#113425" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="999dp" />
+                <solid android:color="@color/dropzone_green_strong" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

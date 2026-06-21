@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- User-visible Android strings. Edit these labels when you rename screens, buttons, or widget copy. -->
+<resources>
+    <string name="app_name">Dropzone</string>
+    <string name="app_description">A native Android shell and widget for Dropzone Apex Tracker.</string>
+    <string name="android_app_intro">Android-first shell for the Apex rank tracker. The native widget starts here; live rank data stays protected on the server.</string>
+    <string name="open_live_dashboard">Open live dashboard</string>
+    <string name="widget_title">Rank Pulse</string>
+    <string name="widget_refresh_label">2 hr pulse</string>
+    <string name="widget_description">Track Apex rank, RP, and daily squad movement from your home screen.</string>
+</resources>

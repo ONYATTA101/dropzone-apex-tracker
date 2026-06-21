@@ -5,6 +5,7 @@
 - Node.js 20 or newer
 - npm
 - Optional Apex Legends Status API key
+- Optional Android Studio, Android SDK, JDK 17, and Gradle for the native Android app
 
 ## Install
 
@@ -47,9 +48,19 @@ npm run verify
 The lint command checks TypeScript, React, and Next.js rules. The build command performs
 production compilation and TypeScript checking.
 
+## Native Android Verification
+
+The Android scaffold lives in `android/`. To verify it, open that folder in Android Studio and
+let Gradle sync, then run the `app` configuration on an emulator or real Android phone.
+
+This workspace currently does not have Java, Gradle, Android SDK, or `adb` available from the
+terminal, so native Android builds cannot be run here yet.
+
 ## Common Setup Problems
 
 - If live data does not appear, confirm `.env.local` contains `APEX_API_KEY`.
 - Restart the development server after changing `.env.local`.
 - For PC players, search using the linked EA/Origin account name rather than the Steam name.
 - If a player is not found, confirm the selected platform and exact account spelling.
+- If the Android project does not sync, install or update Android Studio and make sure it uses
+  JDK 17.

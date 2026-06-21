@@ -42,6 +42,7 @@ folder:
 - [Setup, running, and verification](documentation/setup-running-and-verification.md)
 - [API and data behavior](documentation/api-and-data-behavior.md)
 - [Mobile widget and notifications](documentation/mobile-widget-and-notifications.md)
+- [Android native widget](documentation/android-native-widget.md)
 - [Customization guide](documentation/customization-guide.md)
 - [Optimization techniques](documentation/optimization-techniques.md)
 - [Publishing guide](documentation/publishing-guide.md)

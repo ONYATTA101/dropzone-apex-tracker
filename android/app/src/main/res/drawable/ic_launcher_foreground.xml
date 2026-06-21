@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple vector launcher mark for Dropzone Android until a final app icon is designed. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/dropzone_blue"
+        android:pathData="M54,18L86,36V72L54,90L22,72V36L54,18Z" />
+    <path
+        android:fillColor="#F8FAFC"
+        android:pathData="M38,35H58C69,35 76,42 76,53C76,64 69,72 58,72H38V35ZM49,45V62H57C62,62 65,59 65,53C65,48 62,45 57,45H49Z" />
+</vector>

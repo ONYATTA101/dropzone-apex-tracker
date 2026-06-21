@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Blue RP progress bar for neutral daily RP movement. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="999dp" />
+            <solid android:color="@color/dropzone_blue_dark" />
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <corners android:radius="999dp" />
+                <solid android:color="@color/dropzone_blue" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

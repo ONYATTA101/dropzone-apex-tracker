@@ -10,6 +10,8 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added an Android-first native app scaffold with a compact Rank Pulse home-screen widget.
+- Added Android widget documentation and file-purpose notes.
 - Made the phone dashboard header name smaller and more minimal.
 - Added a DROPZONE account dropdown with Account, History, Widget, and Settings actions.
 - Added dashboard player removal history with quick re-track actions.

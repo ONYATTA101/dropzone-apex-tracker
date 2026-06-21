@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dark phone-app background that matches the web dashboard's glass style. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="135"
+        android:endColor="@color/dropzone_background_end"
+        android:startColor="@color/dropzone_background_start" />
+</shape>

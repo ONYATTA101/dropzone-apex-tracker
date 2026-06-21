@@ -5,6 +5,9 @@
 The dashboard now includes a live in-app preview of the compact Rank Pulse widget. It is not
 yet a native phone home-screen widget, but it shows the design and behavior inside the web app.
 
+The Android-first native scaffold now lives in `android/`. See
+[`android-native-widget.md`](android-native-widget.md) for the real home-screen widget path.
+
 Open the dedicated phone test page on a real phone:
 
 ```text
@@ -73,6 +76,10 @@ player today:
 ```text
 current RP - first RP seen today
 ```
+
+For a real Android home-screen widget that updates even when the app was not opened that day,
+use the planned server snapshot path: Vercel Cron plus Redis or a small database. That is the
+Option 2 reminder from the earlier discussion.
 
 Important testing behavior:
 

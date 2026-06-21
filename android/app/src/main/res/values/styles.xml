@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Shared Android styles for the launcher activity and compact Rank Pulse widget. -->
+<resources>
+    <style name="Theme.Dropzone" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/dropzone_background_end</item>
+        <item name="android:statusBarColor">@color/dropzone_background_start</item>
+    </style>
+
+    <style name="WidgetPlayerRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="WidgetRankBadge">
+        <item name="android:layout_width">31dp</item>
+        <item name="android:layout_height">31dp</item>
+        <item name="android:background">@drawable/rank_badge_background</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/dropzone_text_primary</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="WidgetPlayerTextColumn">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">9dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="WidgetPlayerNameLine">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="WidgetPlayerName">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/dropzone_text_primary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="WidgetHeatIcon">
+        <item name="android:layout_width">15dp</item>
+        <item name="android:layout_height">15dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:src">@drawable/ic_heat_streak</item>
+    </style>
+
+    <style name="WidgetProgressStack">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+
+    <style name="WidgetProgressBlue" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:progressDrawable">@drawable/progress_blue</item>
+    </style>
+
+    <style name="WidgetProgressLightGreen" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:progressDrawable">@drawable/progress_light_green</item>
+    </style>
+
+    <style name="WidgetProgressStrongGreen" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:progressDrawable">@drawable/progress_strong_green</item>
+    </style>
+
+    <style name="WidgetProgressLightRed" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:progressDrawable">@drawable/progress_light_red</item>
+    </style>
+
+    <style name="WidgetProgressStrongRed" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">6dp</item>
+        <item name="android:progressDrawable">@drawable/progress_strong_red</item>
+    </style>
+
+    <style name="WidgetPlayerStatsColumn">
+        <item name="android:layout_width">72dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">end</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="WidgetRankText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:gravity">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/dropzone_text_primary</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="WidgetRpText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textColor">@color/dropzone_text_secondary</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
+    <style name="WidgetDailyNetText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textColor">@color/dropzone_green_light</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+</resources>

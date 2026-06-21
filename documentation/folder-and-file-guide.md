@@ -28,6 +28,7 @@ JSON files cannot safely contain comments, and generated files should not be man
 | `documentation/setup-running-and-verification.md` | Gives install, run, and test commands. |
 | `documentation/api-and-data-behavior.md` | Explains APIs, demo behavior, and data contracts. |
 | `documentation/mobile-widget-and-notifications.md` | Defines the compact phone widget and notification behavior. |
+| `documentation/android-native-widget.md` | Explains the Android native app and real home-screen widget path. |
 | `documentation/customization-guide.md` | Shows where to edit common features yourself. |
 | `documentation/optimization-techniques.md` | Explains the performance optimizations used in the project. |
 | `documentation/publishing-guide.md` | Explains how to publish the app with GitHub and Vercel. |
@@ -110,3 +111,29 @@ home-screen widget.
 | Path | Purpose |
 | --- | --- |
 | `dropzone-application.css` | Contains the complete global, dark theme, glass redesign, widget, and responsive visual system. |
+
+## Android Folder
+
+The `android` folder contains the first native Android scaffold for a real phone app and
+home-screen widget. Android XML and Gradle files include comments because they are manually
+maintained. Generated Android Studio folders such as `.gradle`, `build`, `.idea`, and
+`local.properties` should stay out of Git.
+
+| Path | Purpose |
+| --- | --- |
+| `android/README.md` | Explains how to open, run, and test the native Android scaffold. |
+| `android/settings.gradle.kts` | Names the Android project and includes the native `app` module. |
+| `android/build.gradle.kts` | Stores the Android Gradle plugin version. |
+| `android/gradle.properties` | Stores Android Gradle build settings. |
+| `android/app/build.gradle.kts` | Configures the app package, SDK levels, and version. |
+| `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
+| `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Opens the live Dropzone dashboard from the native app shell. |
+| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Updates the native Rank Pulse home-screen widget. |
+| `android/app/src/main/res/layout/activity_main.xml` | Defines the native launcher screen layout. |
+| `android/app/src/main/res/layout/rank_pulse_widget.xml` | Defines the compact Android home-screen widget UI. |
+| `android/app/src/main/res/xml/rank_pulse_widget_info.xml` | Defines widget sizing, category, preview, and update metadata. |
+| `android/app/src/main/res/values/colors.xml` | Stores native app and widget color tokens. |
+| `android/app/src/main/res/values/strings.xml` | Stores native Android labels and copy. |
+| `android/app/src/main/res/values/styles.xml` | Stores native widget row, badge, text, and progress styles. |
+| `android/app/src/main/res/drawable/*` | Stores native backgrounds, progress bars, heat icon, and launcher mark. |
+| `android/app/src/main/res/mipmap-anydpi-v26/*` | Stores adaptive Android launcher icon definitions. |

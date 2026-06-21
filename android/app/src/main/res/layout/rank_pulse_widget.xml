@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Compact native Rank Pulse widget. Keep this layout small so it fits about one quarter of a phone screen. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rank_pulse_widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_card_background"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-condensed"
+            android:letterSpacing="0.12"
+            android:text="@string/widget_title"
+            android:textAllCaps="true"
+            android:textColor="@color/dropzone_text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/widget_status_pill"
+            android:fontFamily="sans-serif-medium"
+            android:paddingStart="8dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="3dp"
+            android:text="@string/widget_refresh_label"
+            android:textColor="@color/dropzone_text_secondary"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Player row one: owner account. -->
+    <LinearLayout
+        android:id="@+id/player_one_row"
+        style="@style/WidgetPlayerRow">
+
+        <TextView
+            android:id="@+id/player_one_badge"
+            style="@style/WidgetRankBadge" />
+
+        <LinearLayout style="@style/WidgetPlayerTextColumn">
+            <LinearLayout style="@style/WidgetPlayerNameLine">
+                <TextView
+                    android:id="@+id/player_one_name"
+                    style="@style/WidgetPlayerName" />
+
+                <ImageView
+                    android:id="@+id/player_one_heat_icon"
+                    style="@style/WidgetHeatIcon" />
+            </LinearLayout>
+
+            <FrameLayout style="@style/WidgetProgressStack">
+                <ProgressBar
+                    android:id="@+id/player_one_progress_blue"
+                    style="@style/WidgetProgressBlue" />
+
+                <ProgressBar
+                    android:id="@+id/player_one_progress_light_green"
+                    style="@style/WidgetProgressLightGreen" />
+
+                <ProgressBar
+                    android:id="@+id/player_one_progress_strong_green"
+                    style="@style/WidgetProgressStrongGreen" />
+
+                <ProgressBar
+                    android:id="@+id/player_one_progress_light_red"
+                    style="@style/WidgetProgressLightRed" />
+
+                <ProgressBar
+                    android:id="@+id/player_one_progress_strong_red"
+                    style="@style/WidgetProgressStrongRed" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout style="@style/WidgetPlayerStatsColumn">
+            <TextView
+                android:id="@+id/player_one_rank"
+                style="@style/WidgetRankText" />
+
+            <TextView
+                android:id="@+id/player_one_rp"
+                style="@style/WidgetRpText" />
+
+            <TextView
+                android:id="@+id/player_one_daily_net"
+                style="@style/WidgetDailyNetText" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Player row two: first tracked friend. -->
+    <LinearLayout
+        android:id="@+id/player_two_row"
+        style="@style/WidgetPlayerRow">
+
+        <TextView
+            android:id="@+id/player_two_badge"
+            style="@style/WidgetRankBadge" />
+
+        <LinearLayout style="@style/WidgetPlayerTextColumn">
+            <LinearLayout style="@style/WidgetPlayerNameLine">
+                <TextView
+                    android:id="@+id/player_two_name"
+                    style="@style/WidgetPlayerName" />
+
+                <ImageView
+                    android:id="@+id/player_two_heat_icon"
+                    style="@style/WidgetHeatIcon" />
+            </LinearLayout>
+
+            <FrameLayout style="@style/WidgetProgressStack">
+                <ProgressBar
+                    android:id="@+id/player_two_progress_blue"
+                    style="@style/WidgetProgressBlue" />
+
+                <ProgressBar
+                    android:id="@+id/player_two_progress_light_green"
+                    style="@style/WidgetProgressLightGreen" />
+
+                <ProgressBar
+                    android:id="@+id/player_two_progress_strong_green"
+                    style="@style/WidgetProgressStrongGreen" />
+
+                <ProgressBar
+                    android:id="@+id/player_two_progress_light_red"
+                    style="@style/WidgetProgressLightRed" />
+
+                <ProgressBar
+                    android:id="@+id/player_two_progress_strong_red"
+                    style="@style/WidgetProgressStrongRed" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout style="@style/WidgetPlayerStatsColumn">
+            <TextView
+                android:id="@+id/player_two_rank"
+                style="@style/WidgetRankText" />
+
+            <TextView
+                android:id="@+id/player_two_rp"
+                style="@style/WidgetRpText" />
+
+            <TextView
+                android:id="@+id/player_two_daily_net"
+                style="@style/WidgetDailyNetText" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Player row three: second tracked friend. -->
+    <LinearLayout
+        android:id="@+id/player_three_row"
+        style="@style/WidgetPlayerRow">
+
+        <TextView
+            android:id="@+id/player_three_badge"
+            style="@style/WidgetRankBadge" />
+
+        <LinearLayout style="@style/WidgetPlayerTextColumn">
+            <LinearLayout style="@style/WidgetPlayerNameLine">
+                <TextView
+                    android:id="@+id/player_three_name"
+                    style="@style/WidgetPlayerName" />
+
+                <ImageView
+                    android:id="@+id/player_three_heat_icon"
+                    style="@style/WidgetHeatIcon" />
+            </LinearLayout>
+
+            <FrameLayout style="@style/WidgetProgressStack">
+                <ProgressBar
+                    android:id="@+id/player_three_progress_blue"
+                    style="@style/WidgetProgressBlue" />
+
+                <ProgressBar
+                    android:id="@+id/player_three_progress_light_green"
+                    style="@style/WidgetProgressLightGreen" />
+
+                <ProgressBar
+                    android:id="@+id/player_three_progress_strong_green"
+                    style="@style/WidgetProgressStrongGreen" />
+
+                <ProgressBar
+                    android:id="@+id/player_three_progress_light_red"
+                    style="@style/WidgetProgressLightRed" />
+
+                <ProgressBar
+                    android:id="@+id/player_three_progress_strong_red"
+                    style="@style/WidgetProgressStrongRed" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout style="@style/WidgetPlayerStatsColumn">
+            <TextView
+                android:id="@+id/player_three_rank"
+                style="@style/WidgetRankText" />
+
+            <TextView
+                android:id="@+id/player_three_rp"
+                style="@style/WidgetRpText" />
+
+            <TextView
+                android:id="@+id/player_three_daily_net"
+                style="@style/WidgetDailyNetText" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
