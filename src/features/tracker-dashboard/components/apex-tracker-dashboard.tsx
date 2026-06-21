@@ -332,7 +332,7 @@ export default function ApexTrackerDashboard() {
         <header className="topbar">
           <div>
             <span className="eyebrow">Ranked command center</span>
-            <h1>Welcome back, {me?.name ?? profile.name}</h1>
+            <h1>{me?.name ?? profile.name}</h1>
           </div>
           <div className="topbar-actions">
             <button

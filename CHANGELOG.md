@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Simplified the mobile dashboard header to a single sticky name-only bar.
 - Cleaned up the phone widget test layout to reduce gaps, remove repeated copy, and prevent sideways shifting.
 - Added dedicated `/widget` phone test page for the Rank Pulse widget preview.
 - Added Daily RP baseline test controls to the dashboard and phone widget preview.
