@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- In-app dashboard shell. WebView keeps Dropzone inside the installed app instead of opening Chrome. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dashboard_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/activity_background">
