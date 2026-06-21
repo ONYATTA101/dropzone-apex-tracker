@@ -17,6 +17,7 @@ import { CompactRankPulseWidget } from "@/features/mobile-rank-widget/components
 import {
   MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
+  MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
 import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import {
@@ -149,11 +150,12 @@ export function MobileWidgetTestScreen() {
 
   // Refresh when this phone preview becomes active again after matches.
   useEffect(() => {
-    let lastResumeRefresh = 0;
+    let lastResumeRefresh = Date.now();
+    const resumeRefreshCooldownMs = MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES * 60 * 1000;
     const refreshAfterReturn = () => {
       if (document.visibilityState === "hidden") return;
       const now = Date.now();
-      if (now - lastResumeRefresh < 15_000) return;
+      if (now - lastResumeRefresh < resumeRefreshCooldownMs) return;
       lastResumeRefresh = now;
       void loadWidgetData(profile, friendIds, true);
     };

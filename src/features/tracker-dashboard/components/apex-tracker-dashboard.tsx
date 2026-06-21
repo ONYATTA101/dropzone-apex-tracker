@@ -34,6 +34,7 @@ import { CompactRankPulseWidget } from "@/features/mobile-rank-widget/components
 import {
   MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
+  MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
 import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import { FriendRankCard } from "@/features/tracker-dashboard/components/friend-rank-card";
@@ -200,11 +201,12 @@ export default function ApexTrackerDashboard() {
 
   // When the user comes back after matches, refresh immediately so daily RP loss/gain updates quickly.
   useEffect(() => {
-    let lastResumeRefresh = 0;
+    let lastResumeRefresh = Date.now();
+    const resumeRefreshCooldownMs = MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES * 60 * 1000;
     const refreshAfterReturn = () => {
       if (document.visibilityState === "hidden") return;
       const now = Date.now();
-      if (now - lastResumeRefresh < 15_000) return;
+      if (now - lastResumeRefresh < resumeRefreshCooldownMs) return;
       lastResumeRefresh = now;
       void loadData(profile, friendIds, true);
     };

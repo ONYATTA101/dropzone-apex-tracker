@@ -9,6 +9,9 @@ export const MOBILE_WIDGET_MAX_TRACKED_PLAYERS = 3;
 // The app should refresh live RP every 2 hours when open or when the user returns.
 export const MOBILE_WIDGET_REFRESH_INTERVAL_HOURS = 2;
 
+// Returning to the app can fire multiple focus events; this protects the Apex API key from spikes.
+export const MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES = 10;
+
 // Use this to keep the widget inside roughly the top quarter of a phone screen.
 export const MOBILE_WIDGET_MAX_SCREEN_HEIGHT_RATIO = 0.25;
 

@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added provider-side player-rank caching and resume-refresh cooldowns to prevent Apex API limit spikes.
 - Improved daily net RP tracking with fresh player-rank fetches and refresh-on-return behavior.
 - Added visible dashboard remove buttons and rank badges inside each Rank Pulse tracked-player row.
 - Removed the repeated dashboard stat cards for RP to next rank, squad tracked, and account level.

@@ -56,7 +56,9 @@ Each row shows:
 
 The tracker refreshes player RP every 2 hours when the app is open. It also refreshes when
 the user opens the dashboard, manually taps refresh, or returns to the app after playing.
-Player-rank requests bypass app-level caches so the daily RP number reacts to fresh provider data.
+Player-rank requests bypass browser/CDN caches, but the server keeps a short 5-minute
+per-player cache so repeated refreshes do not burn through the Apex API key. Return-to-app
+refreshes are also throttled to once every 10 minutes.
 
 The widget preview stores:
 
@@ -80,6 +82,8 @@ Important testing behavior:
   loss immediately.
 - If the player key changes because the stats provider changes casing or ID details, the app
   tries to recover today's baseline from the latest saved snapshot before falling back to `0`.
+- If the Apex provider rate-limits the key, the server can reuse a recent cached rank instead
+  of failing the whole dashboard.
 - The dashboard widget preview and `/widget` test page include Daily RP test buttons so you
   can confirm the green gain and red loss states without waiting for a real RP change.
 
