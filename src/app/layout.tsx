@@ -4,6 +4,7 @@
  */
 
 import type { Metadata } from "next";
+import type { Viewport } from "next";
 import { Rajdhani, Space_Grotesk } from "next/font/google";
 import "@/styles/dropzone-application.css";
 
@@ -23,6 +24,12 @@ export const metadata: Metadata = {
   // Browser tab title and search/share description live here.
   title: "Dropzone | Apex Rank Tracker",
   description: "Track your Apex Legends rank, RP progress, friends, and current ranked map.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

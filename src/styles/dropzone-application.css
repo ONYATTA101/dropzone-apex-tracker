@@ -427,11 +427,13 @@ button {
 }
 
 .widget-test-shell {
-  min-height: 100vh;
+  height: 100svh;
   width: 100%;
   max-width: 100vw;
-  overflow-x: clip;
+  overflow: hidden;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
   background:
     radial-gradient(circle at 18% 12%, rgba(10, 132, 255, 0.22), transparent 30%),
     radial-gradient(circle at 84% 20%, rgba(48, 209, 88, 0.1), transparent 26%),
@@ -461,14 +463,17 @@ button {
 
 .widget-test-hero {
   width: min(1080px, 100%);
+  min-height: 0;
+  flex: 1;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 0.42fr) minmax(330px, 0.58fr);
+  grid-template-columns: minmax(330px, 0.58fr) minmax(0, 0.42fr);
   gap: 14px;
   align-items: stretch;
 }
 
 .widget-test-copy,
+.widget-control-panel,
 .widget-test-panel {
   border: 1px solid var(--line);
   border-radius: 28px;
@@ -526,7 +531,7 @@ button {
 .widget-phone-frame {
   position: relative;
   min-width: 0;
-  min-height: min(650px, 78vh);
+  min-height: 0;
   padding: 58px 14px 18px;
   display: grid;
   align-content: start;
@@ -563,6 +568,7 @@ button {
   transform: translateX(-50%);
 }
 
+.widget-control-panel,
 .widget-test-panel {
   width: min(1080px, 100%);
   margin: 14px auto 0;
@@ -573,10 +579,81 @@ button {
   align-items: start;
 }
 
+.widget-control-panel {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: start;
+  gap: 10px;
+}
+
+.tracked-player-list {
+  display: grid;
+  gap: 7px;
+}
+
+.tracked-player-chip {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 8px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tracked-player-chip span,
+.tracked-player-chip small {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.tracked-player-chip strong {
+  overflow: hidden;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tracked-player-chip small {
+  grid-column: 1;
+  font-size: 7px;
+}
+
+.tracked-player-chip button {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 69, 58, 0.22);
+  border-radius: 50%;
+  background: rgba(255, 69, 58, 0.1);
+  color: #ff8a84;
+}
+
+.tracked-player-chip.owner {
+  border-color: rgba(10, 132, 255, 0.22);
+  background: rgba(10, 132, 255, 0.08);
+}
+
 .widget-test-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+}
+
+.widget-test-form.compact {
+  gap: 8px;
 }
 
 .widget-test-form label {
@@ -600,6 +677,14 @@ button {
   color: var(--text);
   font: inherit;
   outline: none;
+}
+
+.widget-test-form.compact input,
+.widget-test-form.compact select {
+  min-height: 38px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  font-size: 12px;
 }
 
 .widget-test-form textarea {
@@ -1764,6 +1849,7 @@ html[data-theme] .toast.error {
 
   .widget-mobile-topbar,
   .widget-test-hero,
+  .widget-control-panel,
   .widget-test-panel {
     width: 100%;
     max-width: 430px;
@@ -1774,12 +1860,14 @@ html[data-theme] .toast.error {
   }
 
   .widget-test-hero,
+  .widget-control-panel,
   .widget-test-panel {
     grid-template-columns: 1fr;
     gap: 10px;
   }
 
   .widget-test-copy,
+  .widget-control-panel,
   .widget-test-panel {
     border-radius: 22px;
     padding: 12px;
@@ -1809,7 +1897,7 @@ html[data-theme] .toast.error {
   .widget-phone-frame {
     width: 100%;
     min-height: auto;
-    padding: 46px 10px 14px;
+    padding: 42px 10px 12px;
     border-radius: 32px;
     order: 1;
   }
@@ -1844,6 +1932,10 @@ html[data-theme] .toast.error {
   .widget-test-form {
     grid-template-columns: 1fr;
     gap: 9px;
+  }
+
+  .widget-test-form.compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .widget-test-form input,
@@ -1953,6 +2045,7 @@ html[data-theme] .toast.error {
   }
 
   .widget-test-copy,
+  .widget-control-panel,
   .widget-test-panel {
     padding: 10px;
   }

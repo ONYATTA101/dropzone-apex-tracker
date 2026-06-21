@@ -15,6 +15,10 @@ The test page loads the roster saved on that phone. Friends added on a PC do not
 copy to the phone because the current app stores the roster in each browser's local storage.
 Use the form on `/widget` to add your phone test roster.
 
+The `/widget` page is designed as a one-screen phone control panel. It shows removable tracked
+player chips, with a delete icon on friend chips so players can be removed without scrolling
+through a long roster form.
+
 The mobile widget should occupy no more than one quarter of a phone screen.
 
 Visual style:

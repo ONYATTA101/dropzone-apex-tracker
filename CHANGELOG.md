@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added removable tracked-player chips and a one-screen phone widget control layout.
 - Simplified the mobile dashboard header to a single sticky name-only bar.
 - Cleaned up the phone widget test layout to reduce gaps, remove repeated copy, and prevent sideways shifting.
 - Added dedicated `/widget` phone test page for the Rank Pulse widget preview.

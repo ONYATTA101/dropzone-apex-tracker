@@ -7,6 +7,7 @@
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import {
   ApexPlatform,
   PlayerRankStatus,
@@ -18,31 +19,13 @@ import {
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
 import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
-import { DEFAULT_FRIENDS, DEFAULT_PROFILE } from "@/features/tracker-dashboard/config/dashboard-defaults";
+import {
+  DEFAULT_FRIENDS,
+  DEFAULT_PROFILE,
+  PLATFORM_DISPLAY_NAME,
+} from "@/features/tracker-dashboard/config/dashboard-defaults";
 import { DASHBOARD_STORAGE_KEYS } from "@/features/tracker-dashboard/config/dashboard-storage-keys";
 import { fetchPlayerRankStatuses } from "@/features/tracker-dashboard/data-access/tracker-api-client";
-
-function normalizePlatformInput(value: string): ApexPlatform {
-  const platform = value.trim().toUpperCase();
-  if (["PLAYSTATION", "PS", "PS4", "PS5"].includes(platform)) return "PS4";
-  if (["XBOX", "XB", "X1", "XSX"].includes(platform)) return "X1";
-  return "PC";
-}
-
-function parseFriendRosterInput(value: string, defaultPlatform: ApexPlatform): TrackedPlayerIdentity[] {
-  return value
-    .split(/\r?\n|;/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [name, platform] = line.split(",").map((part) => part.trim());
-      return {
-        name,
-        platform: platform ? normalizePlatformInput(platform) : defaultPlatform,
-      };
-    })
-    .filter((friend) => friend.name.length > 0);
-}
 
 function trackedIdentityKey(identity: TrackedPlayerIdentity) {
   return `${identity.platform}:${identity.name.toLowerCase()}`;
@@ -86,6 +69,10 @@ export function MobileWidgetTestScreen() {
   const widgetPlayers = useMemo(
     () => (owner ? [owner, ...friends].slice(0, MOBILE_WIDGET_MAX_TRACKED_PLAYERS) : []),
     [owner, friends],
+  );
+  const widgetFriendIds = useMemo(
+    () => friendIds.slice(0, MOBILE_WIDGET_MAX_TRACKED_PLAYERS - 1),
+    [friendIds],
   );
 
   useEffect(() => {
@@ -167,19 +154,43 @@ export function MobileWidgetTestScreen() {
       name: String(form.get("name") ?? "").trim(),
       platform: String(form.get("platform") ?? "PC") as ApexPlatform,
     };
-    const defaultFriendPlatform = String(form.get("friendPlatform") ?? nextProfile.platform) as ApexPlatform;
-    const nextFriends = parseFriendRosterInput(String(form.get("friends") ?? ""), defaultFriendPlatform);
+    const friendName = String(form.get("friendName") ?? "").trim();
+    const friendPlatform = String(form.get("friendPlatform") ?? nextProfile.platform) as ApexPlatform;
 
     if (!nextProfile.name) {
       setStatus("Add your Apex ID before testing the widget.");
       return;
     }
 
+    let nextFriends = [...friendIds];
+    if (friendName) {
+      const friendToAdd = { name: friendName, platform: friendPlatform };
+      const friendKey = trackedIdentityKey(friendToAdd);
+      const existingKeys = new Set(nextFriends.map((friend) => trackedIdentityKey(friend)));
+
+      if (existingKeys.has(friendKey)) {
+        setStatus(`${friendName} is already tracked.`);
+      } else if (widgetFriendIds.length >= MOBILE_WIDGET_MAX_TRACKED_PLAYERS - 1) {
+        setStatus("Remove a friend before adding another.");
+      } else {
+        nextFriends = [...nextFriends, friendToAdd];
+        setStatus(`${friendName} added.`);
+      }
+    } else {
+      setStatus("Saved this phone's widget roster.");
+    }
+
     window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.profile, JSON.stringify(nextProfile));
     window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(nextFriends));
     setProfile(nextProfile);
     setFriendIds(nextFriends);
-    setStatus("Saved this phone's widget roster.");
+  }
+
+  function removeTrackedFriend(identity: TrackedPlayerIdentity) {
+    const updated = friendIds.filter((friend) => trackedIdentityKey(friend) !== trackedIdentityKey(identity));
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
+    setFriendIds(updated);
+    setStatus(`${identity.name} removed.`);
   }
 
   function testDailyRpChange(dailyChange: number) {
@@ -200,15 +211,23 @@ export function MobileWidgetTestScreen() {
   return (
     <main className="widget-test-shell">
       <header className="widget-mobile-topbar">
-        <div>
-          <span className="eyebrow">Rank Pulse</span>
-          <strong>Phone widget test</strong>
-        </div>
+        <strong>{profile.name}</strong>
         <Link className="widget-test-link" href="/">Dashboard</Link>
       </header>
 
       <section className="widget-test-hero">
-        <div className="widget-test-copy">
+        <div className="widget-phone-frame" aria-label="Phone widget preview frame">
+          <div className="widget-phone-notch" />
+          <CompactRankPulseWidget owner={owner} friends={friends} baselineRefreshToken={baselineRefreshToken} />
+          <div className="widget-baseline-tools" aria-label="Daily RP test controls">
+            <span>Daily RP test</span>
+            <button onClick={() => testDailyRpChange(250)} type="button">+250</button>
+            <button onClick={() => testDailyRpChange(-250)} type="button">-250</button>
+            <button onClick={() => testDailyRpChange(0)} type="button">Reset</button>
+          </div>
+        </div>
+
+        <section className="widget-control-panel" aria-label="Widget controls">
           <div className="widget-test-actions">
             <button
               className="primary-button"
@@ -216,7 +235,7 @@ export function MobileWidgetTestScreen() {
               onClick={() => void loadWidgetData(profile, friendIds, false)}
               type="button"
             >
-              {loading ? "Refreshing..." : "Refresh widget"}
+              {loading ? "Loading" : "Refresh"}
             </button>
             <button
               className={`theme-mode-button ${darkThemeEnabled ? "active" : ""}`}
@@ -228,61 +247,59 @@ export function MobileWidgetTestScreen() {
           </div>
           <p className="widget-test-status">
             {status}
-            {lastUpdated ? ` Last updated ${lastUpdated}.` : ""}
+            {lastUpdated ? ` ${lastUpdated}` : ""}
           </p>
-        </div>
 
-        <div className="widget-phone-frame" aria-label="Phone widget preview frame">
-          <div className="widget-phone-notch" />
-          <CompactRankPulseWidget owner={owner} friends={friends} baselineRefreshToken={baselineRefreshToken} />
-          <small>Preview size: under one quarter of the phone screen.</small>
-          <div className="widget-baseline-tools" aria-label="Daily RP test controls">
-            <span>Daily RP test</span>
-            <button onClick={() => testDailyRpChange(250)} type="button">Show +250</button>
-            <button onClick={() => testDailyRpChange(-250)} type="button">Show -250</button>
-            <button onClick={() => testDailyRpChange(0)} type="button">Reset 0</button>
+          <div className="tracked-player-list" aria-label="Tracked players">
+            <article className="tracked-player-chip owner">
+              <span>You</span>
+              <strong>{profile.name}</strong>
+              <small>{PLATFORM_DISPLAY_NAME[profile.platform]}</small>
+            </article>
+            {widgetFriendIds.map((friend) => (
+              <article className="tracked-player-chip" key={trackedIdentityKey(friend)}>
+                <span>Friend</span>
+                <strong>{friend.name}</strong>
+                <small>{PLATFORM_DISPLAY_NAME[friend.platform]}</small>
+                <button
+                  aria-label={`Remove ${friend.name}`}
+                  onClick={() => removeTrackedFriend(friend)}
+                  type="button"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </article>
+            ))}
           </div>
-        </div>
-      </section>
 
-      <section className="widget-test-panel">
-        <div>
-          <span className="eyebrow">This phone&apos;s roster</span>
-          <h2>Roster</h2>
-          <p>You plus two friends.</p>
-        </div>
-
-        <form className="widget-test-form" onSubmit={updateTestRoster}>
-          <label>
-            Your Apex ID
-            <input name="name" defaultValue={profile.name} placeholder="blumoat_onyatta" />
-          </label>
-          <label>
-            Your platform
-            <select name="platform" defaultValue={profile.platform}>
-              <option value="PC">PC</option>
-              <option value="PS4">PlayStation</option>
-              <option value="X1">Xbox</option>
-            </select>
-          </label>
-          <label>
-            Friend platform default
-            <select name="friendPlatform" defaultValue={profile.platform}>
-              <option value="PC">PC</option>
-              <option value="PS4">PlayStation</option>
-              <option value="X1">Xbox</option>
-            </select>
-          </label>
-          <label className="widget-test-form-wide">
-            Friends, one per line
-            <textarea
-              name="friends"
-              defaultValue={friendIds.map((friend) => `${friend.name}, ${friend.platform}`).join("\n")}
-              placeholder={"FriendOne, PS4\nFriendTwo, PC"}
-            />
-          </label>
-          <button className="primary-button widget-test-form-wide" type="submit">Save and test widget</button>
-        </form>
+          <form className="widget-test-form compact" onSubmit={updateTestRoster}>
+            <label>
+              You
+              <input name="name" defaultValue={profile.name} placeholder="Apex ID" />
+            </label>
+            <label>
+              Platform
+              <select name="platform" defaultValue={profile.platform}>
+                <option value="PC">PC</option>
+                <option value="PS4">PlayStation</option>
+                <option value="X1">Xbox</option>
+              </select>
+            </label>
+            <label>
+              Add friend
+              <input name="friendName" placeholder="Friend ID" />
+            </label>
+            <label>
+              Platform
+              <select name="friendPlatform" defaultValue={profile.platform}>
+                <option value="PC">PC</option>
+                <option value="PS4">PlayStation</option>
+                <option value="X1">Xbox</option>
+              </select>
+            </label>
+            <button className="primary-button widget-test-form-wide" type="submit">Save</button>
+          </form>
+        </section>
       </section>
     </main>
   );
