@@ -101,7 +101,7 @@ button {
 .sidebar {
   position: fixed;
   inset: 0 auto 0 0;
-  width: 226px;
+  width: 252px;
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--line);
@@ -114,23 +114,170 @@ button {
   height: 88px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
-  padding: 0 24px;
+  padding: 0 12px 0 14px;
   font-family: var(--font-display), sans-serif;
   font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
 
+.brand-logo {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .brand-mark {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 70, 86, 0.45);
   background: rgba(255, 70, 86, 0.12);
   color: var(--accent-bright);
   clip-path: polygon(20% 0, 80% 0, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0 80%, 0 20%);
+}
+
+.account-menu {
+  position: relative;
+  z-index: 40;
+}
+
+.account-menu-trigger {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 7px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.account-menu-avatar {
+  width: 22px;
+  height: 22px;
+  font-size: 8px;
+}
+
+.account-trigger-chevron {
+  color: var(--muted);
+  transform: rotate(90deg);
+  transition: transform 160ms ease, color 160ms ease;
+}
+
+.account-menu-trigger:hover,
+.account-menu:focus-within .account-menu-trigger {
+  border-color: rgba(10, 132, 255, 0.42);
+  background: rgba(10, 132, 255, 0.12);
+  box-shadow: 0 12px 28px rgba(10, 132, 255, 0.14);
+}
+
+.account-menu:hover .account-trigger-chevron,
+.account-menu:focus-within .account-trigger-chevron {
+  color: #8fc8ff;
+  transform: rotate(90deg) translateX(2px);
+}
+
+.account-menu-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 190px;
+  display: grid;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), transparent 38%),
+    var(--glass-strong);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.34), inset 0 1px rgba(255, 255, 255, 0.09);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top right;
+  transition: opacity 160ms ease, transform 160ms ease;
+  backdrop-filter: blur(28px) saturate(1.35);
+}
+
+.account-menu:hover .account-menu-panel,
+.account-menu:focus-within .account-menu-panel {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.account-menu-panel a,
+.account-menu-panel button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  text-decoration: none;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.account-menu-panel a:hover,
+.account-menu-panel button:hover,
+.account-menu-panel a:focus-visible,
+.account-menu-panel button:focus-visible {
+  outline: 0;
+  background: rgba(10, 132, 255, 0.14);
+  color: var(--text);
+  transform: translateX(4px);
+}
+
+.account-menu-panel svg {
+  flex: 0 0 auto;
+  color: #8fc8ff;
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.account-menu-panel a:hover svg,
+.account-menu-panel button:hover svg {
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.account-menu-panel strong,
+.account-menu-panel small {
+  display: block;
+}
+
+.account-menu-panel strong {
+  color: inherit;
+  font-size: 10px;
+}
+
+.account-menu-panel small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.topbar-account-menu {
+  display: none;
 }
 
 .sidebar nav {
@@ -209,7 +356,7 @@ button {
 
 /* Main content area. The left margin matches the desktop sidebar width. */
 .workspace {
-  margin-left: 226px;
+  margin-left: 252px;
   padding: 0 34px 50px;
   max-width: 1600px;
 }
@@ -1652,11 +1799,17 @@ html[data-theme="light"] .sidebar {
     rgba(255, 255, 255, 0.66);
 }
 
+html[data-theme="light"] .account-menu-panel {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.86), transparent 42%),
+    rgba(255, 255, 255, 0.9);
+}
+
 html[data-theme] .brand {
   font-family: var(--font-body), sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
 }
 
 html[data-theme] .brand-mark {
@@ -2111,6 +2264,14 @@ html[data-theme] .toast.error {
 
   .topbar-actions {
     gap: 6px;
+  }
+
+  .topbar-account-menu {
+    display: block;
+  }
+
+  .topbar-account-menu .account-menu-panel {
+    right: 0;
   }
 
   .topbar-actions .theme-mode-button {

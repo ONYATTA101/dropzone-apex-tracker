@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added a DROPZONE account dropdown with Account, History, Widget, and Settings actions.
 - Added dashboard player removal history with quick re-track actions.
 - Added Rank Pulse trend gradients and heat-streak indicators for strong positive RP movement.
 - Added provider-side player-rank caching and resume-refresh cooldowns to prevent Apex API limit spikes.

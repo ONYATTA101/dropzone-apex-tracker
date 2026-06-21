@@ -121,6 +121,29 @@ Unified Apple/OnePlus-inspired glass theme
 
 Edit that block when you want the main dashboard to look more or less like the widget.
 
+## Change The Account Dropdown
+
+The DROPZONE brand rail owns the account dropdown on desktop. On phones, the same dropdown
+appears in the sticky topbar because the sidebar is hidden.
+
+Open:
+
+```text
+src/features/tracker-dashboard/components/apex-tracker-dashboard.tsx
+```
+
+Edit `renderAccountMenu` to change the dropdown actions. The current actions are Account,
+History, Widget, and Settings.
+
+Open:
+
+```text
+src/styles/dropzone-application.css
+```
+
+Search for `account-menu` to adjust the glass card, hover effects, dropdown width, and
+mobile behavior.
+
 ## Change Fonts
 
 Open:

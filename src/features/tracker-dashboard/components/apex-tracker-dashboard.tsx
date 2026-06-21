@@ -370,6 +370,24 @@ export default function ApexTrackerDashboard() {
     setToast({ message: `${identity.name} is back on your tracked squad.`, kind: "success" });
   }, [friendIds]);
 
+  const openTrackedHistory = useCallback(() => {
+    const historyTarget = document.getElementById("tracked-player-history");
+    const squadTarget = document.getElementById("tracked-squad-section");
+    const target = historyTarget ?? squadTarget;
+
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!historyTarget) {
+      setToast({ message: "Remove a tracked player first to build history.", kind: "error" });
+    }
+  }, []);
+
+  function toggleThemeFromAccountMenu() {
+    setThemeLoaded(true);
+    const nextThemeEnabled = !darkThemeEnabled;
+    setDarkThemeEnabled(nextThemeEnabled);
+    setToast({ message: `${nextThemeEnabled ? "Dark" : "Light"} theme enabled.`, kind: "success" });
+  }
+
   function testWidgetDailyRpChange(dailyChange: number) {
     if (widgetPlayers.length === 0) {
       setToast({ message: "Load widget data before testing daily RP change.", kind: "error" });
@@ -390,13 +408,50 @@ export default function ApexTrackerDashboard() {
   // Demo mode is visible so you can quickly tell whether the live API key is being used.
   const usingDemo = me?.source === "demo" || rankedMap?.source === "demo";
 
+  function renderAccountMenu(placement: "sidebar" | "topbar") {
+    return (
+      <div className={`account-menu ${placement === "sidebar" ? "sidebar-account-menu" : "topbar-account-menu"}`}>
+        <button
+          aria-haspopup="menu"
+          className="account-menu-trigger"
+          type="button"
+        >
+          <span className="avatar account-menu-avatar">{createPlayerInitials(profile.name)}</span>
+          <span className="account-trigger-label">Account</span>
+          <ChevronRight className="account-trigger-chevron" size={13} />
+        </button>
+        <div className="account-menu-panel" role="menu">
+          <button onClick={() => setShowProfile(true)} role="menuitem" type="button">
+            <Settings2 size={15} />
+            <span><strong>Account</strong><small>Edit Apex ID</small></span>
+          </button>
+          <button onClick={openTrackedHistory} role="menuitem" type="button">
+            <History size={15} />
+            <span><strong>History</strong><small>Re-track players</small></span>
+          </button>
+          <Link href="/widget" role="menuitem">
+            <Zap size={15} />
+            <span><strong>Widget</strong><small>Phone preview</small></span>
+          </Link>
+          <button onClick={toggleThemeFromAccountMenu} role="menuitem" type="button">
+            <Moon size={15} />
+            <span><strong>Settings</strong><small>{darkThemeEnabled ? "Switch to light" : "Switch to dark"}</small></span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main className="app-shell">
       {/* Sidebar navigation is visual for now; add page routing here if the app grows into multiple screens. */}
       <aside className="sidebar">
         <div className="brand">
-          <span className="brand-mark"><Crosshair size={22} /></span>
-          <span>DROPZONE</span>
+          <div className="brand-logo">
+            <span className="brand-mark"><Crosshair size={22} /></span>
+            <span>DROPZONE</span>
+          </div>
+          {renderAccountMenu("sidebar")}
         </div>
         <nav>
           <button className="nav-item active"><Activity size={18} /><span>Overview</span></button>
@@ -437,11 +492,7 @@ export default function ApexTrackerDashboard() {
             <button className="icon-button" onClick={() => void loadData(profile, friendIds, true, true)} aria-label="Refresh" disabled={loading}>
               <RefreshCw size={18} className={loading ? "spin" : ""} />
             </button>
-            <button className="profile-pill" onClick={() => setShowProfile(true)}>
-              <span className="avatar">{createPlayerInitials(profile.name)}</span>
-              <span><strong>{profile.name}</strong><small>{PLATFORM_DISPLAY_NAME[profile.platform]}</small></span>
-              <Settings2 size={16} />
-            </button>
+            {renderAccountMenu("topbar")}
           </div>
         </header>
 
@@ -528,7 +579,7 @@ export default function ApexTrackerDashboard() {
           </article>
         </section>
 
-        <section className="friends-section">
+        <section className="friends-section" id="tracked-squad-section">
           {/* Friend cards are separate from friend identities so failed lookups do not break the whole dashboard. */}
           <div className="section-heading">
             <div>
@@ -548,7 +599,7 @@ export default function ApexTrackerDashboard() {
             )}
           </div>
           {inactiveTrackedHistory.length > 0 && (
-            <section className="tracked-history-panel" aria-label="Previously tracked players">
+            <section className="tracked-history-panel" id="tracked-player-history" aria-label="Previously tracked players">
               <div className="tracked-history-heading">
                 <div>
                   <span className="eyebrow">Saved roster</span>
