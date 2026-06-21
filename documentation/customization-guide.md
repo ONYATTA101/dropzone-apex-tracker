@@ -48,17 +48,15 @@ stats API does not expose it.
 
 Use the dashboard instead:
 
-1. Click **Add friend**.
-2. Paste one friend per line.
-3. Pick the default platform.
-4. Add `, Xbox` or `, PlayStation` after a name if that friend is on another platform.
+1. Click **Track a squadmate**.
+2. Enter one Apex ID.
+3. Choose PC, PlayStation, or Xbox.
+4. Click **Track squadmate**.
 
 Example:
 
 ```text
-FriendApexID
-ConsoleFriend, Xbox
-PSFriend, PlayStation
+FriendApexID + PlayStation
 ```
 
 Saved friends are stored in browser localStorage under `dropzone-friends`.

@@ -317,8 +317,8 @@ export function MobileWidgetTestScreen() {
               </select>
             </label>
             <label>
-              Add friend
-              <input name="friendName" placeholder="Friend ID" />
+              Track squadmate
+              <input name="friendName" placeholder="Squadmate ID" />
             </label>
             <label>
               Platform

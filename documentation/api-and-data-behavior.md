@@ -16,17 +16,15 @@ therefore cannot automatically import friends already added inside Apex Legends.
 
 Instead, the dashboard provides a manual roster tool:
 
-- Open **Add friend**.
-- Paste one friend per line.
-- Choose a default platform.
-- Optionally add a platform after a comma for a specific friend.
+- Click **Track a squadmate**.
+- Enter one Apex ID.
+- Choose PC, PlayStation, or Xbox from the platform options.
+- Submit the popup to save that squadmate locally.
 
-Examples:
+Example:
 
 ```text
-FriendApexID
-ConsoleFriend, Xbox
-PSFriend, PlayStation
+FriendApexID + PlayStation
 ```
 
 Once saved, those friends are stored locally in the browser and their live ranks are fetched

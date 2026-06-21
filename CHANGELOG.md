@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Replaced the old multiline friend entry with a Track a Squadmate popup that uses one Apex ID field and platform choices.
 - Added a mobile-safe Rank Pulse summary API for the native Android widget.
 - Changed the Android app and widget taps to open Dropzone inside the app instead of a browser.
 - Updated the Android widget to fetch and cache server Rank Pulse data.

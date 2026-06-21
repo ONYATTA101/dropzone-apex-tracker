@@ -1712,6 +1712,74 @@ button {
   line-height: 1.5;
 }
 
+.platform-picker {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.platform-picker legend {
+  margin-bottom: 6px;
+  color: #bbc2cc;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.platform-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.modal .platform-choice {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.platform-choice input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.platform-choice span {
+  min-height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.platform-choice:hover span,
+.platform-choice input:focus-visible + span {
+  border-color: rgba(98, 213, 219, 0.42);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.platform-choice input:checked + span {
+  border-color: rgba(10, 132, 255, 0.62);
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.22), rgba(98, 213, 219, 0.12));
+  box-shadow: 0 0 0 1px rgba(10, 132, 255, 0.12), 0 12px 30px rgba(10, 132, 255, 0.12);
+  color: #dff0ff;
+}
+
 .modal input:focus,
 .modal select:focus,
 .modal textarea:focus {

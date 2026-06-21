@@ -67,27 +67,7 @@ type TrackedPlayerHistoryItem = TrackedPlayerIdentity & {
   lastRankScore?: number;
 };
 
-function normalizePlatformInput(value: string): ApexPlatform {
-  const platform = value.trim().toUpperCase();
-  if (["PLAYSTATION", "PS", "PS4", "PS5"].includes(platform)) return "PS4";
-  if (["XBOX", "XB", "X1", "XSX"].includes(platform)) return "X1";
-  return "PC";
-}
-
-function parseFriendRosterInput(value: string, defaultPlatform: ApexPlatform): TrackedPlayerIdentity[] {
-  return value
-    .split(/\r?\n|;/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [name, platform] = line.split(",").map((part) => part.trim());
-      return {
-        name,
-        platform: platform ? normalizePlatformInput(platform) : defaultPlatform,
-      };
-    })
-    .filter((friend) => friend.name.length > 0);
-}
+const TRACKABLE_PLATFORM_OPTIONS: ApexPlatform[] = ["PC", "PS4", "X1"];
 
 function trackedIdentityKey(identity: TrackedPlayerIdentity) {
   return `${identity.platform}:${identity.name.toLowerCase()}`;
@@ -331,35 +311,27 @@ export default function ApexTrackerDashboard() {
   function addFriend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const defaultPlatform = String(form.get("platform")) as ApexPlatform;
-    const rosterInput = String(form.get("names") ?? "").trim();
-    const parsedFriends = parseFriendRosterInput(rosterInput, defaultPlatform);
+    const nextFriend: TrackedPlayerIdentity = {
+      name: String(form.get("name") ?? "").trim(),
+      platform: String(form.get("platform") ?? "PC") as ApexPlatform,
+    };
 
-    if (parsedFriends.length === 0) return;
-
-    const existingKeys = new Set(
-      friendIds.map((friend) => `${friend.platform}:${friend.name.toLowerCase()}`),
-    );
-    const newFriends = parsedFriends.filter((friend) => {
-      const key = `${friend.platform}:${friend.name.toLowerCase()}`;
-      if (existingKeys.has(key)) return false;
-      existingKeys.add(key);
-      return true;
-    });
-
-    if (newFriends.length === 0) {
-      setToast({ message: "Those friends are already tracked.", kind: "error" });
+    if (!nextFriend.name) {
+      setToast({ message: "Enter the squadmate's Apex ID first.", kind: "error" });
       return;
     }
 
-    const updated = [...friendIds, ...newFriends];
+    const nextFriendKey = trackedIdentityKey(nextFriend);
+    if (friendIds.some((friend) => trackedIdentityKey(friend) === nextFriendKey)) {
+      setToast({ message: `${nextFriend.name} is already tracked.`, kind: "error" });
+      return;
+    }
+
+    const updated = [...friendIds, nextFriend];
     window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(updated));
     setFriendIds(updated);
     setShowFriendForm(false);
-    setToast({
-      message: `${newFriends.length} friend${newFriends.length === 1 ? "" : "s"} added to your roster.`,
-      kind: "success",
-    });
+    setToast({ message: `${nextFriend.name} added to your tracked squad.`, kind: "success" });
   }
 
   const removeFriend = useCallback((player: PlayerRankStatus) => {
@@ -618,7 +590,7 @@ export default function ApexTrackerDashboard() {
             </div>
             <div className="section-actions">
               <label className="search-box"><Search size={16} /><input value={friendQuery} onChange={(event) => setFriendQuery(event.target.value)} placeholder="Find a friend" /></label>
-              <button className="primary-button" onClick={() => setShowFriendForm(true)}><Plus size={17} /> Add friend</button>
+              <button className="primary-button" onClick={() => setShowFriendForm(true)}><Plus size={17} /> Track a squadmate</button>
             </div>
           </div>
           <div className="friends-grid">
@@ -661,22 +633,36 @@ export default function ApexTrackerDashboard() {
         </section>
       </section>
 
-      {/* The same modal handles profile edits and friend additions to keep the UI compact. */}
+      {/* The same modal shell handles profile edits and the single-player squadmate tracker form. */}
       {(showProfile || showFriendForm) && (
         <div className="modal-backdrop" onMouseDown={() => { setShowProfile(false); setShowFriendForm(false); }}>
           <div className="modal" onMouseDown={(event) => event.stopPropagation()}>
             <button className="modal-close" onClick={() => { setShowProfile(false); setShowFriendForm(false); }}><X size={18} /></button>
-            <span className="eyebrow">{showProfile ? "Main profile" : "Squad tracker"}</span>
-            <h2>{showProfile ? "Set your Apex account" : "Add a friend"}</h2>
-            <p>{showProfile ? "Use the EA/Origin account name for PC players, even when they play through Steam." : "Paste one friend per line. Add , PlayStation or , Xbox after a name to override the default platform."}</p>
+            <span className="eyebrow">{showProfile ? "Main profile" : "Squadmate lookup"}</span>
+            <h2>{showProfile ? "Set your Apex account" : "Track a squadmate"}</h2>
+            <p>{showProfile ? "Use the EA/Origin account name for PC players, even when they play through Steam." : "Enter one Apex ID, choose their platform, and Dropzone will add them to your tracked squad."}</p>
             <form onSubmit={showProfile ? updateProfile : addFriend}>
               {showProfile ? (
                 <label>Apex ID<input name="name" defaultValue={profile.name} autoFocus placeholder="Enter player name" /></label>
               ) : (
-                <label>Friend Apex IDs<textarea name="names" autoFocus placeholder={"FriendApexID\nConsoleFriend, Xbox\nPSFriend, PlayStation"} /></label>
+                <label>Squadmate Apex ID<input name="name" autoFocus placeholder="Enter squadmate name" autoComplete="off" /></label>
               )}
-              <label>Platform<select name="platform" defaultValue={showProfile ? profile.platform : "PC"}><option value="PC">PC</option><option value="PS4">PlayStation</option><option value="X1">Xbox</option></select></label>
-              <button className="primary-button" type="submit">{showProfile ? "Update profile" : "Track friend"}<ChevronRight size={17} /></button>
+              {showProfile ? (
+                <label>Platform<select name="platform" defaultValue={profile.platform}><option value="PC">PC</option><option value="PS4">PlayStation</option><option value="X1">Xbox</option></select></label>
+              ) : (
+                <fieldset className="platform-picker">
+                  <legend>Choose platform</legend>
+                  <div className="platform-choice-grid">
+                    {TRACKABLE_PLATFORM_OPTIONS.map((platform) => (
+                      <label className="platform-choice" key={platform}>
+                        <input name="platform" type="radio" value={platform} defaultChecked={platform === "PC"} />
+                        <span>{PLATFORM_DISPLAY_NAME[platform]}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+              <button className="primary-button" type="submit">{showProfile ? "Update profile" : "Track squadmate"}<ChevronRight size={17} /></button>
             </form>
           </div>
         </div>
