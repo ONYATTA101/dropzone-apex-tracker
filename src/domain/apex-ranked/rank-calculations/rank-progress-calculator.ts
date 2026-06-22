@@ -14,6 +14,7 @@ type RankStep = {
 
 // CUSTOMIZE RANK RULES HERE:
 // If EA changes ranked RP requirements, edit the floor values below in ascending order.
+// Current Season 29 high-rank floors use 1,000 RP from Platinum I through Diamond.
 // Master and Predator have no fixed next threshold, so Master is the last fixed floor.
 const RANK_STEPS: RankStep[] = [
   { rank: "Rookie", division: 4, floor: 0, label: "Rookie IV" },
@@ -27,20 +28,20 @@ const RANK_STEPS: RankStep[] = [
   { rank: "Silver", division: 4, floor: 3000, label: "Silver IV" },
   { rank: "Silver", division: 3, floor: 3500, label: "Silver III" },
   { rank: "Silver", division: 2, floor: 4000, label: "Silver II" },
-  { rank: "Silver", division: 1, floor: 4500, label: "Silver I" },
-  { rank: "Gold", division: 4, floor: 5250, label: "Gold IV" },
-  { rank: "Gold", division: 3, floor: 6000, label: "Gold III" },
-  { rank: "Gold", division: 2, floor: 6750, label: "Gold II" },
-  { rank: "Gold", division: 1, floor: 7500, label: "Gold I" },
-  { rank: "Platinum", division: 4, floor: 8250, label: "Platinum IV" },
-  { rank: "Platinum", division: 3, floor: 9000, label: "Platinum III" },
-  { rank: "Platinum", division: 2, floor: 9750, label: "Platinum II" },
-  { rank: "Platinum", division: 1, floor: 10750, label: "Platinum I" },
-  { rank: "Diamond", division: 4, floor: 11750, label: "Diamond IV" },
-  { rank: "Diamond", division: 3, floor: 12750, label: "Diamond III" },
-  { rank: "Diamond", division: 2, floor: 13750, label: "Diamond II" },
-  { rank: "Diamond", division: 1, floor: 14750, label: "Diamond I" },
-  { rank: "Master", division: 0, floor: 15750, label: "Master" },
+  { rank: "Silver", division: 1, floor: 4750, label: "Silver I" },
+  { rank: "Gold", division: 4, floor: 5500, label: "Gold IV" },
+  { rank: "Gold", division: 3, floor: 6250, label: "Gold III" },
+  { rank: "Gold", division: 2, floor: 7000, label: "Gold II" },
+  { rank: "Gold", division: 1, floor: 7750, label: "Gold I" },
+  { rank: "Platinum", division: 4, floor: 8500, label: "Platinum IV" },
+  { rank: "Platinum", division: 3, floor: 9250, label: "Platinum III" },
+  { rank: "Platinum", division: 2, floor: 10000, label: "Platinum II" },
+  { rank: "Platinum", division: 1, floor: 11000, label: "Platinum I" },
+  { rank: "Diamond", division: 4, floor: 12000, label: "Diamond IV" },
+  { rank: "Diamond", division: 3, floor: 13000, label: "Diamond III" },
+  { rank: "Diamond", division: 2, floor: 14000, label: "Diamond II" },
+  { rank: "Diamond", division: 1, floor: 15000, label: "Diamond I" },
+  { rank: "Master", division: 0, floor: 16000, label: "Master" },
 ];
 
 export function normalizeRankName(rankName: string) {
