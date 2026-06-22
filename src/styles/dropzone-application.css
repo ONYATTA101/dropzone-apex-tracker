@@ -1846,8 +1846,7 @@ button {
 
 .history-calendar-header,
 .history-month-controls,
-.history-month-summary,
-.history-day-details-heading {
+.history-month-summary {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1881,10 +1880,10 @@ button {
 }
 
 .history-month-summary {
-  margin: 16px 0 12px;
-  padding: 14px;
+  margin: 10px 0;
+  padding: 9px 11px;
   border: 1px solid rgba(10, 132, 255, 0.18);
-  border-radius: 22px;
+  border-radius: 16px;
   background:
     radial-gradient(circle at 12% 20%, rgba(10, 132, 255, 0.22), transparent 34%),
     rgba(255, 255, 255, 0.045);
@@ -1893,7 +1892,7 @@ button {
 .history-month-summary span,
 .history-month-summary small {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1901,10 +1900,10 @@ button {
 
 .history-month-summary strong {
   display: block;
-  margin-top: 4px;
+  margin-top: 2px;
   color: #8fc8ff;
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(26px, 5vw, 40px);
+  font-size: clamp(16px, 3vw, 24px);
   letter-spacing: -0.03em;
 }
 
@@ -1958,11 +1957,11 @@ button {
 .history-calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 7px;
+  gap: 6px;
 }
 
 .history-calendar-weekdays {
-  margin-bottom: 7px;
+  margin-bottom: 6px;
 }
 
 .history-calendar-weekdays span {
@@ -1976,13 +1975,13 @@ button {
 
 .history-calendar-day {
   min-width: 0;
-  min-height: 72px;
+  min-height: 58px;
   display: grid;
   align-content: space-between;
-  gap: 6px;
-  padding: 9px;
+  gap: 4px;
+  padding: 7px;
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 14px;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.07), transparent 42%),
     rgba(255, 255, 255, 0.035);
@@ -2033,89 +2032,28 @@ button {
   color: #9bd3ff;
 }
 
+.history-calendar-day.no-sync {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 42%),
+    rgba(255, 255, 255, 0.02);
+}
+
+.history-calendar-day.no-sync small {
+  color: rgba(143, 152, 166, 0.74);
+}
+
 .history-calendar-day:disabled {
   cursor: default;
-  opacity: 0.62;
+  opacity: 0.78;
 }
 
 .history-calendar-day.empty {
   visibility: hidden;
 }
 
-.history-calendar-day:not(:disabled):hover,
-.history-calendar-day.selected {
+.history-calendar-day:not(:disabled):hover {
   border-color: rgba(10, 132, 255, 0.6);
   transform: translateY(-2px);
-}
-
-.history-calendar-day.selected {
-  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.26), 0 14px 34px rgba(10, 132, 255, 0.12);
-}
-
-.history-day-details {
-  margin-top: 14px;
-  padding: 14px;
-  border: 1px solid var(--glass-border);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.history-day-details p {
-  margin: 0;
-}
-
-.history-day-details-heading {
-  margin-bottom: 11px;
-}
-
-.history-day-details-heading strong {
-  font-size: 18px;
-}
-
-.history-day-details-heading strong.gain {
-  color: #78f29d;
-}
-
-.history-day-details-heading strong.loss {
-  color: #ff9a93;
-}
-
-.history-day-details dl {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0;
-}
-
-.history-day-details dl div {
-  min-width: 0;
-  padding: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.history-day-details dt,
-.history-day-details dd {
-  margin: 0;
-}
-
-.history-day-details dt {
-  color: var(--muted);
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.history-day-details dd {
-  overflow: hidden;
-  margin-top: 4px;
-  color: var(--text);
-  font-size: 10px;
-  font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* Toast notifications for refresh success and errors. */
@@ -2732,10 +2670,6 @@ html[data-theme] .toast.error {
     width: min(100%, 720px);
     max-height: 92svh;
   }
-
-  .history-day-details dl {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 /* Small phone breakpoint. The dashboard becomes one-column and hides non-essential controls. */
@@ -2888,7 +2822,7 @@ html[data-theme] .toast.error {
   }
 
   .history-calendar-modal {
-    padding: 16px;
+    padding: 12px;
   }
 
   .history-calendar-header,
@@ -2898,8 +2832,7 @@ html[data-theme] .toast.error {
     flex-direction: column;
   }
 
-  .history-refresh-button,
-  .history-month-controls button {
+  .history-refresh-button {
     width: 100%;
   }
 
@@ -2921,25 +2854,17 @@ html[data-theme] .toast.error {
   }
 
   .history-calendar-day {
-    min-height: 48px;
-    padding: 5px;
-    border-radius: 11px;
+    min-height: 38px;
+    padding: 4px;
+    border-radius: 9px;
   }
 
   .history-calendar-day span,
   .history-calendar-day small {
-    font-size: 7px;
+    font-size: 6px;
   }
 
   .history-calendar-day strong {
-    font-size: 7px;
-  }
-
-  .history-day-details {
-    padding: 10px;
-  }
-
-  .history-day-details dl {
-    grid-template-columns: 1fr;
+    font-size: 6px;
   }
 }

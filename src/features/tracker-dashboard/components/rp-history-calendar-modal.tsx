@@ -57,25 +57,9 @@ function formatSignedRp(value: number) {
   return `${value > 0 ? "+" : ""}${formatNumber(value)} RP`;
 }
 
-function formatShortDate(dateKey: string) {
-  return new Date(`${dateKey}T00:00:00Z`).toLocaleDateString([], {
-    day: "numeric",
-    month: "short",
-    timeZone: "UTC",
-  });
-}
-
-function formatSyncTime(value: string) {
-  return new Date(value).toLocaleString([], {
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    month: "short",
-  });
-}
-
-function getDayState(day?: RpHistoryCalendarDay) {
-  if (!day) return "empty";
+function getDayState(dateKey: string | null, day?: RpHistoryCalendarDay) {
+  if (!dateKey) return "empty";
+  if (!day) return "no-sync";
   if (day.dailyNetRp > 0) return "gain";
   if (day.dailyNetRp < 0) return "loss";
   return "flat";
@@ -84,7 +68,6 @@ function getDayState(day?: RpHistoryCalendarDay) {
 export function RpHistoryCalendarModal({ isOpen, onClose, profile }: RpHistoryCalendarModalProps) {
   const [calendar, setCalendar] = useState<RpHistoryCalendarResponse | null>(null);
   const [monthKey, setMonthKey] = useState(getCurrentMonthKey);
-  const [selectedDateKey, setSelectedDateKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -95,11 +78,6 @@ export function RpHistoryCalendarModal({ isOpen, onClose, profile }: RpHistoryCa
     try {
       const response = await fetchRpHistoryCalendar(profile, targetMonth);
       setCalendar(response);
-      setSelectedDateKey((current) => {
-        if (current && response.days.some((day) => day.dateKey === current)) return current;
-        const latestInMonth = response.days.find((day) => day.dateKey === response.latest?.dateKey);
-        return latestInMonth?.dateKey ?? response.days.at(-1)?.dateKey ?? null;
-      });
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not load RP history.");
     } finally {
@@ -118,7 +96,6 @@ export function RpHistoryCalendarModal({ isOpen, onClose, profile }: RpHistoryCa
   ), [calendar]);
 
   const calendarCells = useMemo(() => createCalendarCells(monthKey), [monthKey]);
-  const selectedDay = selectedDateKey ? daysByDate.get(selectedDateKey) : null;
   const monthLabel = calendar?.monthLabel ?? monthKey;
   const monthlyNetRp = calendar?.monthlyNetRp ?? 0;
 
@@ -176,45 +153,20 @@ export function RpHistoryCalendarModal({ isOpen, onClose, profile }: RpHistoryCa
         <div className="history-calendar-grid" aria-label={`${monthLabel} RP history`}>
           {calendarCells.map((dateKey, index) => {
             const day = dateKey ? daysByDate.get(dateKey) : undefined;
-            const state = getDayState(day);
-            const isSelected = dateKey === selectedDateKey;
+            const state = getDayState(dateKey, day);
 
             return (
               <button
-                className={`history-calendar-day ${state} ${isSelected ? "selected" : ""}`}
+                className={`history-calendar-day ${state}`}
                 disabled={!dateKey || !day}
                 key={dateKey ?? `empty-${index}`}
-                onClick={() => dateKey && setSelectedDateKey(dateKey)}
                 type="button"
               >
                 {dateKey && <span>{Number(dateKey.slice(-2))}</span>}
-                {day ? <strong>{formatSignedRp(day.dailyNetRp)}</strong> : dateKey && <small>No sync</small>}
+                {day ? <strong>{formatSignedRp(day.dailyNetRp)}</strong> : dateKey && <small>--</small>}
               </button>
             );
           })}
-        </div>
-
-        <div className="history-day-details">
-          {selectedDay ? (
-            <>
-              <div className="history-day-details-heading">
-                <span className="eyebrow">{formatShortDate(selectedDay.dateKey)}</span>
-                <strong className={selectedDay.dailyNetRp >= 0 ? "gain" : "loss"}>
-                  {formatSignedRp(selectedDay.dailyNetRp)}
-                </strong>
-              </div>
-              <dl>
-                <div><dt>Baseline</dt><dd>{formatNumber(selectedDay.baselineRp)} RP</dd></div>
-                <div><dt>Final RP</dt><dd>{formatNumber(selectedDay.currentRp)} RP</dd></div>
-                <div><dt>Highest</dt><dd>{formatNumber(selectedDay.highestRp)} RP</dd></div>
-                <div><dt>Lowest</dt><dd>{formatNumber(selectedDay.lowestRp)} RP</dd></div>
-                <div><dt>Last change</dt><dd>{formatSignedRp(selectedDay.lastDeltaRp)}</dd></div>
-                <div><dt>Last sync</dt><dd>{formatSyncTime(selectedDay.lastSeenAt)}</dd></div>
-              </dl>
-            </>
-          ) : (
-            <p>Select a tracked day to see the daily RP details.</p>
-          )}
         </div>
       </section>
     </div>
