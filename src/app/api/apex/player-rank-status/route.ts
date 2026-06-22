@@ -13,6 +13,10 @@ import {
   getPlayerRankStatus,
   normalizeApexPlatform,
 } from "@/integrations/apex-legends-status/player-rank-service";
+import {
+  getRpHistoryPlayerKey,
+  updateRpHistoryForPlayers,
+} from "@/features/rp-history/server/rp-history-service";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -36,7 +40,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    return NextResponse.json(await getPlayerRankStatus({ name: player, platform }, primary, { forceRefresh }));
+    const status = await getPlayerRankStatus({ name: player, platform }, primary, { forceRefresh });
+    const history = await updateRpHistoryForPlayers([status]);
+
+    return NextResponse.json({
+      ...status,
+      rpHistory: history.players.get(getRpHistoryPlayerKey(status)),
+    });
   } catch (error) {
     if (error instanceof ApexPlayerRankError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

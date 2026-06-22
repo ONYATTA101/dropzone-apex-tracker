@@ -61,8 +61,12 @@ That endpoint returns no secrets, only the small widget summary:
       "currentRp": 9820,
       "progressPercent": 76,
       "dailyNetRp": 220,
+      "lastDeltaRp": 120,
+      "highestRpToday": 9820,
+      "lowestRpToday": 9600,
       "badgeLabel": "PL",
-      "hasHeatStreak": true
+      "hasHeatStreak": true,
+      "updatesTracked": 4
     }
   ]
 }
@@ -73,14 +77,14 @@ friends.
 
 ## Daily RP Plan
 
-The current mobile endpoint calculates daily RP from the first RP value the server saw for that
-player on the current day. That removes the browser from the calculation, but server memory can
-reset during deploys or platform restarts.
+The mobile endpoint now uses the server RP history layer. It calculates daily RP from the first
+RP value stored for that player on the current day and also returns last delta, high/low RP,
+tracked update count, and heat-streak state.
 
-For stronger production behavior, use Option 2 from the earlier discussion:
+For durable production behavior, use Option 2 from the earlier discussion:
 
 - Vercel Cron refreshes tracked players on the server.
-- Redis or a small database stores the first RP snapshot of the day and the latest RP.
+- Upstash Redis, Vercel KV, or a small database stores the first RP snapshot of the day and the latest RP.
 - Daily net RP is calculated as `latest RP - first RP snapshot of the day`.
 - The Android widget reads the server summary every two hours.
 
@@ -104,7 +108,7 @@ WorkManager and let it fetch the server summary, then update the widget.
 ## What To Build Next
 
 1. Store the user's selected roster on the server instead of only browser local storage.
-2. Add Redis or database-backed daily RP history with Vercel Cron.
+2. Add Upstash Redis or Vercel KV env vars in production so RP history survives cold starts.
 3. Add Android background refresh with WorkManager.
 4. Add Android notifications for rank-up, rank-down, RP gain, and RP loss.
 5. Add release signing and a Play Store publishing checklist.

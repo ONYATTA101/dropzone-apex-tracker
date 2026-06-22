@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Added server-side RP history with file/memory/Upstash storage, scheduled refresh API, daily high/low RP, and dashboard history stats.
 - Added force-refresh rank lookups for manual refresh, return-to-app refresh, and native widget refresh so app-side cache does not hide newer RP.
 - Replaced the old multiline friend entry with a Track a Squadmate popup that uses one Apex ID field and platform choices.
 - Added a mobile-safe Rank Pulse summary API for the native Android widget.

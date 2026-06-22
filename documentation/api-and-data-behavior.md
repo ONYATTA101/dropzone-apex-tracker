@@ -72,7 +72,11 @@ requested player:
 ```text
 results[].requestKey
 results[].player
+results[].player.rpHistory
 ```
+
+`rpHistory` includes server-calculated daily RP fields such as `dailyNetRp`, `lastDeltaRp`,
+`highestRp`, `lowestRp`, `updateCount`, and `hasHeatStreak`.
 
 ## API Protection
 
@@ -104,9 +108,23 @@ DROPZONE_MOBILE_WIDGET_PLAYERS=PS4:blumoat_onyatta,PC:FriendOne,PS4:FriendTwo
 If that variable is missing, the endpoint uses the default dashboard profile plus any configured
 starter friends. The starter friend list is empty by default so demo friends do not appear.
 
-Daily RP baselines are stored in server memory using `DROPZONE_WIDGET_TIME_ZONE`, which defaults
-to `Africa/Nairobi`. For production-grade tracking that survives server restarts, move these
-baselines to Redis or a database and refresh them with Vercel Cron.
+Daily RP baselines are stored by the server history layer using `DROPZONE_WIDGET_TIME_ZONE`,
+which defaults to `Africa/Nairobi`. Local development writes `.dropzone-data/rp-history.json`.
+Production should set Upstash Redis or Vercel KV REST env vars so history survives server restarts.
+
+The response also includes `historyStorageMode` so you can see whether the deployment is using
+`upstash`, `file`, or `memory`.
+
+### `GET /api/cron/refresh-rank-pulse`
+
+Refreshes the configured Rank Pulse roster and writes RP history without the dashboard being open.
+Vercel Cron calls this route with `GET`.
+
+Security:
+
+- Set `DROPZONE_CRON_SECRET` in production.
+- Call with `Authorization: Bearer <DROPZONE_CRON_SECRET>` when using an external scheduler.
+- Vercel Cron can call the route directly, but a secret is stronger.
 
 ### `GET /api/apex/ranked-map-rotation`
 
@@ -132,5 +150,6 @@ refreshing the same name produces the same rank, score, level, and selected Lege
 
 ## Caching
 
-Server calls to the external provider use a 60-second Next.js revalidation period. This keeps
-the dashboard current while avoiding unnecessary API requests.
+Server calls to the external provider use a short in-memory fresh cache unless the request asks
+for a force refresh. Manual refresh, return-to-app refresh, native widget refresh, and cron
+refresh bypass that fresh cache.

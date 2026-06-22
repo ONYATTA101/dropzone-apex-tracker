@@ -14,6 +14,10 @@ import {
   getPlayerRankStatus,
   normalizeApexPlatform,
 } from "@/integrations/apex-legends-status/player-rank-service";
+import {
+  getRpHistoryPlayerKey,
+  updateRpHistoryForPlayers,
+} from "@/features/rp-history/server/rp-history-service";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -78,6 +82,26 @@ export async function POST(request: NextRequest) {
     };
     response.errors.push(error);
   });
+
+  if (response.players.length > 0) {
+    const history = await updateRpHistoryForPlayers(response.players);
+    response.players = response.players.map((player) => ({
+      ...player,
+      rpHistory: history.players.get(getRpHistoryPlayerKey(player)),
+    }));
+    response.results = response.results.map((result) => ({
+      ...result,
+      player: {
+        ...result.player,
+        rpHistory: history.players.get(getRpHistoryPlayerKey(result.player)),
+      },
+    }));
+    response.history = {
+      playerCount: history.players.size,
+      storageMode: history.storageMode,
+      updatedAt: history.updatedAt,
+    };
+  }
 
   return NextResponse.json(response);
 }

@@ -1,6 +1,6 @@
 /**
  * Compact mobile-first Rank Pulse widget preview.
- * This component shows the exact 3-player widget direction inside the current web app.
+ * It prefers server-side RP history and falls back to local testing baselines.
  */
 
 "use client";
@@ -105,10 +105,11 @@ export function CompactRankPulseWidget({
         {players.map((player, index) => {
           const key = getWidgetPlayerStorageKey(player);
           const baseline = dailyBaselines[key]?.rp ?? player.rankScore;
-          const dailyChange = player.rankScore - baseline;
+          const dailyChange = player.rpHistory?.dailyNetRp ?? player.rankScore - baseline;
           const featured = index === 0;
           const momentum = playerMomentum[key];
-          const hasHeatStreak = momentum?.hasHeatStreak ?? false;
+          const hasHeatStreak = player.rpHistory?.hasHeatStreak ?? momentum?.hasHeatStreak ?? false;
+          const heatStreakCount = player.rpHistory?.heatStreakCount ?? momentum?.heatStreakCount ?? MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES;
 
           return (
             <article className={`rank-pulse-player ${featured ? "featured" : ""}`} key={key}>
@@ -122,7 +123,7 @@ export function CompactRankPulseWidget({
                       <span
                         aria-label={`${player.name} has a ${MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES} update heat streak`}
                         className="rank-pulse-heat-streak"
-                        title={`${momentum?.heatStreakCount ?? MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES} hot RP updates`}
+                        title={`${heatStreakCount} hot RP updates`}
                       >
                         <Flame size={10} />
                       </span>

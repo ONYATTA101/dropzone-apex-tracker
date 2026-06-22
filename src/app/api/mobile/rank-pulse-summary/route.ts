@@ -11,29 +11,17 @@ import {
   PlayerRankStatus,
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
-import { DEFAULT_FRIENDS, DEFAULT_PROFILE } from "@/features/tracker-dashboard/config/dashboard-defaults";
+import { getRankPulseRoster } from "@/features/rp-history/server/rank-pulse-roster";
 import {
-  MOBILE_WIDGET_HEAT_STREAK_GAIN_RP,
-  MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES,
-  MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
-} from "@/features/mobile-rank-widget/config/mobile-widget-settings";
-import {
-  getPlayerRankStatus,
-  normalizeApexPlatform,
-} from "@/integrations/apex-legends-status/player-rank-service";
+  getRpHistoryPlayerKey,
+  updateRpHistoryForPlayers,
+} from "@/features/rp-history/server/rp-history-service";
+import { getPlayerRankStatus } from "@/integrations/apex-legends-status/player-rank-service";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const MOBILE_ROSTER_ENV_KEY = "DROPZONE_MOBILE_WIDGET_PLAYERS";
 const WIDGET_TIME_ZONE = process.env.DROPZONE_WIDGET_TIME_ZONE || "Africa/Nairobi";
-
-type MobileRankPulseSnapshot = {
-  baselineRp: number;
-  dateKey: string;
-  hotUpdateCount: number;
-  previousRp: number;
-};
 
 type MobileRankPulsePlayer = {
   badgeLabel: string;
@@ -46,17 +34,13 @@ type MobileRankPulsePlayer = {
   progressPercent: number;
   rank: string;
   source: PlayerRankStatus["source"] | "unavailable";
+  lastDeltaRp: number;
+  highestRpToday: number;
+  lowestRpToday: number;
+  trend: string;
+  updatesTracked: number;
   updatedAt: string;
 };
-
-declare global {
-  var __dropzoneMobileRankPulseSnapshots:
-    | Map<string, MobileRankPulseSnapshot>
-    | undefined;
-}
-
-const snapshots = globalThis.__dropzoneMobileRankPulseSnapshots ?? new Map<string, MobileRankPulseSnapshot>();
-globalThis.__dropzoneMobileRankPulseSnapshots = snapshots;
 
 function getServerDayKey() {
   // This controls when daily RP resets for the native widget.
@@ -66,41 +50,6 @@ function getServerDayKey() {
     timeZone: WIDGET_TIME_ZONE,
     year: "numeric",
   }).format(new Date());
-}
-
-function getPlayerKey(player: TrackedPlayerIdentity) {
-  return `${player.platform}:${player.name.trim().toLowerCase()}`;
-}
-
-function parseRosterEntry(entry: string): TrackedPlayerIdentity | null {
-  const value = entry.trim();
-  if (!value) return null;
-
-  const [first, ...rest] = value.split(":");
-  if (rest.length === 0) {
-    return { name: value, platform: "PC" };
-  }
-
-  const name = rest.join(":").trim();
-  if (!name) return null;
-
-  return {
-    name,
-    platform: normalizeApexPlatform(first),
-  };
-}
-
-function getMobileWidgetRoster() {
-  const configuredRoster = process.env[MOBILE_ROSTER_ENV_KEY]
-    ?.split(",")
-    .map(parseRosterEntry)
-    .filter((player): player is TrackedPlayerIdentity => Boolean(player));
-
-  const roster = configuredRoster?.length
-    ? configuredRoster
-    : [DEFAULT_PROFILE, ...DEFAULT_FRIENDS];
-
-  return roster.slice(0, MOBILE_WIDGET_MAX_TRACKED_PLAYERS);
 }
 
 function getBadgeLabel(rankName: string) {
@@ -113,53 +62,25 @@ function getBadgeLabel(rankName: string) {
     .toUpperCase() || "--";
 }
 
-function updateDailySnapshot(player: PlayerRankStatus) {
-  const dateKey = getServerDayKey();
-  const playerKey = getPlayerKey(player);
-  const existing = snapshots.get(playerKey);
-
-  if (!existing || existing.dateKey !== dateKey) {
-    const fresh: MobileRankPulseSnapshot = {
-      baselineRp: player.rankScore,
-      dateKey,
-      hotUpdateCount: 0,
-      previousRp: player.rankScore,
-    };
-    snapshots.set(playerKey, fresh);
-    return fresh;
-  }
-
-  const rpChangeSincePrevious = player.rankScore - existing.previousRp;
-  const hotUpdateIncrease = Math.floor(
-    Math.max(0, rpChangeSincePrevious) / MOBILE_WIDGET_HEAT_STREAK_GAIN_RP,
-  );
-
-  const nextSnapshot: MobileRankPulseSnapshot = {
-    ...existing,
-    hotUpdateCount: hotUpdateIncrease > 0
-      ? existing.hotUpdateCount + hotUpdateIncrease
-      : 0,
-    previousRp: player.rankScore,
-  };
-
-  snapshots.set(playerKey, nextSnapshot);
-  return nextSnapshot;
-}
-
 function createMobilePlayer(player: PlayerRankStatus): MobileRankPulsePlayer {
-  const snapshot = updateDailySnapshot(player);
+  const history = player.rpHistory;
   const rankLabel = createRankLabel(player.rankName, player.rankDivision);
 
   return {
     badgeLabel: getBadgeLabel(player.rankName),
     currentRp: player.rankScore,
-    dailyNetRp: player.rankScore - snapshot.baselineRp,
-    hasHeatStreak: snapshot.hotUpdateCount >= MOBILE_WIDGET_HEAT_STREAK_REQUIRED_UPDATES,
+    dailyNetRp: history?.dailyNetRp ?? 0,
+    hasHeatStreak: Boolean(history?.hasHeatStreak),
+    highestRpToday: history?.highestRp ?? player.rankScore,
+    lastDeltaRp: history?.lastDeltaRp ?? 0,
+    lowestRpToday: history?.lowestRp ?? player.rankScore,
     name: player.name,
     platform: player.platform,
     progressPercent: Math.round(player.progress.percent),
     rank: rankLabel,
     source: player.source,
+    trend: history?.trend ?? "flat",
+    updatesTracked: history?.updateCount ?? 1,
     updatedAt: player.updatedAt,
   };
 }
@@ -174,11 +95,16 @@ function createUnavailablePlayer(
     dailyNetRp: 0,
     error: error instanceof Error ? error.message : "Could not load player.",
     hasHeatStreak: false,
+    highestRpToday: 0,
+    lastDeltaRp: 0,
+    lowestRpToday: 0,
     name: requested.name,
     platform: requested.platform,
     progressPercent: 0,
     rank: "Unavailable",
     source: "unavailable",
+    trend: "flat",
+    updatesTracked: 0,
     updatedAt: new Date().toISOString(),
   };
 }
@@ -192,21 +118,32 @@ export async function GET(request: NextRequest) {
   });
   if (guarded) return guarded;
 
-  const roster = getMobileWidgetRoster();
+  const roster = getRankPulseRoster();
   const settled = await Promise.allSettled(
-    roster.map((player, index) => getPlayerRankStatus(player, index === 0, { forceRefresh: true })),
+    roster.players.map((player, index) => getPlayerRankStatus(player, index === 0, { forceRefresh: true })),
   );
+  const fulfilledPlayers = settled
+    .filter((result): result is PromiseFulfilledResult<PlayerRankStatus> => result.status === "fulfilled")
+    .map((result) => result.value);
+  const history = fulfilledPlayers.length > 0
+    ? await updateRpHistoryForPlayers(fulfilledPlayers)
+    : null;
 
   const players = settled.map((result, index) => (
     result.status === "fulfilled"
-      ? createMobilePlayer(result.value)
-      : createUnavailablePlayer(roster[index], result.reason)
+      ? createMobilePlayer({
+          ...result.value,
+          rpHistory: history?.players.get(getRpHistoryPlayerKey(result.value)),
+        })
+      : createUnavailablePlayer(roster.players[index], result.reason)
   ));
 
   return NextResponse.json(
     {
+      historyStorageMode: history?.storageMode ?? null,
+      historyUpdatedAt: history?.updatedAt ?? null,
       players,
-      rosterSource: process.env[MOBILE_ROSTER_ENV_KEY] ? "environment" : "default",
+      rosterSource: roster.source,
       serverDayKey: getServerDayKey(),
       updatedAt: new Date().toISOString(),
     },

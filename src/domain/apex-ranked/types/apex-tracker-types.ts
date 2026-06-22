@@ -9,6 +9,26 @@ export type ApexPlatform = "PC" | "PS4" | "X1";
 // DataSource lets the UI show whether the app is using real API data or local demo data.
 export type DataSource = "live" | "demo";
 
+export type PlayerRpHistoryTrend = "up" | "down" | "flat";
+
+export type PlayerRpHistorySummary = {
+  baselineRp: number;
+  currentRp: number;
+  dailyNetRp: number;
+  dateKey: string;
+  firstSeenAt: string;
+  hasHeatStreak: boolean;
+  heatStreakCount: number;
+  highestRp: number;
+  lastDeltaRp: number;
+  lastSeenAt: string;
+  lowestRp: number;
+  rankChanged: boolean;
+  rankDirection: PlayerRpHistoryTrend;
+  trend: PlayerRpHistoryTrend;
+  updateCount: number;
+};
+
 // RankProgress powers the progress bars and "RP remaining" labels.
 export type RankProgress = {
   currentFloor: number;
@@ -37,6 +57,7 @@ export type PlayerRankStatus = {
   updatedAt: string;
   source: DataSource;
   progress: RankProgress;
+  rpHistory?: PlayerRpHistorySummary;
 };
 
 // RankedMapRotation is intentionally small because the dashboard only needs current/next map.
@@ -73,6 +94,11 @@ export type PlayerRankBatchError = TrackedPlayerIdentity & {
 };
 
 export type PlayerRankBatchResponse = {
+  history?: {
+    playerCount: number;
+    storageMode: string;
+    updatedAt: string;
+  };
   results: PlayerRankBatchResult[];
   players: PlayerRankStatus[];
   errors: PlayerRankBatchError[];

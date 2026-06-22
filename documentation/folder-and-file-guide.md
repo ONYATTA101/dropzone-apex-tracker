@@ -14,6 +14,7 @@ JSON files cannot safely contain comments, and generated files should not be man
 | `package.json` | JSON package manifest, scripts, and dependencies. JSON does not allow comments. |
 | `package-lock.json` | npm-generated exact dependency versions. Do not manually edit it. |
 | `tsconfig.json` | TypeScript compiler configuration. |
+| `vercel.json` | Configures the safe daily Vercel Cron call for RP history refresh. |
 | `README.md` | Quick project entry point and documentation links. |
 | `CONTRIBUTING.md` | Explains how collaborators should branch, test, and open pull requests. |
 | `CHANGELOG.md` | Tracks user-facing changes by version. |
@@ -64,6 +65,7 @@ purpose-named parent folders and header comments explain what they do.
 | `src/app/api/apex/player-rank-status/route.ts` | Protects the API key and returns player rank data. |
 | `src/app/api/apex/player-rank-statuses/route.ts` | Protects the API key and returns a batched roster of player rank data. |
 | `src/app/api/apex/ranked-map-rotation/route.ts` | Protects the API key and returns ranked map data. |
+| `src/app/api/cron/refresh-rank-pulse/route.ts` | Refreshes configured Rank Pulse players and stores server RP history on a schedule. |
 | `src/app/api/mobile/rank-pulse-summary/route.ts` | Returns mobile-safe widget display data without exposing the Apex API key. |
 
 ### `src/domain/apex-ranked`: Game Rules And Contracts
@@ -106,6 +108,14 @@ home-screen widget.
 | `config/mobile-widget-settings.ts` | Stores planned widget limits, refresh timing, and storage keys. |
 | `config/rank-notification-messages.ts` | Stores editable rank/RP notification message templates. |
 | `utilities/widget-daily-rp-baselines.ts` | Stores and tests local daily RP baselines for net gain/loss display. |
+
+### `src/features/rp-history`: Server RP History Feature
+
+| Path | Purpose |
+| --- | --- |
+| `server/rank-pulse-roster.ts` | Selects the configured server-side Rank Pulse roster. |
+| `server/rp-history-service.ts` | Calculates and stores daily RP baseline, latest RP, last delta, high/low RP, and heat streaks. |
+| `server/rp-history-store.ts` | Provides local file, memory, and Upstash/Vercel KV REST storage adapters. |
 
 ### `src/styles`: Visual Design
 

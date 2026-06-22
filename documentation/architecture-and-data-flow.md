@@ -20,7 +20,8 @@ The source is separated by responsibility:
 5. With a key, the service calls Apex Legends Status.
 6. `player-rank-response-normalizer.ts` converts the external response into the app contract.
 7. `rank-progress-calculator.ts` calculates RP earned, RP remaining, and progress percentage.
-8. The dashboard renders the owner, friend cards, and compact widget from the batched result.
+8. `rp-history-service.ts` stores the first RP seen today, latest RP, last delta, and high/low RP.
+9. The dashboard renders the owner, friend cards, compact widget, and server RP history from the batched result.
 
 ## Ranked Map Data Flow
 
@@ -58,10 +59,15 @@ The current live flow is:
 
 1. Android asks `/api/mobile/rank-pulse-summary` for the three-player Rank Pulse summary.
 2. The server route uses the private `APEX_API_KEY` to load rank data.
-3. The server keeps an in-memory first RP snapshot for the current day.
-4. The response includes current RP, daily net RP, rank label, progress percentage, and heat streak state.
+3. The server writes the latest player snapshot into the RP history store.
+4. The response includes current RP, daily net RP, last delta, high/low RP, rank label, progress percentage, and heat streak state.
 5. `RankPulseWidgetProvider.java` caches the response and renders it into the home-screen widget.
 
-The later production-grade version should move the daily snapshot from server memory into Redis
-or a small database and refresh it with Vercel Cron, so daily RP changes do not depend on widget
-refresh timing.
+## Server RP History Flow
+
+1. `/api/cron/refresh-rank-pulse` refreshes the Rank Pulse roster without needing the app to be open.
+2. The route fetches live RP through `player-rank-service.ts`.
+3. `rp-history-service.ts` stores the first RP of the day and updates latest RP.
+4. Local development stores history in `.dropzone-data/rp-history.json`.
+5. Production uses Upstash Redis or Vercel KV when `UPSTASH_REDIS_REST_*` or `KV_REST_API_*` env vars exist.
+6. If no durable production store is configured, the app falls back to memory and marks that response with `historyStorageMode: "memory"`.

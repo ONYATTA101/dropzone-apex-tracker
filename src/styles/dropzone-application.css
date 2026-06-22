@@ -1245,6 +1245,51 @@ button {
   margin-top: 6px;
 }
 
+.rank-history-strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.rank-history-strip div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.rank-history-strip span,
+.rank-history-strip strong {
+  display: block;
+}
+
+.rank-history-strip span {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rank-history-strip strong {
+  overflow: hidden;
+  margin-top: 4px;
+  color: var(--text);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-history-strip strong.gain {
+  color: var(--good);
+}
+
+.rank-history-strip strong.loss {
+  color: #ff8a84;
+}
+
 /* Ranked map card visual treatment. */
 .map-panel {
   min-height: 322px;
@@ -2375,6 +2420,10 @@ html[data-theme] .toast.error {
     grid-template-columns: 105px 1fr;
   }
 
+  .rank-history-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .rank-badge-large {
     width: 96px;
     height: 96px;
@@ -2465,6 +2514,11 @@ html[data-theme] .toast.error {
   }
 
   .rank-progress {
+    text-align: left;
+  }
+
+  .rank-history-strip {
+    grid-template-columns: 1fr;
     text-align: left;
   }
 

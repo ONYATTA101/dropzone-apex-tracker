@@ -73,6 +73,15 @@ function trackedIdentityKey(identity: TrackedPlayerIdentity) {
   return `${identity.platform}:${identity.name.toLowerCase()}`;
 }
 
+function formatSignedRp(value: number) {
+  if (value === 0) return "0 RP";
+  return `${value > 0 ? "+" : ""}${formatNumber(value)} RP`;
+}
+
+function formatHistoryTime(value: string) {
+  return new Date(value).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
 function readStoredTrackedHistory() {
   const saved = window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.trackedHistory);
   if (!saved) return [];
@@ -554,6 +563,26 @@ export default function ApexTrackerDashboard() {
                     <span>Updated just now</span>
                   </div>
                 </div>
+                {me.rpHistory && (
+                  <div className="rank-history-strip" aria-label="Server RP history">
+                    <div>
+                      <span>Today</span>
+                      <strong className={me.rpHistory.dailyNetRp >= 0 ? "gain" : "loss"}>{formatSignedRp(me.rpHistory.dailyNetRp)}</strong>
+                    </div>
+                    <div>
+                      <span>Last change</span>
+                      <strong className={me.rpHistory.lastDeltaRp >= 0 ? "gain" : "loss"}>{formatSignedRp(me.rpHistory.lastDeltaRp)}</strong>
+                    </div>
+                    <div>
+                      <span>Today range</span>
+                      <strong>{formatNumber(me.rpHistory.lowestRp)} - {formatNumber(me.rpHistory.highestRp)} RP</strong>
+                    </div>
+                    <div>
+                      <span>Server sync</span>
+                      <strong>{formatHistoryTime(me.rpHistory.lastSeenAt)}</strong>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : <div className="loading-card">Loading your ranked profile...</div>}
           </article>
