@@ -29,6 +29,38 @@ export type PlayerRpHistorySummary = {
   updateCount: number;
 };
 
+// Calendar history powers the Account page RP history view.
+export type RpHistoryCalendarDay = {
+  baselineRankDivision: number;
+  baselineRankName: string;
+  baselineRp: number;
+  currentRankDivision: number;
+  currentRankName: string;
+  currentRp: number;
+  dailyNetRp: number;
+  dateKey: string;
+  firstSeenAt: string;
+  highestRp: number;
+  lastDeltaRp: number;
+  lastSeenAt: string;
+  lowestRp: number;
+  trend: PlayerRpHistoryTrend;
+  updateCount: number;
+};
+
+export type RpHistoryCalendarResponse = {
+  availableMonthKeys: string[];
+  days: RpHistoryCalendarDay[];
+  latest: RpHistoryCalendarDay | null;
+  month: string;
+  monthLabel: string;
+  monthlyNetRp: number;
+  player: TrackedPlayerIdentity;
+  retainedDayLimit: number;
+  storageMode: string;
+  updatedAt: string;
+};
+
 // RankProgress powers the progress bars and "RP remaining" labels.
 export type RankProgress = {
   currentFloor: number;

@@ -78,6 +78,33 @@ results[].player.rpHistory
 `rpHistory` includes server-calculated daily RP fields such as `dailyNetRp`, `lastDeltaRp`,
 `highestRp`, `lowestRp`, `updateCount`, and `hasHeatStreak`.
 
+### `GET /api/apex/rp-history-calendar`
+
+Query parameters:
+
+| Parameter | Required | Meaning |
+| --- | --- | --- |
+| `player` | Yes | Player's account name. |
+| `platform` | Yes | `PC`, `PS4`, or `X1`. |
+| `month` | No | Calendar month in `YYYY-MM` format. Defaults to the current server month. |
+
+Returns the stored Account History calendar for the selected month. The response includes:
+
+```text
+month
+monthLabel
+monthlyNetRp
+days[]
+days[].dailyNetRp
+days[].baselineRp
+days[].currentRp
+days[].highestRp
+days[].lowestRp
+```
+
+The dashboard uses this route for the Account -> History calendar. It reads existing RP history
+from the server store; it does not expose the external Apex API key.
+
 ## API Protection
 
 The internal Apex proxy routes use:
@@ -111,6 +138,8 @@ starter friends. The starter friend list is empty by default so demo friends do 
 Daily RP baselines are stored by the server history layer using `DROPZONE_WIDGET_TIME_ZONE`,
 which defaults to `Africa/Nairobi`. Local development writes `.dropzone-data/rp-history.json`.
 Production should set Upstash Redis or Vercel KV REST env vars so history survives server restarts.
+The app keeps `DROPZONE_RP_HISTORY_MAX_DAYS` days per player, defaulting to 120 days so the
+calendar can cover a practical current-season window.
 
 The response also includes `historyStorageMode` so you can see whether the deployment is using
 `upstash`, `file`, or `memory`.

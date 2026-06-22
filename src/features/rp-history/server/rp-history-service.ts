@@ -5,6 +5,8 @@
 
 import {
   PlayerRankStatus,
+  RpHistoryCalendarDay,
+  RpHistoryCalendarResponse,
   PlayerRpHistorySummary,
   PlayerRpHistoryTrend,
   TrackedPlayerIdentity,
@@ -23,7 +25,7 @@ import {
 } from "@/features/rp-history/server/rp-history-store";
 
 const HISTORY_TIME_ZONE = process.env.DROPZONE_WIDGET_TIME_ZONE || "Africa/Nairobi";
-const MAX_STORED_DAYS_PER_PLAYER = 14;
+const DEFAULT_STORED_DAYS_PER_PLAYER = 120;
 
 export type RpHistoryUpdateResult = {
   players: Map<string, PlayerRpHistorySummary>;
@@ -42,6 +44,13 @@ export function getRpHistoryDayKey(date = new Date()) {
 
 export function getRpHistoryPlayerKey(player: TrackedPlayerIdentity) {
   return `${player.platform}:${player.name.trim().toLowerCase()}`;
+}
+
+export function getRpHistoryStoredDayLimit() {
+  const configuredLimit = Number(process.env.DROPZONE_RP_HISTORY_MAX_DAYS);
+  return Number.isFinite(configuredLimit) && configuredLimit > 0
+    ? Math.floor(configuredLimit)
+    : DEFAULT_STORED_DAYS_PER_PLAYER;
 }
 
 function getTrend(delta: number): PlayerRpHistoryTrend {
@@ -107,7 +116,7 @@ function updateExistingDay(
 
 function trimOldDays(history: StoredRpPlayerHistory) {
   const sortedDays = Object.keys(history.days).sort().reverse();
-  for (const oldDayKey of sortedDays.slice(MAX_STORED_DAYS_PER_PLAYER)) {
+  for (const oldDayKey of sortedDays.slice(getRpHistoryStoredDayLimit())) {
     delete history.days[oldDayKey];
   }
 }
@@ -132,6 +141,37 @@ function createSummary(day: StoredRpHistoryDay): PlayerRpHistorySummary {
     trend: getTrend(dailyNetRp),
     updateCount: day.updateCount,
   };
+}
+
+function createCalendarDay(day: StoredRpHistoryDay): RpHistoryCalendarDay {
+  return {
+    baselineRankDivision: day.baselineRankDivision,
+    baselineRankName: day.baselineRankName,
+    baselineRp: day.baselineRp,
+    currentRankDivision: day.currentRankDivision,
+    currentRankName: day.currentRankName,
+    currentRp: day.currentRp,
+    dailyNetRp: day.currentRp - day.baselineRp,
+    dateKey: day.dateKey,
+    firstSeenAt: day.firstSeenAt,
+    highestRp: day.highestRp,
+    lastDeltaRp: day.lastDeltaRp,
+    lastSeenAt: day.lastSeenAt,
+    lowestRp: day.lowestRp,
+    trend: getTrend(day.currentRp - day.baselineRp),
+    updateCount: day.updateCount,
+  };
+}
+
+function getMonthLabel(monthKey: string) {
+  const [year, month] = monthKey.split("-").map(Number);
+  if (!year || !month) return monthKey;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    timeZone: "UTC",
+    year: "numeric",
+  }).format(new Date(Date.UTC(year, month - 1, 1)));
 }
 
 export async function updateRpHistoryForPlayers(players: PlayerRankStatus[]): Promise<RpHistoryUpdateResult> {
@@ -167,6 +207,37 @@ export async function updateRpHistoryForPlayers(players: PlayerRankStatus[]): Pr
 
   return {
     players: summaries,
+    storageMode: getRpHistoryStorageMode(),
+    updatedAt: document.updatedAt,
+  };
+}
+
+export async function getRpHistoryCalendar(
+  identity: TrackedPlayerIdentity,
+  monthKey = getRpHistoryDayKey().slice(0, 7),
+): Promise<RpHistoryCalendarResponse> {
+  const document = await readRpHistoryDocument();
+  const playerKey = getRpHistoryPlayerKey(identity);
+  const history = document.players[playerKey];
+  const allDays = Object.values(history?.days ?? {})
+    .sort((left, right) => left.dateKey.localeCompare(right.dateKey))
+    .map(createCalendarDay);
+  const days = allDays.filter((day) => day.dateKey.startsWith(`${monthKey}-`));
+  const latest = history?.latest ? createCalendarDay(history.latest) : null;
+  const availableMonthKeys = Array.from(new Set(allDays.map((day) => day.dateKey.slice(0, 7)))).sort();
+
+  return {
+    availableMonthKeys,
+    days,
+    latest,
+    month: monthKey,
+    monthLabel: getMonthLabel(monthKey),
+    monthlyNetRp: days.reduce((total, day) => total + day.dailyNetRp, 0),
+    player: {
+      name: history?.name ?? identity.name,
+      platform: history?.platform ?? identity.platform,
+    },
+    retainedDayLimit: getRpHistoryStoredDayLimit(),
     storageMode: getRpHistoryStorageMode(),
     updatedAt: document.updatedAt,
   };

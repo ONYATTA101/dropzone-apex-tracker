@@ -41,6 +41,7 @@ import {
 import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import { FriendRankCard } from "@/features/tracker-dashboard/components/friend-rank-card";
 import { RankBadge } from "@/features/tracker-dashboard/components/rank-badge";
+import { RpHistoryCalendarModal } from "@/features/tracker-dashboard/components/rp-history-calendar-modal";
 import {
   DEFAULT_FRIENDS,
   DEFAULT_PROFILE,
@@ -137,6 +138,7 @@ export default function ApexTrackerDashboard() {
   const [loading, setLoading] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
   const [showFriendForm, setShowFriendForm] = useState(false);
+  const [showRpHistory, setShowRpHistory] = useState(false);
   const [toast, setToast] = useState<Toast>(null);
   const [friendQuery, setFriendQuery] = useState("");
   const [darkThemeEnabled, setDarkThemeEnabled] = useState(true);
@@ -381,17 +383,6 @@ export default function ApexTrackerDashboard() {
     setToast({ message: `${identity.name} is back on your tracked squad.`, kind: "success" });
   }, [friendIds]);
 
-  const openTrackedHistory = useCallback(() => {
-    const historyTarget = document.getElementById("tracked-player-history");
-    const squadTarget = document.getElementById("tracked-squad-section");
-    const target = historyTarget ?? squadTarget;
-
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (!historyTarget) {
-      setToast({ message: "Remove a tracked player first to build history.", kind: "error" });
-    }
-  }, []);
-
   function toggleThemeFromAccountMenu() {
     setThemeLoaded(true);
     const nextThemeEnabled = !darkThemeEnabled;
@@ -436,9 +427,9 @@ export default function ApexTrackerDashboard() {
             <Settings2 size={15} />
             <span><strong>Account</strong><small>Edit Apex ID</small></span>
           </button>
-          <button onClick={openTrackedHistory} role="menuitem" type="button">
+          <button onClick={() => setShowRpHistory(true)} role="menuitem" type="button">
             <History size={15} />
-            <span><strong>History</strong><small>Re-track players</small></span>
+            <span><strong>History</strong><small>RP calendar</small></span>
           </button>
           <Link href="/widget" role="menuitem">
             <Zap size={15} />
@@ -697,6 +688,12 @@ export default function ApexTrackerDashboard() {
           </div>
         </div>
       )}
+
+      <RpHistoryCalendarModal
+        isOpen={showRpHistory}
+        onClose={() => setShowRpHistory(false)}
+        profile={profile}
+      />
 
       {toast && <div className={`toast ${toast.kind}`}>{toast.message}</div>}
     </main>

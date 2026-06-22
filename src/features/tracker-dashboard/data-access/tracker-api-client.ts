@@ -8,6 +8,7 @@ import {
   PlayerRankBatchResponse,
   PlayerRankStatus,
   RankedMapRotation,
+  RpHistoryCalendarResponse,
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
 
@@ -52,4 +53,21 @@ export async function fetchRankedMapRotation(): Promise<RankedMapRotation> {
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? "Could not load the ranked map rotation.");
   return data as RankedMapRotation;
+}
+
+export async function fetchRpHistoryCalendar(
+  identity: TrackedPlayerIdentity,
+  month?: string,
+): Promise<RpHistoryCalendarResponse> {
+  const params = new URLSearchParams({
+    player: identity.name,
+    platform: identity.platform,
+    refresh: String(Date.now()),
+  });
+  if (month) params.set("month", month);
+
+  const response = await fetch(`/api/apex/rp-history-calendar?${params}`, { cache: "no-store" });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error ?? "Could not load RP history.");
+  return data as RpHistoryCalendarResponse;
 }
