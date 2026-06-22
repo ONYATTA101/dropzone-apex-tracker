@@ -55,6 +55,15 @@ day cell shows that date's net RP. Positive days should read like `+240 RP`, neg
 `-120 RP`, and flat days like `0 RP`. Use the existing color language: green for gain, red for
 loss, and blue or neutral for flat.
 
+Each calendar date cell should change its full visual state based on that day's result. RP loss
+days use a red-tinted cell, RP gain days use a green-tinted cell, and flat/no-change days use the
+normal dark or neutral cell style. The calendar should follow the active app theme and the current
+rank/season color language so it feels like part of Dropzone instead of a separate report.
+
+Above the calendar grid, show a month summary card with the selected month's net RP total. For
+example: `June net: +840 RP` or `June net: -320 RP`. This monthly total should be calculated by
+adding the visible days' daily net RP values.
+
 When a user opens a calendar day, show the useful daily details:
 
 - Baseline RP
@@ -76,6 +85,7 @@ Planned controls:
 - This month
 - Day-by-day net RP gain or loss
 - Month picker for the calendar
+- Monthly net RP summary above the calendar
 - RP gained or lost per tracked snapshot
 - Later: exact ranked match list with RP gain/loss per game
 
