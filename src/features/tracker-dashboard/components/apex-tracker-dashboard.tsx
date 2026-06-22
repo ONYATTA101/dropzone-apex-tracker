@@ -12,6 +12,7 @@ import {
   Clock3,
   Crosshair,
   History,
+  LogIn,
   MapPinned,
   Moon,
   Plus,
@@ -440,6 +441,10 @@ export default function ApexTrackerDashboard() {
           <Link href="/widget" onClick={() => setOpenAccountMenu(null)} role="menuitem">
             <Zap size={15} />
             <span><strong>Widget</strong><small>Phone preview</small></span>
+          </Link>
+          <Link href="/login" onClick={() => setOpenAccountMenu(null)} role="menuitem">
+            <LogIn size={15} />
+            <span><strong>Login</strong><small>Dropzone account</small></span>
           </Link>
           <button onClick={() => { setOpenAccountMenu(null); toggleThemeFromAccountMenu(); }} role="menuitem" type="button">
             <Moon size={15} />

@@ -61,12 +61,20 @@ purpose-named parent folders and header comments explain what they do.
 | --- | --- |
 | `src/app/layout.tsx` | Creates the shared HTML shell, metadata, fonts, and global styles. |
 | `src/app/page.tsx` | Renders the tracker dashboard at `/`. |
+| `src/app/login/page.tsx` | Renders the Dropzone account login and registration page. |
+| `src/app/admin/users/page.tsx` | Renders the admin-safe registered users viewer. |
 | `src/app/widget/page.tsx` | Renders the dedicated phone widget test page at `/widget`. |
 | `src/app/api/_shared/api-request-guard.ts` | Provides same-origin and rate-limit protection for API routes. |
+| `src/app/api/admin/users/route.ts` | Returns safe registered-user metadata when the admin secret is supplied. |
 | `src/app/api/apex/player-rank-status/route.ts` | Protects the API key and returns player rank data. |
 | `src/app/api/apex/player-rank-statuses/route.ts` | Protects the API key and returns a batched roster of player rank data. |
 | `src/app/api/apex/rp-history-calendar/route.ts` | Returns day-by-day RP history for the Statistics History calendar. |
 | `src/app/api/apex/rp-history-comparison/route.ts` | Returns stored RP comparison graph data for the Statistics Comparison tab. |
+| `src/app/api/auth/login/route.ts` | Verifies a Dropzone password and sets the signed login cookie. |
+| `src/app/api/auth/logout/route.ts` | Clears the signed login cookie. |
+| `src/app/api/auth/lookup/route.ts` | Verifies an Apex ID and reports whether a Dropzone account exists. |
+| `src/app/api/auth/register/route.ts` | Creates a Dropzone account with a salted password hash. |
+| `src/app/api/auth/session/route.ts` | Returns the safe currently signed-in user from the session cookie. |
 | `src/app/api/apex/ranked-map-rotation/route.ts` | Protects the API key and returns ranked map data. |
 | `src/app/api/cron/refresh-rank-pulse/route.ts` | Refreshes configured Rank Pulse players and stores server RP history on a schedule. |
 | `src/app/api/mobile/rank-pulse-summary/route.ts` | Returns mobile-safe widget display data without exposing the Apex API key. |
@@ -99,6 +107,16 @@ purpose-named parent folders and header comments explain what they do.
 | `config/dashboard-defaults.ts` | Stores default profiles, labels, and rank colors. |
 | `data-access/tracker-api-client.ts` | Calls protected internal API routes from the browser. |
 | `utilities/dashboard-display-formatters.ts` | Formats numbers, initials, and map countdowns. |
+
+### `src/features/dropzone-auth`: Dropzone Account Feature
+
+| Path | Purpose |
+| --- | --- |
+| `components/dropzone-login-panel.tsx` | Handles Apex ID lookup, account creation, login, logout, and dashboard handoff. |
+| `components/dropzone-admin-users-panel.tsx` | Shows registered-user metadata after the admin secret is entered. |
+| `server/dropzone-auth-service.ts` | Verifies Apex IDs, hashes passwords, signs sessions, and prepares safe admin summaries. |
+| `server/dropzone-auth-store.ts` | Provides local file, memory, and Upstash/Vercel KV REST storage for Dropzone users. |
+| `server/dropzone-auth-cookies.ts` | Sets and clears the signed HTTP-only Dropzone session cookie. |
 
 ### `src/features/mobile-rank-widget`: Planned Mobile Widget Feature
 

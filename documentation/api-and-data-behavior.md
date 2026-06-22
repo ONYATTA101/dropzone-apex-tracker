@@ -32,6 +32,24 @@ from the player rank endpoint.
 
 ## Internal Endpoints
 
+### Dropzone Auth
+
+Dropzone accounts use the player's Apex ID as the username. The login flow:
+
+1. `/login` asks for Apex ID and platform.
+2. `POST /api/auth/lookup` verifies the Apex ID against the stats provider.
+3. If no Dropzone account exists, the user creates a password.
+4. `POST /api/auth/register` stores a salted password hash and sets a signed session cookie.
+5. `POST /api/auth/login` verifies the password hash and refreshes safe account metadata.
+
+Passwords are never stored as readable text and are never returned to the browser or admin UI.
+
+Admin visibility:
+
+- `/admin/users` asks for `DROPZONE_ADMIN_SECRET`.
+- `GET /api/admin/users` returns user metadata, login count, rank snapshot, and timestamps.
+- The admin response does not include password hashes, salts, or session cookies.
+
 ### `GET /api/apex/player-rank-status`
 
 Query parameters:
