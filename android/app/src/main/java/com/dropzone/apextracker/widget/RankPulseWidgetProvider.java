@@ -64,7 +64,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     ) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.rank_pulse_widget);
 
-        bindOpenDashboardTap(context, views);
+        bindOpenDashboardButton(context, views);
         bindRow(views, rows[0], RowViews.PLAYER_ONE);
         bindRow(views, rows[1], RowViews.PLAYER_TWO);
         bindRow(views, rows[2], RowViews.PLAYER_THREE);
@@ -72,7 +72,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    private static void bindOpenDashboardTap(Context context, RemoteViews views) {
+    private static void bindOpenDashboardButton(Context context, RemoteViews views) {
         Intent openDashboardIntent = new Intent(context, MainActivity.class);
         openDashboardIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -82,7 +82,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        views.setOnClickPendingIntent(R.id.rank_pulse_widget_root, pendingIntent);
+        views.setOnClickPendingIntent(R.id.widget_open_app_button, pendingIntent);
     }
 
     private static void fetchServerSummary(

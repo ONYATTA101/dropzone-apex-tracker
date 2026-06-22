@@ -28,15 +28,17 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/widget_open_app_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/widget_status_pill"
+            android:contentDescription="@string/widget_open_description"
             android:fontFamily="sans-serif-medium"
             android:paddingStart="8dp"
             android:paddingTop="3dp"
             android:paddingEnd="8dp"
             android:paddingBottom="3dp"
-            android:text="@string/widget_refresh_label"
+            android:text="@string/widget_open_label"
             android:textColor="@color/dropzone_text_secondary"
             android:textSize="10sp" />
     </LinearLayout>

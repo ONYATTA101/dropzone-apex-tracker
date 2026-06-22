@@ -63,7 +63,9 @@ android/app/build/outputs/apk/debug/app-debug.apk
 
 The widget is designed as a compact information widget. It fits the same idea as the web
 preview: owner plus two friends, rank text, current RP, daily net RP, and a trend-colored bar.
-The Android launcher handles dragging and placing the widget after it is added.
+Only the small `Open` pill launches the app. The Android launcher handles dragging, placing, and
+removing the widget after it is added; long-press the widget if you want to remove it from the
+home screen.
 
 ## Next Android Milestones
 

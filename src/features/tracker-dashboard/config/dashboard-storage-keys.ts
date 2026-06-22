@@ -6,6 +6,7 @@
 export const DASHBOARD_STORAGE_KEYS = {
   profile: "dropzone-profile",
   friends: "dropzone-friends",
+  rankPulseWidgetHidden: "dropzone-rank-pulse-widget-hidden",
   rankPulseWidgetPosition: "dropzone-rank-pulse-widget-position",
   trackedHistory: "dropzone-tracked-player-history",
   theme: "dropzone-theme-mode",

@@ -99,8 +99,10 @@ This is the path that lets the widget update reliably even when the app was not 
 
 The scaffold sets `android:updatePeriodMillis="7200000"`, which is two hours. Android may still
 delay background updates to protect battery life. The widget is draggable from the Android
-launcher after the user places it on the home screen. For richer background behavior later, add
-WorkManager and let it fetch the server summary, then update the widget.
+launcher after the user places it on the home screen. The widget cannot close/remove itself;
+Android launchers control removal through long-press and remove. Only the small `Open` pill
+launches the app. For richer background behavior later, add WorkManager and let it fetch the
+server summary, then update the widget.
 
 ## How To Change The Widget
 

@@ -4,6 +4,7 @@
     <string name="app_name">Dropzone</string>
     <string name="app_description">A native Android shell and widget for Dropzone Apex Tracker.</string>
     <string name="widget_title">Rank Pulse</string>
-    <string name="widget_refresh_label">2 hr pulse</string>
+    <string name="widget_open_label">Open</string>
+    <string name="widget_open_description">Open Dropzone dashboard</string>
     <string name="widget_description">Track Apex rank, RP, and daily squad movement from your home screen.</string>
 </resources>

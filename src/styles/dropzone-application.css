@@ -872,7 +872,14 @@ button {
   text-transform: uppercase;
 }
 
-.floating-rank-pulse-handle button {
+.floating-rank-pulse-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.floating-rank-pulse-handle button,
+.rank-pulse-widget-restore {
   width: 26px;
   height: 26px;
   display: grid;
@@ -881,6 +888,29 @@ button {
   border-radius: 50%;
   background: rgba(10, 132, 255, 0.12);
   color: #9bd3ff;
+}
+
+.rank-pulse-widget-restore {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 32;
+  width: auto;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.floating-rank-pulse-handle button:hover,
+.rank-pulse-widget-restore:hover {
+  border-color: rgba(155, 211, 255, 0.6);
+  background: rgba(10, 132, 255, 0.2);
 }
 
 .widget-test-shell {

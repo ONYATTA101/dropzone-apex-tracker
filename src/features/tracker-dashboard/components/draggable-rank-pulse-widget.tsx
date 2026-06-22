@@ -5,7 +5,7 @@
 
 "use client";
 
-import { GripHorizontal, RefreshCw } from "lucide-react";
+import { GripHorizontal, RefreshCw, X } from "lucide-react";
 import { PointerEvent, useEffect, useRef, useState } from "react";
 import { PlayerRankStatus } from "@/domain/apex-ranked/types/apex-tracker-types";
 import { CompactRankPulseWidget } from "@/features/mobile-rank-widget/components/compact-rank-pulse-widget";
@@ -76,10 +76,14 @@ export function DraggableRankPulseWidget({
 }: DraggableRankPulseWidgetProps) {
   const [position, setPosition] = useState<WidgetPosition>(DEFAULT_POSITION);
   const [dragging, setDragging] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   const dragState = useRef<DragState | null>(null);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setPosition(readStoredPosition()), 0);
+    const timer = window.setTimeout(() => {
+      setPosition(readStoredPosition());
+      setIsHidden(window.localStorage.getItem(DASHBOARD_STORAGE_KEYS.rankPulseWidgetHidden) === "true");
+    }, 0);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -132,6 +136,25 @@ export function DraggableRankPulseWidget({
     });
   }
 
+  function hideWidget() {
+    window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.rankPulseWidgetHidden, "true");
+    setIsHidden(true);
+  }
+
+  function showWidget() {
+    window.localStorage.removeItem(DASHBOARD_STORAGE_KEYS.rankPulseWidgetHidden);
+    setIsHidden(false);
+    setPosition((current) => clampWidgetPosition(current));
+  }
+
+  if (isHidden) {
+    return (
+      <button className="rank-pulse-widget-restore" onClick={showWidget} type="button">
+        Rank Pulse
+      </button>
+    );
+  }
+
   return (
     <section
       className={`floating-rank-pulse-widget ${dragging ? "dragging" : ""}`}
@@ -146,9 +169,14 @@ export function DraggableRankPulseWidget({
         onPointerUp={finishDrag}
       >
         <span><GripHorizontal size={15} /> Drag Rank Pulse</span>
-        <button aria-label="Refresh Rank Pulse widget" disabled={loading} onClick={onRefresh} type="button">
-          <RefreshCw size={14} className={loading ? "spin" : ""} />
-        </button>
+        <div className="floating-rank-pulse-actions">
+          <button aria-label="Refresh Rank Pulse widget" disabled={loading} onClick={onRefresh} type="button">
+            <RefreshCw size={14} className={loading ? "spin" : ""} />
+          </button>
+          <button aria-label="Hide Rank Pulse widget" onClick={hideWidget} type="button">
+            <X size={14} />
+          </button>
+        </div>
       </div>
       <CompactRankPulseWidget owner={owner} friends={friends} />
     </section>
