@@ -46,6 +46,24 @@ history, so a player can review whether each day ended positive, negative, or fl
 reliable because the app already stores each day's baseline RP, current RP, daily net RP, last
 delta, and high/low RP in Upstash.
 
+Store enough day records for the current Apex ranked season, not just the current 14-day window.
+Use the ranked season metadata from the Apex provider when available. If the provider does not
+return season dates, use a configurable fallback such as 120 stored days per player.
+
+The first Account History UI should be a calendar. The user changes the visible month, and each
+day cell shows that date's net RP. Positive days should read like `+240 RP`, negative days like
+`-120 RP`, and flat days like `0 RP`. Use the existing color language: green for gain, red for
+loss, and blue or neutral for flat.
+
+When a user opens a calendar day, show the useful daily details:
+
+- Baseline RP
+- Final/current RP for that day
+- Net RP gained or lost
+- Highest RP reached that day
+- Lowest RP reached that day
+- Last sync time
+
 Version 2 can add exact per-game ranked records only if match-history access becomes available.
 The Apex API match-history endpoint requires special access, so do not promise exact game-by-game
 records until that provider limitation is solved.
@@ -57,6 +75,7 @@ Planned controls:
 - This week
 - This month
 - Day-by-day net RP gain or loss
+- Month picker for the calendar
 - RP gained or lost per tracked snapshot
 - Later: exact ranked match list with RP gain/loss per game
 
