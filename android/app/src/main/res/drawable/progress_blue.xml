@@ -11,7 +11,10 @@
         <clip>
             <shape>
                 <corners android:radius="999dp" />
-                <solid android:color="@color/dropzone_blue" />
+            <gradient
+                android:angle="0"
+                android:endColor="@color/dropzone_blue_bright"
+                android:startColor="@color/dropzone_blue" />
             </shape>
         </clip>
     </item>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Compact native Rank Pulse widget. Keep this layout small so it fits about one quarter of a phone screen. -->
+<!-- Native home-screen version of the Rank Pulse card. Keep this aligned with the web Rank Pulse styling. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rank_pulse_widget_root"
     android:layout_width="match_parent"
@@ -7,40 +7,20 @@
     android:background="@drawable/widget_card_background"
     android:gravity="center_vertical"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="13dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+    <LinearLayout style="@style/WidgetHeaderRow">
+        <TextView style="@style/WidgetHeaderNotch" />
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif-condensed"
-            android:letterSpacing="0.12"
-            android:text="@string/widget_title"
-            android:textAllCaps="true"
-            android:textColor="@color/dropzone_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            style="@style/WidgetTitleText"
+            android:text="@string/widget_title" />
 
         <TextView
             android:id="@+id/widget_open_app_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/widget_status_pill"
+            style="@style/WidgetSyncPill"
             android:contentDescription="@string/widget_open_description"
-            android:fontFamily="sans-serif-medium"
-            android:paddingStart="8dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="3dp"
-            android:text="@string/widget_open_label"
-            android:textColor="@color/dropzone_text_secondary"
-            android:textSize="10sp" />
+            android:text="@string/widget_open_label" />
     </LinearLayout>
 
     <!-- Player row one: owner account. -->
@@ -48,45 +28,27 @@
         android:id="@+id/player_one_row"
         style="@style/WidgetPlayerRow">
 
-        <TextView
-            android:id="@+id/player_one_badge"
-            style="@style/WidgetRankBadge" />
+        <LinearLayout style="@style/WidgetPlayerMainLine">
+            <TextView
+                android:id="@+id/player_one_badge"
+                style="@style/WidgetRankBadge" />
 
-        <LinearLayout style="@style/WidgetPlayerTextColumn">
-            <LinearLayout style="@style/WidgetPlayerNameLine">
+            <LinearLayout style="@style/WidgetPlayerNameColumn">
                 <TextView
-                    android:id="@+id/player_one_name"
-                    style="@style/WidgetPlayerName" />
+                    android:text="@string/widget_owner_role"
+                    style="@style/WidgetPlayerRole" />
 
-                <ImageView
-                    android:id="@+id/player_one_heat_icon"
-                    style="@style/WidgetHeatIcon" />
+                <LinearLayout style="@style/WidgetPlayerNameLine">
+                    <TextView
+                        android:id="@+id/player_one_name"
+                        style="@style/WidgetPlayerName" />
+
+                    <ImageView
+                        android:id="@+id/player_one_heat_icon"
+                        style="@style/WidgetHeatIcon" />
+                </LinearLayout>
             </LinearLayout>
 
-            <FrameLayout style="@style/WidgetProgressStack">
-                <ProgressBar
-                    android:id="@+id/player_one_progress_blue"
-                    style="@style/WidgetProgressBlue" />
-
-                <ProgressBar
-                    android:id="@+id/player_one_progress_light_green"
-                    style="@style/WidgetProgressLightGreen" />
-
-                <ProgressBar
-                    android:id="@+id/player_one_progress_strong_green"
-                    style="@style/WidgetProgressStrongGreen" />
-
-                <ProgressBar
-                    android:id="@+id/player_one_progress_light_red"
-                    style="@style/WidgetProgressLightRed" />
-
-                <ProgressBar
-                    android:id="@+id/player_one_progress_strong_red"
-                    style="@style/WidgetProgressStrongRed" />
-            </FrameLayout>
-        </LinearLayout>
-
-        <LinearLayout style="@style/WidgetPlayerStatsColumn">
             <TextView
                 android:id="@+id/player_one_rank"
                 style="@style/WidgetRankText" />
@@ -99,6 +61,28 @@
                 android:id="@+id/player_one_daily_net"
                 style="@style/WidgetDailyNetText" />
         </LinearLayout>
+
+        <FrameLayout style="@style/WidgetProgressStack">
+            <ProgressBar
+                android:id="@+id/player_one_progress_blue"
+                style="@style/WidgetProgressBlue" />
+
+            <ProgressBar
+                android:id="@+id/player_one_progress_light_green"
+                style="@style/WidgetProgressLightGreen" />
+
+            <ProgressBar
+                android:id="@+id/player_one_progress_strong_green"
+                style="@style/WidgetProgressStrongGreen" />
+
+            <ProgressBar
+                android:id="@+id/player_one_progress_light_red"
+                style="@style/WidgetProgressLightRed" />
+
+            <ProgressBar
+                android:id="@+id/player_one_progress_strong_red"
+                style="@style/WidgetProgressStrongRed" />
+        </FrameLayout>
     </LinearLayout>
 
     <!-- Player row two: first tracked friend. -->
@@ -106,45 +90,23 @@
         android:id="@+id/player_two_row"
         style="@style/WidgetPlayerRow">
 
-        <TextView
-            android:id="@+id/player_two_badge"
-            style="@style/WidgetRankBadge" />
+        <LinearLayout style="@style/WidgetPlayerMainLine">
+            <TextView
+                android:id="@+id/player_two_badge"
+                style="@style/WidgetRankBadge" />
 
-        <LinearLayout style="@style/WidgetPlayerTextColumn">
-            <LinearLayout style="@style/WidgetPlayerNameLine">
-                <TextView
-                    android:id="@+id/player_two_name"
-                    style="@style/WidgetPlayerName" />
+            <LinearLayout style="@style/WidgetPlayerNameColumn">
+                <LinearLayout style="@style/WidgetPlayerNameLine">
+                    <TextView
+                        android:id="@+id/player_two_name"
+                        style="@style/WidgetPlayerName" />
 
-                <ImageView
-                    android:id="@+id/player_two_heat_icon"
-                    style="@style/WidgetHeatIcon" />
+                    <ImageView
+                        android:id="@+id/player_two_heat_icon"
+                        style="@style/WidgetHeatIcon" />
+                </LinearLayout>
             </LinearLayout>
 
-            <FrameLayout style="@style/WidgetProgressStack">
-                <ProgressBar
-                    android:id="@+id/player_two_progress_blue"
-                    style="@style/WidgetProgressBlue" />
-
-                <ProgressBar
-                    android:id="@+id/player_two_progress_light_green"
-                    style="@style/WidgetProgressLightGreen" />
-
-                <ProgressBar
-                    android:id="@+id/player_two_progress_strong_green"
-                    style="@style/WidgetProgressStrongGreen" />
-
-                <ProgressBar
-                    android:id="@+id/player_two_progress_light_red"
-                    style="@style/WidgetProgressLightRed" />
-
-                <ProgressBar
-                    android:id="@+id/player_two_progress_strong_red"
-                    style="@style/WidgetProgressStrongRed" />
-            </FrameLayout>
-        </LinearLayout>
-
-        <LinearLayout style="@style/WidgetPlayerStatsColumn">
             <TextView
                 android:id="@+id/player_two_rank"
                 style="@style/WidgetRankText" />
@@ -157,6 +119,28 @@
                 android:id="@+id/player_two_daily_net"
                 style="@style/WidgetDailyNetText" />
         </LinearLayout>
+
+        <FrameLayout style="@style/WidgetProgressStack">
+            <ProgressBar
+                android:id="@+id/player_two_progress_blue"
+                style="@style/WidgetProgressBlue" />
+
+            <ProgressBar
+                android:id="@+id/player_two_progress_light_green"
+                style="@style/WidgetProgressLightGreen" />
+
+            <ProgressBar
+                android:id="@+id/player_two_progress_strong_green"
+                style="@style/WidgetProgressStrongGreen" />
+
+            <ProgressBar
+                android:id="@+id/player_two_progress_light_red"
+                style="@style/WidgetProgressLightRed" />
+
+            <ProgressBar
+                android:id="@+id/player_two_progress_strong_red"
+                style="@style/WidgetProgressStrongRed" />
+        </FrameLayout>
     </LinearLayout>
 
     <!-- Player row three: second tracked friend. -->
@@ -164,45 +148,23 @@
         android:id="@+id/player_three_row"
         style="@style/WidgetPlayerRow">
 
-        <TextView
-            android:id="@+id/player_three_badge"
-            style="@style/WidgetRankBadge" />
+        <LinearLayout style="@style/WidgetPlayerMainLine">
+            <TextView
+                android:id="@+id/player_three_badge"
+                style="@style/WidgetRankBadge" />
 
-        <LinearLayout style="@style/WidgetPlayerTextColumn">
-            <LinearLayout style="@style/WidgetPlayerNameLine">
-                <TextView
-                    android:id="@+id/player_three_name"
-                    style="@style/WidgetPlayerName" />
+            <LinearLayout style="@style/WidgetPlayerNameColumn">
+                <LinearLayout style="@style/WidgetPlayerNameLine">
+                    <TextView
+                        android:id="@+id/player_three_name"
+                        style="@style/WidgetPlayerName" />
 
-                <ImageView
-                    android:id="@+id/player_three_heat_icon"
-                    style="@style/WidgetHeatIcon" />
+                    <ImageView
+                        android:id="@+id/player_three_heat_icon"
+                        style="@style/WidgetHeatIcon" />
+                </LinearLayout>
             </LinearLayout>
 
-            <FrameLayout style="@style/WidgetProgressStack">
-                <ProgressBar
-                    android:id="@+id/player_three_progress_blue"
-                    style="@style/WidgetProgressBlue" />
-
-                <ProgressBar
-                    android:id="@+id/player_three_progress_light_green"
-                    style="@style/WidgetProgressLightGreen" />
-
-                <ProgressBar
-                    android:id="@+id/player_three_progress_strong_green"
-                    style="@style/WidgetProgressStrongGreen" />
-
-                <ProgressBar
-                    android:id="@+id/player_three_progress_light_red"
-                    style="@style/WidgetProgressLightRed" />
-
-                <ProgressBar
-                    android:id="@+id/player_three_progress_strong_red"
-                    style="@style/WidgetProgressStrongRed" />
-            </FrameLayout>
-        </LinearLayout>
-
-        <LinearLayout style="@style/WidgetPlayerStatsColumn">
             <TextView
                 android:id="@+id/player_three_rank"
                 style="@style/WidgetRankText" />
@@ -215,5 +177,39 @@
                 android:id="@+id/player_three_daily_net"
                 style="@style/WidgetDailyNetText" />
         </LinearLayout>
+
+        <FrameLayout style="@style/WidgetProgressStack">
+            <ProgressBar
+                android:id="@+id/player_three_progress_blue"
+                style="@style/WidgetProgressBlue" />
+
+            <ProgressBar
+                android:id="@+id/player_three_progress_light_green"
+                style="@style/WidgetProgressLightGreen" />
+
+            <ProgressBar
+                android:id="@+id/player_three_progress_strong_green"
+                style="@style/WidgetProgressStrongGreen" />
+
+            <ProgressBar
+                android:id="@+id/player_three_progress_light_red"
+                style="@style/WidgetProgressLightRed" />
+
+            <ProgressBar
+                android:id="@+id/player_three_progress_strong_red"
+                style="@style/WidgetProgressStrongRed" />
+        </FrameLayout>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="end"
+        android:letterSpacing="0.18"
+        android:text="@string/widget_footer_label"
+        android:textAllCaps="true"
+        android:textColor="@color/dropzone_text_quiet"
+        android:textSize="7sp"
+        android:textStyle="bold" />
 </LinearLayout>

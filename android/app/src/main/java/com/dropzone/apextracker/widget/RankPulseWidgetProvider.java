@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -182,7 +183,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
             rows[rowIndex] = new RankPulseRow(
                 player.optString("badgeLabel", createBadgeLabel(rankName)),
                 playerName,
-                rankName,
+                shortenRankName(rankName),
                 player.optInt("currentRp", 0),
                 player.optInt("progressPercent", 0),
                 player.optInt("dailyNetRp", 0),
@@ -229,6 +230,12 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         return label.length() == 0 ? "--" : label.toString().toUpperCase();
     }
 
+    private static String shortenRankName(String rankName) {
+        return rankName
+            .replace("Platinum", "Plat")
+            .replace("Diamond", "Dia");
+    }
+
     private static void bindRow(RemoteViews views, RankPulseRow row, RowViews rowViews) {
         views.setViewVisibility(rowViews.rowRootId, row.isVisible ? View.VISIBLE : View.GONE);
         if (!row.isVisible) {
@@ -240,6 +247,7 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         views.setTextViewText(rowViews.rankTextId, row.rankName);
         views.setTextViewText(rowViews.rpTextId, row.currentRp + " RP");
         views.setTextViewText(rowViews.dailyNetTextId, formatDailyNet(row.dailyNetRp));
+        bindDailyNetPill(views, rowViews.dailyNetTextId, row.dailyNetRp);
         views.setProgressBar(rowViews.blueProgressId, 100, row.progressPercent, false);
         views.setProgressBar(rowViews.lightGreenProgressId, 100, row.progressPercent, false);
         views.setProgressBar(rowViews.strongGreenProgressId, 100, row.progressPercent, false);
@@ -253,6 +261,23 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         views.setViewVisibility(rowViews.lightRedProgressId, trendStyle == TrendStyle.LIGHT_RED ? View.VISIBLE : View.GONE);
         views.setViewVisibility(rowViews.strongRedProgressId, trendStyle == TrendStyle.STRONG_RED ? View.VISIBLE : View.GONE);
         views.setViewVisibility(rowViews.heatIconId, row.hasHeatStreak ? View.VISIBLE : View.GONE);
+    }
+
+    private static void bindDailyNetPill(RemoteViews views, int dailyNetTextId, int dailyNetRp) {
+        if (dailyNetRp > 0) {
+            views.setTextColor(dailyNetTextId, Color.rgb(54, 213, 106));
+            views.setInt(dailyNetTextId, "setBackgroundResource", R.drawable.widget_daily_net_gain);
+            return;
+        }
+
+        if (dailyNetRp < 0) {
+            views.setTextColor(dailyNetTextId, Color.rgb(255, 107, 98));
+            views.setInt(dailyNetTextId, "setBackgroundResource", R.drawable.widget_daily_net_loss);
+            return;
+        }
+
+        views.setTextColor(dailyNetTextId, Color.rgb(174, 180, 191));
+        views.setInt(dailyNetTextId, "setBackgroundResource", R.drawable.widget_daily_net_neutral);
     }
 
     private static String formatDailyNet(int dailyNetRp) {

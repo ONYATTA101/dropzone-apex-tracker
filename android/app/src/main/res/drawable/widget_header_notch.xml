@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Small rounded sync pill used in the widget header. -->
+<!-- Small red notch that mirrors the web Rank Pulse card accent. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="999dp" />
-    <solid android:color="@color/dropzone_pill" />
+    <solid android:color="@color/dropzone_red_notch" />
 </shape>
