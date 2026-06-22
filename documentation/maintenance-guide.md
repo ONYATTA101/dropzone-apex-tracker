@@ -37,6 +37,27 @@ src/features/mobile-rank-widget/config/rank-notification-messages.ts
 Add a new message to the correct event group. Keep messages short so they fit phone
 notifications.
 
+## Future Todo: Account History
+
+Build an Account page history dropdown after the core tracker is stable.
+
+Version 1 should use the existing server RP history snapshots. It can show RP changes grouped by
+today, week, month, or current season. This is reliable because the app already stores current RP,
+daily net RP, last delta, and high/low RP in Upstash.
+
+Version 2 can add exact per-game ranked records only if match-history access becomes available.
+The Apex API match-history endpoint requires special access, so do not promise exact game-by-game
+records until that provider limitation is solved.
+
+Planned controls:
+
+- Current season only
+- Today
+- This week
+- This month
+- RP gained or lost per tracked snapshot
+- Later: exact ranked match list with RP gain/loss per game
+
 ## Add A New Server Endpoint
 
 1. Create a descriptive folder under `src/app/api`.
