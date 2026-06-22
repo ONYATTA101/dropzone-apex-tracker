@@ -27,6 +27,10 @@ type AccountStatisticsModalProps = {
 };
 
 type StatisticsTab = "history" | "comparison";
+type ComparisonGraphPoint = {
+  cumulativeNetRp: number;
+  dateKey: string;
+};
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const COMPARISON_COLORS = ["#0a84ff", "#30d158", "#ff9f0a"];
@@ -181,12 +185,29 @@ export function AccountStatisticsModal({
 
   if (!isOpen) return null;
 
+  function getGraphY(cumulativeNetRp: number) {
+    return 100 - ((cumulativeNetRp - comparisonRange.min) / (comparisonRange.max - comparisonRange.min)) * 100;
+  }
+
   function getGraphPoint(dateKey: string, cumulativeNetRp: number) {
     const dateIndex = comparisonDates.indexOf(dateKey);
-    const x = comparisonDates.length <= 1 ? 50 : (dateIndex / (comparisonDates.length - 1)) * 100;
-    const y = 100 - ((cumulativeNetRp - comparisonRange.min) / (comparisonRange.max - comparisonRange.min)) * 100;
+    const x = comparisonDates.length <= 1 ? 100 : (dateIndex / (comparisonDates.length - 1)) * 100;
+    const y = getGraphY(cumulativeNetRp);
 
     return { x, y };
+  }
+
+  function getComparisonLineCoordinates(points: ComparisonGraphPoint[]) {
+    if (points.length === 0) return "";
+
+    // Start every player at the same zero-RP baseline so even a single stored day renders as a line.
+    const baselineCoordinate = `0,${getGraphY(0)}`;
+    const playerCoordinates = points.map((point) => {
+      const graphPoint = getGraphPoint(point.dateKey, point.cumulativeNetRp);
+      return `${graphPoint.x},${graphPoint.y}`;
+    });
+
+    return [baselineCoordinate, ...playerCoordinates].join(" ");
   }
 
   return (
@@ -302,29 +323,18 @@ export function AccountStatisticsModal({
                     <span>{formatSignedRp(comparisonRange.min)}</span>
                   </div>
                   <svg className="statistics-graph" viewBox="0 0 100 100" preserveAspectRatio="none" aria-label="Squad RP comparison graph">
-                    <line x1="0" x2="100" y1="50" y2="50" className="statistics-graph-zero" />
+                    <line x1="0" x2="100" y1={getGraphY(0)} y2={getGraphY(0)} className="statistics-graph-zero" />
                     <line x1="0" x2="100" y1="18" y2="18" className="statistics-graph-gridline" />
                     <line x1="0" x2="100" y1="82" y2="82" className="statistics-graph-gridline" />
                     {comparison?.players.map((player, index) => {
                       const color = COMPARISON_COLORS[index % COMPARISON_COLORS.length];
-                      const coordinates = player.points
-                        .map((point) => {
-                          const graphPoint = getGraphPoint(point.dateKey, point.cumulativeNetRp);
-                          return `${graphPoint.x},${graphPoint.y}`;
-                        })
-                        .join(" ");
-                      const latestPoint = player.points[player.points.length - 1];
-                      const latestGraphPoint = latestPoint
-                        ? getGraphPoint(latestPoint.dateKey, latestPoint.cumulativeNetRp)
-                        : null;
+                      const coordinates = getComparisonLineCoordinates(player.points);
+                      if (!coordinates) return null;
 
                       return (
-                        <g key={getTrackedPlayerKey(player.player)}>
-                          {player.points.length > 1 ? (
-                            <polyline points={coordinates} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.6" vectorEffect="non-scaling-stroke" />
-                          ) : latestGraphPoint ? (
-                            <circle cx={latestGraphPoint.x} cy={latestGraphPoint.y} fill={color} r="2.8" vectorEffect="non-scaling-stroke" />
-                          ) : null}
+                        <g key={getTrackedPlayerKey(player.player)} aria-label={`${player.player.name} cumulative RP line`}>
+                          <polyline className="statistics-comparison-line-glow" points={coordinates} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth="7" />
+                          <polyline className="statistics-comparison-line" points={coordinates} fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.8" />
                         </g>
                       );
                     })}

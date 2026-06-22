@@ -6,6 +6,7 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
 import { Rajdhani, Space_Grotesk } from "next/font/google";
+import { TapHapticsController } from "@/features/app-feedback/components/tap-haptics-controller";
 import "@/styles/dropzone-application.css";
 
 // Swap these font imports if you want the app to feel more Apple-like, OnePlus-like, or arcade-like.
@@ -35,7 +36,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
-      <body className={`${display.variable} ${body.variable}`}>{children}</body>
+      <body className={`${display.variable} ${body.variable}`}>
+        <TapHapticsController />
+        {children}
+      </body>
     </html>
   );
 }

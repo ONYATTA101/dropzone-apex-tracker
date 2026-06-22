@@ -93,6 +93,34 @@ button {
   cursor: pointer;
 }
 
+button,
+a,
+[role="button"],
+[role="menuitem"],
+.platform-choice {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button,
+a[href],
+[role="button"],
+[role="menuitem"],
+.platform-choice {
+  transition:
+    transform 120ms ease,
+    filter 120ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.tap-feedback-active {
+  filter: brightness(1.12) saturate(1.08);
+  transform: translateY(1px) scale(0.985);
+}
+
 .app-shell {
   min-height: 100vh;
 }
@@ -2257,6 +2285,19 @@ button {
   stroke: rgba(255, 255, 255, 0.08);
 }
 
+.statistics-comparison-line,
+.statistics-comparison-line-glow {
+  vector-effect: non-scaling-stroke;
+}
+
+.statistics-comparison-line {
+  opacity: 0.98;
+}
+
+.statistics-comparison-line-glow {
+  opacity: 0.2;
+}
+
 .statistics-graph-dates {
   display: flex;
   justify-content: space-between;
@@ -2580,6 +2621,12 @@ button {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tap-feedback-active {
+    transform: none;
+  }
 }
 
 /* Unified Apple/OnePlus-inspired glass theme for the dashboard and widget. */

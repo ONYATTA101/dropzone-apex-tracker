@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Insets;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.View;
 import android.view.WindowInsets;
 import android.webkit.JavascriptInterface;
@@ -123,6 +125,23 @@ public class MainActivity extends Activity {
         public void saveTrackedRoster(String profileJson, String friendsJson) {
             RankPulseWidgetRosterStore.saveTrackedRoster(appContext, profileJson, friendsJson);
             RankPulseWidgetProvider.refreshAllWidgets(appContext);
+        }
+
+        @JavascriptInterface
+        public void tapHaptic() {
+            try {
+                Vibrator vibrator = (Vibrator) appContext.getSystemService(Context.VIBRATOR_SERVICE);
+                if (vibrator == null || !vibrator.hasVibrator()) return;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK));
+                    return;
+                }
+
+                vibrator.vibrate(VibrationEffect.createOneShot(12, VibrationEffect.DEFAULT_AMPLITUDE));
+            } catch (RuntimeException ignored) {
+                // WebView keeps the visual tap animation even if the device blocks vibration.
+            }
         }
     }
 }
