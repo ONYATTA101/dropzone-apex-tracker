@@ -17,13 +17,13 @@ function isAuthorizedCronRequest(request: NextRequest) {
   const bearerSecret = authHeader.replace(/^Bearer\s+/i, "");
   const querySecret = request.nextUrl.searchParams.get("secret");
 
-  if (configuredSecret) {
-    return bearerSecret === configuredSecret || querySecret === configuredSecret;
-  }
-
-  // Vercel Cron sends this user agent. Add DROPZONE_CRON_SECRET for stronger protection.
+  // Vercel Cron cannot attach custom auth headers, so keep this daily fallback available.
   if (request.headers.get("user-agent")?.includes("vercel-cron/1.0")) {
     return true;
+  }
+
+  if (configuredSecret) {
+    return bearerSecret === configuredSecret || querySecret === configuredSecret;
   }
 
   return process.env.NODE_ENV !== "production";

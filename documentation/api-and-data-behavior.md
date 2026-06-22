@@ -161,8 +161,10 @@ The response also includes `historyStorageMode` so you can see whether the deplo
 ### `GET /api/cron/refresh-rank-pulse`
 
 Refreshes the configured Rank Pulse roster and writes RP history without the dashboard being open.
-GitHub Actions calls this route every 2 hours through `.github/workflows/refresh-rank-pulse.yml`.
-Vercel Cron also calls it daily as a fallback.
+GitHub Actions calls this route every 2 hours through `.github/workflows/refresh-rank-pulse.yml`
+when Actions is enabled for the repository. Vercel Cron also calls it daily as a fallback.
+If GitHub Actions is locked or disabled, use any external HTTP scheduler with the same endpoint
+and bearer token.
 
 Security:
 
