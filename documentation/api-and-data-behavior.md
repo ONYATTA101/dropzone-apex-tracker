@@ -88,7 +88,7 @@ Query parameters:
 | `platform` | Yes | `PC`, `PS4`, or `X1`. |
 | `month` | No | Calendar month in `YYYY-MM` format. Defaults to the current server month. |
 
-Returns the stored Account History calendar for the selected month. The response includes:
+Returns the stored Statistics -> History calendar for the selected month. The response includes:
 
 ```text
 month
@@ -102,8 +102,22 @@ days[].highestRp
 days[].lowestRp
 ```
 
-The dashboard uses this route for the Account -> History calendar. It reads existing RP history
+The dashboard uses this route for the Account -> Statistics -> History calendar. It reads existing RP history
 from the server store; it does not expose the external Apex API key.
+
+### `POST /api/apex/rp-history-comparison`
+
+Body:
+
+```text
+players[]
+players[].name
+players[].platform
+```
+
+Returns stored Statistics -> Comparison graph data for up to three tracked players. Each player
+includes daily points with `dailyNetRp` and `cumulativeNetRp`, plus total and average daily RP
+fields for the legend cards.
 
 ## API Protection
 

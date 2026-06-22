@@ -1,5 +1,5 @@
 /**
- * Server-only Account History endpoint for day-by-day RP calendar data.
+ * Server-only Statistics History endpoint for day-by-day RP calendar data.
  * It reads the durable RP history store without exposing the Apex API key.
  */
 

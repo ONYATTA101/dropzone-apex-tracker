@@ -37,9 +37,9 @@ src/features/mobile-rank-widget/config/rank-notification-messages.ts
 Add a new message to the correct event group. Keep messages short so they fit phone
 notifications.
 
-## Future Todo: Account History
+## Future Todo: Account Statistics
 
-Build an Account page history dropdown after the core tracker is stable.
+Build out the Account -> Statistics area after the core tracker is stable.
 
 Version 1 should use the existing server RP history snapshots. It should show day-to-day net RP
 history, so a player can review whether each day ended positive, negative, or flat. This is
@@ -50,7 +50,7 @@ Store enough day records for the current Apex ranked season, not just the curren
 Use the ranked season metadata from the Apex provider when available. If the provider does not
 return season dates, use a configurable fallback such as 120 stored days per player.
 
-The first Account History UI should be a calendar. The user changes the visible month, and each
+The first Statistics History UI should be a calendar. The user changes the visible month, and each
 day cell shows that date's net RP. Positive days should read like `+240 RP`, negative days like
 `-120 RP`, and flat days like `0 RP`. Use the existing color language: green for gain, red for
 loss, and blue or neutral for flat.
@@ -76,6 +76,10 @@ When a user opens a calendar day, show the useful daily details:
 Version 2 can add exact per-game ranked records only if match-history access becomes available.
 The Apex API match-history endpoint requires special access, so do not promise exact game-by-game
 records until that provider limitation is solved.
+
+The Statistics Comparison tab should graph cumulative daily net RP for the owner and tracked
+friends from the first stored server sync. This measures pace using stored daily snapshots, not
+exact match-by-match records.
 
 Planned controls:
 

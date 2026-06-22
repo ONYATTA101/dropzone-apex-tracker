@@ -64,7 +64,8 @@ purpose-named parent folders and header comments explain what they do.
 | `src/app/api/_shared/api-request-guard.ts` | Provides same-origin and rate-limit protection for API routes. |
 | `src/app/api/apex/player-rank-status/route.ts` | Protects the API key and returns player rank data. |
 | `src/app/api/apex/player-rank-statuses/route.ts` | Protects the API key and returns a batched roster of player rank data. |
-| `src/app/api/apex/rp-history-calendar/route.ts` | Returns day-by-day RP history for the Account History calendar. |
+| `src/app/api/apex/rp-history-calendar/route.ts` | Returns day-by-day RP history for the Statistics History calendar. |
+| `src/app/api/apex/rp-history-comparison/route.ts` | Returns stored RP comparison graph data for the Statistics Comparison tab. |
 | `src/app/api/apex/ranked-map-rotation/route.ts` | Protects the API key and returns ranked map data. |
 | `src/app/api/cron/refresh-rank-pulse/route.ts` | Refreshes configured Rank Pulse players and stores server RP history on a schedule. |
 | `src/app/api/mobile/rank-pulse-summary/route.ts` | Returns mobile-safe widget display data without exposing the Apex API key. |
@@ -93,7 +94,7 @@ purpose-named parent folders and header comments explain what they do.
 | `components/apex-tracker-dashboard.tsx` | Coordinates dashboard state, loading, forms, and layout. |
 | `components/friend-rank-card.tsx` | Renders one friend's rank status. |
 | `components/rank-badge.tsx` | Renders live or fallback rank badge artwork. |
-| `components/rp-history-calendar-modal.tsx` | Renders the Account History calendar with day and month net RP. |
+| `components/account-statistics-modal.tsx` | Renders the Statistics modal with History calendar and Comparison graph tabs. |
 | `config/dashboard-defaults.ts` | Stores default profiles, labels, and rank colors. |
 | `data-access/tracker-api-client.ts` | Calls protected internal API routes from the browser. |
 | `utilities/dashboard-display-formatters.ts` | Formats numbers, initials, and map countdowns. |

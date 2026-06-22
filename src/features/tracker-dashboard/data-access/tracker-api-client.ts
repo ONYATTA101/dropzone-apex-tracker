@@ -9,6 +9,7 @@ import {
   PlayerRankStatus,
   RankedMapRotation,
   RpHistoryCalendarResponse,
+  RpHistoryComparisonResponse,
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
 
@@ -70,4 +71,18 @@ export async function fetchRpHistoryCalendar(
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? "Could not load RP history.");
   return data as RpHistoryCalendarResponse;
+}
+
+export async function fetchRpHistoryComparison(
+  players: TrackedPlayerIdentity[],
+): Promise<RpHistoryComparisonResponse> {
+  const response = await fetch("/api/apex/rp-history-comparison", {
+    method: "POST",
+    cache: "no-store",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ players }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error ?? "Could not load RP comparison.");
+  return data as RpHistoryComparisonResponse;
 }

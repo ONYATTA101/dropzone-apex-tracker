@@ -131,7 +131,7 @@ src/features/tracker-dashboard/components/apex-tracker-dashboard.tsx
 ```
 
 Edit `renderAccountMenu` to change the dropdown actions. The current actions are Account,
-History, Widget, and Settings.
+Statistics, Widget, and Settings.
 
 Open:
 

@@ -7,6 +7,8 @@ import {
   PlayerRankStatus,
   RpHistoryCalendarDay,
   RpHistoryCalendarResponse,
+  RpHistoryComparisonPlayer,
+  RpHistoryComparisonResponse,
   PlayerRpHistorySummary,
   PlayerRpHistoryTrend,
   TrackedPlayerIdentity,
@@ -237,6 +239,65 @@ export async function getRpHistoryCalendar(
       name: history?.name ?? identity.name,
       platform: history?.platform ?? identity.platform,
     },
+    retainedDayLimit: getRpHistoryStoredDayLimit(),
+    storageMode: getRpHistoryStorageMode(),
+    updatedAt: document.updatedAt,
+  };
+}
+
+function createComparisonPlayer(
+  identity: TrackedPlayerIdentity,
+  history?: StoredRpPlayerHistory,
+): RpHistoryComparisonPlayer {
+  let cumulativeNetRp = 0;
+  const points = Object.values(history?.days ?? {})
+    .sort((left, right) => left.dateKey.localeCompare(right.dateKey))
+    .map(createCalendarDay)
+    .map((day) => {
+      cumulativeNetRp += day.dailyNetRp;
+
+      return {
+        cumulativeNetRp,
+        currentRp: day.currentRp,
+        dailyNetRp: day.dailyNetRp,
+        dateKey: day.dateKey,
+      };
+    });
+  const trackedDayCount = points.length;
+
+  return {
+    averageDailyNetRp: trackedDayCount > 0 ? Math.round(cumulativeNetRp / trackedDayCount) : 0,
+    firstDateKey: points[0]?.dateKey ?? null,
+    latestDateKey: points[points.length - 1]?.dateKey ?? null,
+    player: {
+      name: history?.name ?? identity.name,
+      platform: history?.platform ?? identity.platform,
+    },
+    points,
+    totalNetRp: cumulativeNetRp,
+    trackedDayCount,
+  };
+}
+
+export async function getRpHistoryComparison(
+  identities: TrackedPlayerIdentity[],
+): Promise<RpHistoryComparisonResponse> {
+  const document = await readRpHistoryDocument();
+  const seen = new Set<string>();
+  const players = identities
+    .filter((identity) => {
+      const key = getRpHistoryPlayerKey(identity);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .map((identity) => {
+      const history = document.players[getRpHistoryPlayerKey(identity)];
+      return createComparisonPlayer(identity, history);
+    });
+
+  return {
+    players,
     retainedDayLimit: getRpHistoryStoredDayLimit(),
     storageMode: getRpHistoryStorageMode(),
     updatedAt: document.updatedAt,

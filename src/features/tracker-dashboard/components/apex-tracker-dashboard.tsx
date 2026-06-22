@@ -7,6 +7,7 @@
 
 import {
   Activity,
+  BarChart3,
   ChevronRight,
   Clock3,
   Crosshair,
@@ -39,9 +40,9 @@ import {
   MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
 import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
+import { AccountStatisticsModal } from "@/features/tracker-dashboard/components/account-statistics-modal";
 import { FriendRankCard } from "@/features/tracker-dashboard/components/friend-rank-card";
 import { RankBadge } from "@/features/tracker-dashboard/components/rank-badge";
-import { RpHistoryCalendarModal } from "@/features/tracker-dashboard/components/rp-history-calendar-modal";
 import {
   DEFAULT_FRIENDS,
   DEFAULT_PROFILE,
@@ -138,7 +139,7 @@ export default function ApexTrackerDashboard() {
   const [loading, setLoading] = useState(true);
   const [showProfile, setShowProfile] = useState(false);
   const [showFriendForm, setShowFriendForm] = useState(false);
-  const [showRpHistory, setShowRpHistory] = useState(false);
+  const [showStatistics, setShowStatistics] = useState(false);
   const [openAccountMenu, setOpenAccountMenu] = useState<"sidebar" | "topbar" | null>(null);
   const [toast, setToast] = useState<Toast>(null);
   const [friendQuery, setFriendQuery] = useState("");
@@ -432,9 +433,9 @@ export default function ApexTrackerDashboard() {
             <Settings2 size={15} />
             <span><strong>Account</strong><small>Edit Apex ID</small></span>
           </button>
-          <button onClick={() => { setOpenAccountMenu(null); setShowRpHistory(true); }} role="menuitem" type="button">
-            <History size={15} />
-            <span><strong>History</strong><small>RP calendar</small></span>
+          <button onClick={() => { setOpenAccountMenu(null); setShowStatistics(true); }} role="menuitem" type="button">
+            <BarChart3 size={15} />
+            <span><strong>Statistics</strong><small>History & comparison</small></span>
           </button>
           <Link href="/widget" onClick={() => setOpenAccountMenu(null)} role="menuitem">
             <Zap size={15} />
@@ -694,9 +695,10 @@ export default function ApexTrackerDashboard() {
         </div>
       )}
 
-      <RpHistoryCalendarModal
-        isOpen={showRpHistory}
-        onClose={() => setShowRpHistory(false)}
+      <AccountStatisticsModal
+        comparisonPlayers={friendIds}
+        isOpen={showStatistics}
+        onClose={() => setShowStatistics(false)}
         profile={profile}
       />
 

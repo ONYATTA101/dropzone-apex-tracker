@@ -61,6 +61,31 @@ export type RpHistoryCalendarResponse = {
   updatedAt: string;
 };
 
+// Comparison history turns stored daily RP snapshots into squad graph points.
+export type RpHistoryComparisonPoint = {
+  cumulativeNetRp: number;
+  currentRp: number;
+  dailyNetRp: number;
+  dateKey: string;
+};
+
+export type RpHistoryComparisonPlayer = {
+  averageDailyNetRp: number;
+  firstDateKey: string | null;
+  latestDateKey: string | null;
+  player: TrackedPlayerIdentity;
+  points: RpHistoryComparisonPoint[];
+  totalNetRp: number;
+  trackedDayCount: number;
+};
+
+export type RpHistoryComparisonResponse = {
+  players: RpHistoryComparisonPlayer[];
+  retainedDayLimit: number;
+  storageMode: string;
+  updatedAt: string;
+};
+
 // RankProgress powers the progress bars and "RP remaining" labels.
 export type RankProgress = {
   currentFloor: number;
