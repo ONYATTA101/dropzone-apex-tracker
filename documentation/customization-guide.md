@@ -229,16 +229,16 @@ Open the public phone test page here:
 https://dropzone-apex-tracker.vercel.app/widget
 ```
 
-The dashboard renders it here:
+The dashboard renders it directly in the homepage layout here:
 
 ```text
-src/features/tracker-dashboard/components/draggable-rank-pulse-widget.tsx
+src/features/tracker-dashboard/components/apex-tracker-dashboard.tsx
 ```
 
 Look for:
 
 ```tsx
-<DraggableRankPulseWidget owner={me} friends={friends} />
+<CompactRankPulseWidget owner={me} friends={friends} />
 ```
 
 The widget is capped at 3 players by:

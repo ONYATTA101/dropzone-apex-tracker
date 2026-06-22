@@ -57,7 +57,7 @@ android/app/build/outputs/apk/debug/app-debug.apk
 1. Install/run the Android app on the phone.
 2. Open the app once so the dashboard roster can sync into Android storage.
 3. Long-press the Android home screen.
-4. Choose `Widgets`.
+4. Choose `Widgets`. On some OnePlus launchers this is inside `Wallpaper & style`.
 5. Find `Dropzone`.
 6. Drag `Rank Pulse` to the home screen.
 

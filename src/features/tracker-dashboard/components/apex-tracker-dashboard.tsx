@@ -38,8 +38,8 @@ import {
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
   MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
+import { CompactRankPulseWidget } from "@/features/mobile-rank-widget/components/compact-rank-pulse-widget";
 import { AccountStatisticsModal } from "@/features/tracker-dashboard/components/account-statistics-modal";
-import { DraggableRankPulseWidget } from "@/features/tracker-dashboard/components/draggable-rank-pulse-widget";
 import { FriendRankCard } from "@/features/tracker-dashboard/components/friend-rank-card";
 import { RankBadge } from "@/features/tracker-dashboard/components/rank-badge";
 import {
@@ -494,12 +494,9 @@ export default function ApexTrackerDashboard() {
           </div>
         )}
 
-        <DraggableRankPulseWidget
-          friends={friends}
-          loading={loading}
-          onRefresh={() => void loadData(profile, friendIds, true, true, true)}
-          owner={me}
-        />
+        <section className="dashboard-rank-pulse-slot" aria-label="Rank Pulse">
+          <CompactRankPulseWidget owner={me} friends={friends} />
+        </section>
 
         <section className="hero-grid">
           {/* Main rank panel: change this block when redesigning the primary rank summary. */}

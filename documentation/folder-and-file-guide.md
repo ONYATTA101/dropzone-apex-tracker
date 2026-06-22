@@ -101,7 +101,6 @@ purpose-named parent folders and header comments explain what they do.
 | Path | Purpose |
 | --- | --- |
 | `components/apex-tracker-dashboard.tsx` | Coordinates dashboard state, loading, forms, and layout. |
-| `components/draggable-rank-pulse-widget.tsx` | Renders the movable dashboard Rank Pulse widget that mirrors tracked players. |
 | `components/friend-rank-card.tsx` | Renders one friend's rank status. |
 | `components/rank-badge.tsx` | Renders live or fallback rank badge artwork. |
 | `components/account-statistics-modal.tsx` | Renders the Statistics modal with History calendar and Comparison graph tabs. |
