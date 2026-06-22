@@ -32,11 +32,14 @@ public class MainActivity extends Activity {
         // The Next.js dashboard needs JavaScript and local storage for the roster UI.
         settings.setDomStorageEnabled(true);
         settings.setJavaScriptEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
 
+        // Avoid showing an old cached dashboard after a production redeploy or RP refresh fix.
+        dashboardWebView.clearCache(true);
         dashboardWebView.setWebViewClient(new WebViewClient());
-        dashboardWebView.loadUrl(DASHBOARD_URL);
+        dashboardWebView.loadUrl(DASHBOARD_URL + "?refresh=" + System.currentTimeMillis());
     }
 
     private void applySystemBarPadding() {

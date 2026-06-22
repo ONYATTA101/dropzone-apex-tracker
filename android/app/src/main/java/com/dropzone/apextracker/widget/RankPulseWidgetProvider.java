@@ -98,11 +98,15 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     }
 
     private static String fetchSummaryJson() throws Exception {
-        HttpURLConnection connection = (HttpURLConnection) new URL(WIDGET_SUMMARY_URL).openConnection();
+        String summaryUrl = WIDGET_SUMMARY_URL + "?refresh=" + System.currentTimeMillis();
+        HttpURLConnection connection = (HttpURLConnection) new URL(summaryUrl).openConnection();
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
         connection.setRequestMethod("GET");
+        connection.setUseCaches(false);
         connection.setRequestProperty("Accept", "application/json");
+        connection.setRequestProperty("Cache-Control", "no-cache");
+        connection.setRequestProperty("Pragma", "no-cache");
         connection.setRequestProperty("User-Agent", "DropzoneAndroidWidget/0.1");
 
         int statusCode = connection.getResponseCode();
