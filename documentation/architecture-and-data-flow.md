@@ -65,9 +65,10 @@ The current live flow is:
 
 ## Server RP History Flow
 
-1. `/api/cron/refresh-rank-pulse` refreshes the Rank Pulse roster without needing the app to be open.
-2. The route fetches live RP through `player-rank-service.ts`.
-3. `rp-history-service.ts` stores the first RP of the day and updates latest RP.
-4. Local development stores history in `.dropzone-data/rp-history.json`.
-5. Production uses Upstash Redis or Vercel KV when `UPSTASH_REDIS_REST_*` or `KV_REST_API_*` env vars exist.
-6. If no durable production store is configured, the app falls back to memory and marks that response with `historyStorageMode: "memory"`.
+1. `.github/workflows/refresh-rank-pulse.yml` calls `/api/cron/refresh-rank-pulse` every 2 hours.
+2. Vercel Cron also calls the same route daily as a fallback refresh.
+3. The route fetches live RP through `player-rank-service.ts`.
+4. `rp-history-service.ts` stores the first RP of the day and updates latest RP.
+5. Local development stores history in `.dropzone-data/rp-history.json`.
+6. Production uses Upstash Redis or Vercel KV when `UPSTASH_REDIS_REST_*` or `KV_REST_API_*` env vars exist.
+7. If no durable production store is configured, the app falls back to memory and marks that response with `historyStorageMode: "memory"`.

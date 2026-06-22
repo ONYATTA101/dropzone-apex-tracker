@@ -1,0 +1,27 @@
+name: Refresh Rank Pulse RP History
+
+on:
+  schedule:
+    # External 2-hour refresh for RP history, independent of opening the app.
+    - cron: "17 */2 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-rank-pulse
+  cancel-in-progress: false
+
+jobs:
+  refresh-rank-pulse:
+    name: Call production refresh endpoint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Refresh tracked players
+        env:
+          DROPZONE_CRON_SECRET: ${{ secrets.DROPZONE_CRON_SECRET }}
+        run: |
+          test -n "$DROPZONE_CRON_SECRET"
+          curl --fail --show-error --silent --retry 2 --retry-delay 10 \
+            --header "Authorization: Bearer $DROPZONE_CRON_SECRET" \
+            "https://dropzone-apex-tracker.vercel.app/api/cron/refresh-rank-pulse"

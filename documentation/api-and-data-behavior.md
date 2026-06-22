@@ -161,13 +161,20 @@ The response also includes `historyStorageMode` so you can see whether the deplo
 ### `GET /api/cron/refresh-rank-pulse`
 
 Refreshes the configured Rank Pulse roster and writes RP history without the dashboard being open.
-Vercel Cron calls this route with `GET`.
+GitHub Actions calls this route every 2 hours through `.github/workflows/refresh-rank-pulse.yml`.
+Vercel Cron also calls it daily as a fallback.
 
 Security:
 
 - Set `DROPZONE_CRON_SECRET` in production.
 - Call with `Authorization: Bearer <DROPZONE_CRON_SECRET>` when using an external scheduler.
 - Vercel Cron can call the route directly, but a secret is stronger.
+
+Production roster:
+
+- `DROPZONE_MOBILE_WIDGET_PLAYERS` controls which players the background job refreshes.
+- Format: `PS4:Player,PC:Friend,X1:FriendTwo`.
+- Keep it to three players so the server history matches the Rank Pulse widget.
 
 ### `GET /api/apex/ranked-map-rotation`
 

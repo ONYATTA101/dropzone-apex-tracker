@@ -78,8 +78,8 @@ current RP - first RP seen today
 ```
 
 For a real Android home-screen widget that updates even when the app was not opened that day,
-use the planned server snapshot path: Vercel Cron plus Redis or a small database. That is the
-Option 2 reminder from the earlier discussion.
+the server stores RP snapshots in Upstash. GitHub Actions calls the secure refresh endpoint every
+2 hours, and Vercel Cron keeps a daily fallback refresh.
 
 Important testing behavior:
 

@@ -7,6 +7,7 @@ JSON files cannot safely contain comments, and generated files should not be man
 
 | Path | Purpose |
 | --- | --- |
+| `.github/workflows/refresh-rank-pulse.yml` | Calls the secure production RP refresh endpoint every 2 hours. |
 | `.env.example` | Documents the environment variable required for live data. |
 | `.gitignore` | Prevents dependencies, builds, and secrets from entering version control. |
 | `eslint.config.mjs` | Defines code-quality rules. |
@@ -14,7 +15,7 @@ JSON files cannot safely contain comments, and generated files should not be man
 | `package.json` | JSON package manifest, scripts, and dependencies. JSON does not allow comments. |
 | `package-lock.json` | npm-generated exact dependency versions. Do not manually edit it. |
 | `tsconfig.json` | TypeScript compiler configuration. |
-| `vercel.json` | Configures the safe daily Vercel Cron call for RP history refresh. |
+| `vercel.json` | Configures the safe daily Vercel Cron fallback for RP history refresh. |
 | `README.md` | Quick project entry point and documentation links. |
 | `CONTRIBUTING.md` | Explains how collaborators should branch, test, and open pull requests. |
 | `CHANGELOG.md` | Tracks user-facing changes by version. |
