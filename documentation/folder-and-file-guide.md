@@ -165,13 +165,13 @@ maintained. Generated Android Studio folders such as `.gradle`, `build`, `.idea`
 | `android/app/build.gradle.kts` | Configures the app package, SDK levels, and version. |
 | `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
 | `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Shows the live Dropzone dashboard inside the native app shell. |
-| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches mobile-safe data and updates the native Rank Pulse home-screen widget. |
+| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches mobile-safe data, draws the Rank Pulse bitmap card, and updates the home-screen widget. |
 | `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetRosterStore.java` | Stores the WebView-tracked owner and friends for the native Rank Pulse widget. |
 | `android/app/src/main/res/layout/activity_main.xml` | Defines the in-app dashboard WebView layout. |
-| `android/app/src/main/res/layout/rank_pulse_widget.xml` | Defines the compact Android home-screen widget UI. |
+| `android/app/src/main/res/layout/rank_pulse_widget.xml` | Hosts the bitmap-rendered Android home-screen widget card. |
 | `android/app/src/main/res/xml/rank_pulse_widget_info.xml` | Defines widget sizing, category, preview, and update metadata. |
-| `android/app/src/main/res/values/colors.xml` | Stores native app and widget color tokens. |
+| `android/app/src/main/res/values/colors.xml` | Stores native Android XML color tokens. |
 | `android/app/src/main/res/values/strings.xml` | Stores native Android labels and copy. |
-| `android/app/src/main/res/values/styles.xml` | Stores native widget row, badge, text, and progress styles. |
-| `android/app/src/main/res/drawable/*` | Stores native backgrounds, progress bars, heat icon, and launcher mark. |
+| `android/app/src/main/res/values/styles.xml` | Stores the native Android activity theme. |
+| `android/app/src/main/res/drawable/*` | Stores native backgrounds, heat icon, and launcher mark. |
 | `android/app/src/main/res/mipmap-anydpi-v26/*` | Stores adaptive Android launcher icon definitions. |

@@ -9,8 +9,9 @@ The current `/widget` page is a web preview. It is useful for designing and test
 layout, but it cannot appear on the Android home screen like a Weather widget.
 
 Android home-screen widgets are native app widgets. That means Dropzone needs an Android app
-that registers an `AppWidgetProvider`, supplies widget metadata XML, and renders a compact
-RemoteViews layout.
+that registers an `AppWidgetProvider`, supplies widget metadata XML, and updates a RemoteViews
+layout. To stay close to the dashboard Rank Pulse card, the widget draws the card as one bitmap
+instead of rebuilding the design from separate native TextViews and ProgressBars.
 
 ## Current Native Files
 
@@ -23,15 +24,15 @@ RemoteViews layout.
 | `android/app/build.gradle.kts` | Configures package name, Android SDK 36 levels, and version numbers. |
 | `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
 | `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Shows the live web dashboard inside the native shell. |
-| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches the server widget summary and updates the native home-screen widget. |
+| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches the server widget summary, draws the Rank Pulse bitmap card, and updates the home-screen widget. |
 | `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetRosterStore.java` | Copies the dashboard-tracked roster from WebView storage into Android shared preferences for the widget. |
 | `android/app/src/main/res/layout/activity_main.xml` | Native in-app dashboard WebView layout. |
-| `android/app/src/main/res/layout/rank_pulse_widget.xml` | Compact widget layout with three tracked-player rows. |
+| `android/app/src/main/res/layout/rank_pulse_widget.xml` | Minimal widget layout that displays the rendered Rank Pulse bitmap and keeps a tap target over the sync pill. |
 | `android/app/src/main/res/xml/rank_pulse_widget_info.xml` | Android widget sizing, category, layout, and update metadata. |
-| `android/app/src/main/res/values/colors.xml` | Native color tokens for app and widget styling. |
+| `android/app/src/main/res/values/colors.xml` | Native color tokens for Android XML assets. |
 | `android/app/src/main/res/values/strings.xml` | Native user-facing app and widget copy. |
-| `android/app/src/main/res/values/styles.xml` | Shared widget text, row, badge, and progress bar styles. |
-| `android/app/src/main/res/drawable/*` | Native backgrounds, progress bars, launcher mark, and heat icon. |
+| `android/app/src/main/res/values/styles.xml` | Native launcher activity theme. |
+| `android/app/src/main/res/drawable/*` | Native activity backgrounds, launcher mark, and remaining vector assets. |
 
 ## Data Safety Rule
 
@@ -100,19 +101,17 @@ This is the path that lets the widget update reliably even when the app was not 
 The scaffold sets `android:updatePeriodMillis="7200000"`, which is two hours. Android may still
 delay background updates to protect battery life. The widget is draggable from the Android
 launcher after the user places it on the home screen. The widget cannot close/remove itself;
-Android launchers control removal through long-press and remove. Only the small `Open` pill
-launches the app. For richer background behavior later, add WorkManager and let it fetch the
-server summary, then update the widget.
+Android launchers control removal through long-press and remove. The dashboard-style `2H SYNC`
+pill area opens the app. For richer background behavior later, add WorkManager and let it fetch
+the server summary, then update the widget.
 
 ## How To Change The Widget
 
 - Change the roster sync keys or default owner in `MainActivity.java`.
 - Change how WebView roster JSON becomes a server query in `RankPulseWidgetRosterStore.java`.
-- Change the widget title and refresh label in `strings.xml`.
-- Change colors in `colors.xml`.
-- Change row spacing and text sizes in `styles.xml`.
-- Change the compact layout in `rank_pulse_widget.xml`.
-- Change the trend thresholds in `RankPulseWidgetProvider.java`.
+- Change card dimensions, colors, row spacing, text sizes, and trend thresholds in `RankPulseWidgetProvider.java`.
+- Change the minimal ImageView/tap-target host in `rank_pulse_widget.xml`.
+- Change widget labels and accessibility descriptions in `strings.xml`.
 
 ## What To Build Next
 

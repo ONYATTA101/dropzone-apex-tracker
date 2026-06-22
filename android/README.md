@@ -9,7 +9,7 @@ Weather-style Android widget by itself.
 - A native Android project that Android Studio can open from this `android` folder.
 - A small launcher activity that opens the live Dropzone dashboard inside the app.
 - A native `AppWidgetProvider` named `RankPulseWidgetProvider`.
-- A compact dark Rank Pulse widget layout with three tracked-player rows.
+- A bitmap-rendered Rank Pulse widget card that mirrors the dashboard widget style.
 - A WebView-to-native roster sync so the widget mirrors players already tracked in the app.
 - Commented Java, XML, and Gradle files so you can see where to change labels, colors, and
   refresh behavior later.
@@ -61,11 +61,12 @@ android/app/build/outputs/apk/debug/app-debug.apk
 5. Find `Dropzone`.
 6. Drag `Rank Pulse` to the home screen.
 
-The widget is designed as a compact information widget. It fits the same idea as the web
-preview: owner plus two friends, rank text, current RP, daily net RP, and a trend-colored bar.
-Only the small `Open` pill launches the app. The Android launcher handles dragging, placing, and
-removing the widget after it is added; long-press the widget if you want to remove it from the
-home screen.
+The widget is designed as a compact information widget. It mirrors the dashboard Rank Pulse card:
+owner plus two friends, rank text, current RP, daily net RP, and a trend-colored bar. The card is
+drawn as a bitmap inside `RankPulseWidgetProvider.java` so it can stay much closer to the web UI
+than separate Android TextViews and ProgressBars. The Android launcher handles dragging, placing,
+and removing the widget after it is added; long-press the widget if you want to remove it from
+the home screen.
 
 ## Next Android Milestones
 

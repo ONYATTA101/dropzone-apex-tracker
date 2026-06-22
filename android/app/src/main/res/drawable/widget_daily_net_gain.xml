@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Daily RP gain pill background for the native Rank Pulse widget. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="999dp" />
-    <solid android:color="@color/dropzone_daily_gain_bg" />
-</shape>

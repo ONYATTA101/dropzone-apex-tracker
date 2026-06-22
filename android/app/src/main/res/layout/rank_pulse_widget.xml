@@ -1,215 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Native home-screen version of the Rank Pulse card. Keep this aligned with the web Rank Pulse styling. -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Native launcher container for a bitmap-rendered Rank Pulse card. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/rank_pulse_widget_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/widget_card_background"
-    android:gravity="center_vertical"
-    android:orientation="vertical"
-    android:padding="13dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout style="@style/WidgetHeaderRow">
-        <TextView style="@style/WidgetHeaderNotch" />
-
-        <TextView
-            style="@style/WidgetTitleText"
-            android:text="@string/widget_title" />
-
-        <TextView
-            android:id="@+id/widget_open_app_button"
-            style="@style/WidgetSyncPill"
-            android:contentDescription="@string/widget_open_description"
-            android:text="@string/widget_open_label" />
-    </LinearLayout>
-
-    <!-- Player row one: owner account. -->
-    <LinearLayout
-        android:id="@+id/player_one_row"
-        style="@style/WidgetPlayerRow">
-
-        <LinearLayout style="@style/WidgetPlayerMainLine">
-            <TextView
-                android:id="@+id/player_one_badge"
-                style="@style/WidgetRankBadge" />
-
-            <LinearLayout style="@style/WidgetPlayerNameColumn">
-                <TextView
-                    android:text="@string/widget_owner_role"
-                    style="@style/WidgetPlayerRole" />
-
-                <LinearLayout style="@style/WidgetPlayerNameLine">
-                    <TextView
-                        android:id="@+id/player_one_name"
-                        style="@style/WidgetPlayerName" />
-
-                    <ImageView
-                        android:id="@+id/player_one_heat_icon"
-                        style="@style/WidgetHeatIcon" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/player_one_rank"
-                style="@style/WidgetRankText" />
-
-            <TextView
-                android:id="@+id/player_one_rp"
-                style="@style/WidgetRpText" />
-
-            <TextView
-                android:id="@+id/player_one_daily_net"
-                style="@style/WidgetDailyNetText" />
-        </LinearLayout>
-
-        <FrameLayout style="@style/WidgetProgressStack">
-            <ProgressBar
-                android:id="@+id/player_one_progress_blue"
-                style="@style/WidgetProgressBlue" />
-
-            <ProgressBar
-                android:id="@+id/player_one_progress_light_green"
-                style="@style/WidgetProgressLightGreen" />
-
-            <ProgressBar
-                android:id="@+id/player_one_progress_strong_green"
-                style="@style/WidgetProgressStrongGreen" />
-
-            <ProgressBar
-                android:id="@+id/player_one_progress_light_red"
-                style="@style/WidgetProgressLightRed" />
-
-            <ProgressBar
-                android:id="@+id/player_one_progress_strong_red"
-                style="@style/WidgetProgressStrongRed" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <!-- Player row two: first tracked friend. -->
-    <LinearLayout
-        android:id="@+id/player_two_row"
-        style="@style/WidgetPlayerRow">
-
-        <LinearLayout style="@style/WidgetPlayerMainLine">
-            <TextView
-                android:id="@+id/player_two_badge"
-                style="@style/WidgetRankBadge" />
-
-            <LinearLayout style="@style/WidgetPlayerNameColumn">
-                <LinearLayout style="@style/WidgetPlayerNameLine">
-                    <TextView
-                        android:id="@+id/player_two_name"
-                        style="@style/WidgetPlayerName" />
-
-                    <ImageView
-                        android:id="@+id/player_two_heat_icon"
-                        style="@style/WidgetHeatIcon" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/player_two_rank"
-                style="@style/WidgetRankText" />
-
-            <TextView
-                android:id="@+id/player_two_rp"
-                style="@style/WidgetRpText" />
-
-            <TextView
-                android:id="@+id/player_two_daily_net"
-                style="@style/WidgetDailyNetText" />
-        </LinearLayout>
-
-        <FrameLayout style="@style/WidgetProgressStack">
-            <ProgressBar
-                android:id="@+id/player_two_progress_blue"
-                style="@style/WidgetProgressBlue" />
-
-            <ProgressBar
-                android:id="@+id/player_two_progress_light_green"
-                style="@style/WidgetProgressLightGreen" />
-
-            <ProgressBar
-                android:id="@+id/player_two_progress_strong_green"
-                style="@style/WidgetProgressStrongGreen" />
-
-            <ProgressBar
-                android:id="@+id/player_two_progress_light_red"
-                style="@style/WidgetProgressLightRed" />
-
-            <ProgressBar
-                android:id="@+id/player_two_progress_strong_red"
-                style="@style/WidgetProgressStrongRed" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <!-- Player row three: second tracked friend. -->
-    <LinearLayout
-        android:id="@+id/player_three_row"
-        style="@style/WidgetPlayerRow">
-
-        <LinearLayout style="@style/WidgetPlayerMainLine">
-            <TextView
-                android:id="@+id/player_three_badge"
-                style="@style/WidgetRankBadge" />
-
-            <LinearLayout style="@style/WidgetPlayerNameColumn">
-                <LinearLayout style="@style/WidgetPlayerNameLine">
-                    <TextView
-                        android:id="@+id/player_three_name"
-                        style="@style/WidgetPlayerName" />
-
-                    <ImageView
-                        android:id="@+id/player_three_heat_icon"
-                        style="@style/WidgetHeatIcon" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/player_three_rank"
-                style="@style/WidgetRankText" />
-
-            <TextView
-                android:id="@+id/player_three_rp"
-                style="@style/WidgetRpText" />
-
-            <TextView
-                android:id="@+id/player_three_daily_net"
-                style="@style/WidgetDailyNetText" />
-        </LinearLayout>
-
-        <FrameLayout style="@style/WidgetProgressStack">
-            <ProgressBar
-                android:id="@+id/player_three_progress_blue"
-                style="@style/WidgetProgressBlue" />
-
-            <ProgressBar
-                android:id="@+id/player_three_progress_light_green"
-                style="@style/WidgetProgressLightGreen" />
-
-            <ProgressBar
-                android:id="@+id/player_three_progress_strong_green"
-                style="@style/WidgetProgressStrongGreen" />
-
-            <ProgressBar
-                android:id="@+id/player_three_progress_light_red"
-                style="@style/WidgetProgressLightRed" />
-
-            <ProgressBar
-                android:id="@+id/player_three_progress_strong_red"
-                style="@style/WidgetProgressStrongRed" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <TextView
+    <ImageView
+        android:id="@+id/rank_pulse_widget_bitmap"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="end"
-        android:letterSpacing="0.18"
-        android:text="@string/widget_footer_label"
-        android:textAllCaps="true"
-        android:textColor="@color/dropzone_text_quiet"
-        android:textSize="7sp"
-        android:textStyle="bold" />
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:contentDescription="@string/widget_description"
+        android:scaleType="fitXY" />
+
+    <!-- Invisible tap target over the dashboard-style sync pill. -->
+    <TextView
+        android:id="@+id/widget_open_app_button"
+        android:layout_width="96dp"
+        android:layout_height="44dp"
+        android:layout_gravity="top|end"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/widget_open_description" />
+</FrameLayout>
