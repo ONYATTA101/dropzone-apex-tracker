@@ -101,6 +101,7 @@ purpose-named parent folders and header comments explain what they do.
 | Path | Purpose |
 | --- | --- |
 | `components/apex-tracker-dashboard.tsx` | Coordinates dashboard state, loading, forms, and layout. |
+| `components/draggable-rank-pulse-widget.tsx` | Renders the movable dashboard Rank Pulse widget that mirrors tracked players. |
 | `components/friend-rank-card.tsx` | Renders one friend's rank status. |
 | `components/rank-badge.tsx` | Renders live or fallback rank badge artwork. |
 | `components/account-statistics-modal.tsx` | Renders the Statistics modal with History calendar and Comparison graph tabs. |
@@ -126,10 +127,10 @@ home-screen widget.
 | Path | Purpose |
 | --- | --- |
 | `components/compact-rank-pulse-widget.tsx` | Renders the compact live widget preview. |
-| `components/mobile-widget-test-screen.tsx` | Renders the dedicated `/widget` phone test screen. |
+| `components/mobile-widget-test-screen.tsx` | Renders the dedicated `/widget` phone preview/status screen. |
 | `config/mobile-widget-settings.ts` | Stores planned widget limits, refresh timing, and storage keys. |
 | `config/rank-notification-messages.ts` | Stores editable rank/RP notification message templates. |
-| `utilities/widget-daily-rp-baselines.ts` | Stores and tests local daily RP baselines for net gain/loss display. |
+| `utilities/widget-daily-rp-baselines.ts` | Stores local daily RP baselines and momentum snapshots for net gain/loss display. |
 
 ### `src/features/rp-history`: Server RP History Feature
 

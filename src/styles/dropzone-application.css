@@ -827,6 +827,62 @@ button {
   color: #9bd3ff;
 }
 
+.floating-rank-pulse-widget {
+  position: fixed;
+  z-index: 32;
+  width: min(430px, calc(100vw - 24px));
+  display: grid;
+  gap: 7px;
+}
+
+.floating-rank-pulse-widget.dragging {
+  cursor: grabbing;
+}
+
+.floating-rank-pulse-widget .rank-pulse-widget {
+  width: 100%;
+  max-height: none;
+}
+
+.floating-rank-pulse-handle {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px 6px 11px;
+  border: 1px solid rgba(10, 132, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(12, 16, 24, 0.76);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22), inset 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  color: #9bd3ff;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.floating-rank-pulse-handle span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.floating-rank-pulse-handle button {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(10, 132, 255, 0.28);
+  border-radius: 50%;
+  background: rgba(10, 132, 255, 0.12);
+  color: #9bd3ff;
+}
+
 .widget-test-shell {
   height: 100svh;
   width: 100%;
@@ -927,6 +983,32 @@ button {
 
 .widget-test-status {
   min-height: 23px;
+}
+
+.widget-auto-sync-card {
+  display: grid;
+  gap: 5px;
+  padding: 13px;
+  border: 1px solid rgba(10, 132, 255, 0.18);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(10, 132, 255, 0.2), transparent 38%),
+    rgba(255, 255, 255, 0.045);
+}
+
+.widget-auto-sync-card span,
+.widget-auto-sync-card small {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.widget-auto-sync-card strong {
+  color: var(--text);
+  font-size: 16px;
 }
 
 .widget-phone-frame {

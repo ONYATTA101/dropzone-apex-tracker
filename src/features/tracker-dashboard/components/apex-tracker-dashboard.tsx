@@ -34,14 +34,12 @@ import {
   RankedMapRotation,
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
-import { CompactRankPulseWidget } from "@/features/mobile-rank-widget/components/compact-rank-pulse-widget";
 import {
-  MOBILE_WIDGET_MAX_TRACKED_PLAYERS,
   MOBILE_WIDGET_REFRESH_INTERVAL_HOURS,
   MOBILE_WIDGET_RESUME_REFRESH_COOLDOWN_MINUTES,
 } from "@/features/mobile-rank-widget/config/mobile-widget-settings";
-import { setWidgetDailyChangeForTesting } from "@/features/mobile-rank-widget/utilities/widget-daily-rp-baselines";
 import { AccountStatisticsModal } from "@/features/tracker-dashboard/components/account-statistics-modal";
+import { DraggableRankPulseWidget } from "@/features/tracker-dashboard/components/draggable-rank-pulse-widget";
 import { FriendRankCard } from "@/features/tracker-dashboard/components/friend-rank-card";
 import { RankBadge } from "@/features/tracker-dashboard/components/rank-badge";
 import {
@@ -146,7 +144,6 @@ export default function ApexTrackerDashboard() {
   const [friendQuery, setFriendQuery] = useState("");
   const [darkThemeEnabled, setDarkThemeEnabled] = useState(true);
   const [themeLoaded, setThemeLoaded] = useState(false);
-  const [widgetBaselineRefreshToken, setWidgetBaselineRefreshToken] = useState(0);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -291,11 +288,6 @@ export default function ApexTrackerDashboard() {
     [friends, friendQuery],
   );
 
-  const widgetPlayers = useMemo(
-    () => (me ? [me, ...friends].slice(0, MOBILE_WIDGET_MAX_TRACKED_PLAYERS) : []),
-    [me, friends],
-  );
-
   const inactiveTrackedHistory = useMemo(() => {
     const activeKeys = new Set(friendIds.map(trackedIdentityKey));
     return trackedHistory
@@ -391,22 +383,6 @@ export default function ApexTrackerDashboard() {
     const nextThemeEnabled = !darkThemeEnabled;
     setDarkThemeEnabled(nextThemeEnabled);
     setToast({ message: `${nextThemeEnabled ? "Dark" : "Light"} theme enabled.`, kind: "success" });
-  }
-
-  function testWidgetDailyRpChange(dailyChange: number) {
-    if (widgetPlayers.length === 0) {
-      setToast({ message: "Load widget data before testing daily RP change.", kind: "error" });
-      return;
-    }
-
-    setWidgetDailyChangeForTesting(widgetPlayers, dailyChange);
-    setWidgetBaselineRefreshToken((token) => token + 1);
-    setToast({
-      message: dailyChange === 0
-        ? "Daily RP baseline reset to current RP."
-        : `Daily RP test set to ${dailyChange > 0 ? "+" : ""}${dailyChange} RP.`,
-      kind: "success",
-    });
   }
 
   const label = me ? createRankLabel(me.rankName, me.rankDivision) : "Loading rank";
@@ -518,21 +494,12 @@ export default function ApexTrackerDashboard() {
           </div>
         )}
 
-        <section className="widget-preview-section">
-          <div className="widget-preview-copy">
-            <span className="eyebrow">Phone widget preview</span>
-            <h2>Rank Pulse</h2>
-            <p>Shows you plus two friends, daily net RP, and refreshes every {MOBILE_WIDGET_REFRESH_INTERVAL_HOURS} hours while open.</p>
-            <div className="widget-baseline-tools compact" aria-label="Dashboard daily RP test controls">
-              <span>Daily RP test</span>
-              <button onClick={() => testWidgetDailyRpChange(250)} type="button">+250</button>
-              <button onClick={() => testWidgetDailyRpChange(-250)} type="button">-250</button>
-              <button onClick={() => testWidgetDailyRpChange(0)} type="button">Reset</button>
-            </div>
-            <Link className="widget-test-link" href="/widget">Open phone test view</Link>
-          </div>
-          <CompactRankPulseWidget owner={me} friends={friends} baselineRefreshToken={widgetBaselineRefreshToken} />
-        </section>
+        <DraggableRankPulseWidget
+          friends={friends}
+          loading={loading}
+          onRefresh={() => void loadData(profile, friendIds, true, true, true)}
+          owner={me}
+        />
 
         <section className="hero-grid">
           {/* Main rank panel: change this block when redesigning the primary rank summary. */}

@@ -2,8 +2,9 @@
 
 ## Compact Widget Direction
 
-The dashboard now includes a live in-app preview of the compact Rank Pulse widget. It is not
-yet a native phone home-screen widget, but it shows the design and behavior inside the web app.
+The dashboard now includes a draggable in-app preview of the compact Rank Pulse widget. It is not
+yet the Android launcher widget itself, but it behaves more like a movable home-screen card inside
+the Dropzone dashboard.
 
 The Android-first native scaffold now lives in `android/`. See
 [`android-native-widget.md`](android-native-widget.md) for the real home-screen widget path.
@@ -14,13 +15,13 @@ Open the dedicated phone test page on a real phone:
 https://dropzone-apex-tracker.vercel.app/widget
 ```
 
-The test page loads the roster saved on that phone. Friends added on a PC do not automatically
+The preview page loads the roster saved on that phone. Friends added on a PC do not automatically
 copy to the phone because the current app stores the roster in each browser's local storage.
-Use the form on `/widget` to add your phone test roster.
+Track squadmates from the dashboard; `/widget` mirrors that tracked roster automatically.
 
-The `/widget` page is designed as a one-screen phone control panel. It shows removable tracked
-player chips, with a delete icon on friend chips so players can be removed without scrolling
-through a long roster form.
+The `/widget` page is now a focused preview/status page. It does not include Daily RP test buttons
+or its own player-tracking form, because the widget should only reflect the dashboard's tracked
+teammates.
 
 The mobile widget should occupy no more than one quarter of a phone screen.
 
@@ -91,8 +92,8 @@ Important testing behavior:
   tries to recover today's baseline from the latest saved snapshot before falling back to `0`.
 - If the Apex provider rate-limits the key, the server can reuse a recent cached rank instead
   of failing the whole dashboard.
-- The dashboard widget preview and `/widget` test page include Daily RP test buttons so you
-  can confirm the green gain and red loss states without waiting for a real RP change.
+- The dashboard and `/widget` preview no longer include fake Daily RP test controls. Visual trend
+  states should come from real stored RP history or purpose-built local development tests.
 
 Daily net styling:
 

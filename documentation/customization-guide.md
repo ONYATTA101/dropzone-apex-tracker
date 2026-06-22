@@ -232,13 +232,13 @@ https://dropzone-apex-tracker.vercel.app/widget
 The dashboard renders it here:
 
 ```text
-src/features/tracker-dashboard/components/apex-tracker-dashboard.tsx
+src/features/tracker-dashboard/components/draggable-rank-pulse-widget.tsx
 ```
 
 Look for:
 
 ```tsx
-<CompactRankPulseWidget owner={me} friends={friends} />
+<DraggableRankPulseWidget owner={me} friends={friends} />
 ```
 
 The widget is capped at 3 players by:
@@ -247,7 +247,7 @@ The widget is capped at 3 players by:
 src/features/mobile-rank-widget/config/mobile-widget-settings.ts
 ```
 
-Daily RP baseline storage and testing helpers live here:
+Daily RP baseline and momentum helpers live here:
 
 ```text
 src/features/mobile-rank-widget/utilities/widget-daily-rp-baselines.ts
