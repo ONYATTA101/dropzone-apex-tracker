@@ -11,7 +11,10 @@ import {
   PlayerRankStatus,
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
-import { getRankPulseRoster } from "@/features/rp-history/server/rank-pulse-roster";
+import {
+  getRankPulseRoster,
+  parseRankPulseRosterValue,
+} from "@/features/rp-history/server/rank-pulse-roster";
 import {
   getRpHistoryPlayerKey,
   updateRpHistoryForPlayers,
@@ -118,7 +121,10 @@ export async function GET(request: NextRequest) {
   });
   if (guarded) return guarded;
 
-  const roster = getRankPulseRoster();
+  const requestedRoster = parseRankPulseRosterValue(request.nextUrl.searchParams.get("players")).slice(0, 3);
+  const roster = requestedRoster.length > 0
+    ? { players: requestedRoster, source: "android-tracked-roster" }
+    : getRankPulseRoster();
   const settled = await Promise.allSettled(
     roster.players.map((player, index) => getPlayerRankStatus(player, index === 0, { forceRefresh: true })),
   );

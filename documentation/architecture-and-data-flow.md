@@ -57,11 +57,14 @@ for offline use.
 
 The current live flow is:
 
-1. Android asks `/api/mobile/rank-pulse-summary` for the three-player Rank Pulse summary.
-2. The server route uses the private `APEX_API_KEY` to load rank data.
-3. The server writes the latest player snapshot into the RP history store.
-4. The response includes current RP, daily net RP, last delta, high/low RP, rank label, progress percentage, and heat streak state.
-5. `RankPulseWidgetProvider.java` caches the response and renders it into the home-screen widget.
+1. `MainActivity.java` opens the live dashboard inside a WebView.
+2. A small JavaScript bridge reads `dropzone-profile` and `dropzone-friends` from dashboard storage.
+3. `RankPulseWidgetRosterStore.java` saves that owner-plus-friends roster in Android shared preferences.
+4. Android asks `/api/mobile/rank-pulse-summary?players=...` for the three-player Rank Pulse summary.
+5. The server route uses the private `APEX_API_KEY` to load rank data.
+6. The server writes the latest player snapshot into the RP history store.
+7. The response includes current RP, daily net RP, last delta, high/low RP, rank label, progress percentage, and heat streak state.
+8. `RankPulseWidgetProvider.java` caches the response and renders it into the home-screen widget.
 
 ## Server RP History Flow
 

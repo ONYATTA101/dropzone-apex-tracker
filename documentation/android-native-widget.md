@@ -24,6 +24,7 @@ RemoteViews layout.
 | `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
 | `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Shows the live web dashboard inside the native shell. |
 | `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches the server widget summary and updates the native home-screen widget. |
+| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetRosterStore.java` | Copies the dashboard-tracked roster from WebView storage into Android shared preferences for the widget. |
 | `android/app/src/main/res/layout/activity_main.xml` | Native in-app dashboard WebView layout. |
 | `android/app/src/main/res/layout/rank_pulse_widget.xml` | Compact widget layout with three tracked-player rows. |
 | `android/app/src/main/res/xml/rank_pulse_widget_info.xml` | Android widget sizing, category, layout, and update metadata. |
@@ -46,6 +47,7 @@ The Android widget calls this server endpoint:
 
 ```text
 GET /api/mobile/rank-pulse-summary
+GET /api/mobile/rank-pulse-summary?players=PS4:blumoat_onyatta,PC:FriendOne
 ```
 
 That endpoint returns no secrets, only the small widget summary:
@@ -72,8 +74,11 @@ That endpoint returns no secrets, only the small widget summary:
 }
 ```
 
-The Android widget should display only the first three players: the owner account plus two
-friends.
+The Android widget displays only the first three players: the owner account plus two friends.
+When the native app has been opened, `MainActivity.java` reads the same dashboard roster saved in
+browser storage and `RankPulseWidgetRosterStore.java` passes that roster to the endpoint with the
+optional `players` query parameter. If the app has not synced a roster yet, the endpoint falls
+back to the server roster from `DROPZONE_MOBILE_WIDGET_PLAYERS`.
 
 ## Daily RP Plan
 
@@ -93,12 +98,14 @@ This is the path that lets the widget update reliably even when the app was not 
 ## Native Refresh Notes
 
 The scaffold sets `android:updatePeriodMillis="7200000"`, which is two hours. Android may still
-delay background updates to protect battery life. For richer background behavior later, add
+delay background updates to protect battery life. The widget is draggable from the Android
+launcher after the user places it on the home screen. For richer background behavior later, add
 WorkManager and let it fetch the server summary, then update the widget.
 
 ## How To Change The Widget
 
-- Change player preview data in `RankPulseWidgetProvider.java`.
+- Change the roster sync keys or default owner in `MainActivity.java`.
+- Change how WebView roster JSON becomes a server query in `RankPulseWidgetRosterStore.java`.
 - Change the widget title and refresh label in `strings.xml`.
 - Change colors in `colors.xml`.
 - Change row spacing and text sizes in `styles.xml`.

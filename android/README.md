@@ -10,10 +10,12 @@ Weather-style Android widget by itself.
 - A small launcher activity that opens the live Dropzone dashboard inside the app.
 - A native `AppWidgetProvider` named `RankPulseWidgetProvider`.
 - A compact dark Rank Pulse widget layout with three tracked-player rows.
+- A WebView-to-native roster sync so the widget mirrors players already tracked in the app.
 - Commented Java, XML, and Gradle files so you can see where to change labels, colors, and
   refresh behavior later.
 
-The widget reads a safe server summary from `/api/mobile/rank-pulse-summary`. This is
+The widget reads a safe server summary from `/api/mobile/rank-pulse-summary`. The installed app
+adds an optional `players` query from the dashboard roster, capped to three players. This is
 intentional: an Android APK can be inspected, so the Apex API key must stay on the server,
 never inside the phone app.
 
@@ -53,13 +55,15 @@ android/app/build/outputs/apk/debug/app-debug.apk
 ## How To Test The Widget
 
 1. Install/run the Android app on the phone.
-2. Long-press the Android home screen.
-3. Choose `Widgets`.
-4. Find `Dropzone`.
-5. Drag `Rank Pulse` to the home screen.
+2. Open the app once so the dashboard roster can sync into Android storage.
+3. Long-press the Android home screen.
+4. Choose `Widgets`.
+5. Find `Dropzone`.
+6. Drag `Rank Pulse` to the home screen.
 
 The widget is designed as a compact information widget. It fits the same idea as the web
 preview: owner plus two friends, rank text, current RP, daily net RP, and a trend-colored bar.
+The Android launcher handles dragging and placing the widget after it is added.
 
 ## Next Android Milestones
 

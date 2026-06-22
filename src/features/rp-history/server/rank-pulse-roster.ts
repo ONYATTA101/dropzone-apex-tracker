@@ -28,11 +28,15 @@ function parseRosterEntry(entry: string): TrackedPlayerIdentity | null {
   };
 }
 
-export function getRankPulseRoster() {
-  const configuredRoster = process.env[RANK_PULSE_ROSTER_ENV_KEY]
+export function parseRankPulseRosterValue(value: string | null | undefined) {
+  return value
     ?.split(",")
     .map(parseRosterEntry)
-    .filter((player): player is TrackedPlayerIdentity => Boolean(player));
+    .filter((player): player is TrackedPlayerIdentity => Boolean(player)) ?? [];
+}
+
+export function getRankPulseRoster() {
+  const configuredRoster = parseRankPulseRosterValue(process.env[RANK_PULSE_ROSTER_ENV_KEY]);
   const roster = configuredRoster?.length
     ? configuredRoster
     : [DEFAULT_PROFILE, ...DEFAULT_FRIENDS];

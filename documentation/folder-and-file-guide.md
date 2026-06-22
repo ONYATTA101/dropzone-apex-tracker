@@ -167,6 +167,7 @@ maintained. Generated Android Studio folders such as `.gradle`, `build`, `.idea`
 | `android/app/src/main/AndroidManifest.xml` | Declares the launcher activity and Rank Pulse widget receiver. |
 | `android/app/src/main/java/com/dropzone/apextracker/MainActivity.java` | Shows the live Dropzone dashboard inside the native app shell. |
 | `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetProvider.java` | Fetches mobile-safe data and updates the native Rank Pulse home-screen widget. |
+| `android/app/src/main/java/com/dropzone/apextracker/widget/RankPulseWidgetRosterStore.java` | Stores the WebView-tracked owner and friends for the native Rank Pulse widget. |
 | `android/app/src/main/res/layout/activity_main.xml` | Defines the in-app dashboard WebView layout. |
 | `android/app/src/main/res/layout/rank_pulse_widget.xml` | Defines the compact Android home-screen widget UI. |
 | `android/app/src/main/res/xml/rank_pulse_widget_info.xml` | Defines widget sizing, category, preview, and update metadata. |

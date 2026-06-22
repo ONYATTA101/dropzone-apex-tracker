@@ -156,9 +156,9 @@ in-game lobby, the app cannot see the newer RP until the provider updates its da
 ### `GET /api/mobile/rank-pulse-summary`
 
 Returns the mobile-safe summary used by the native Android home-screen widget. It does not
-accept arbitrary player names from the phone, and it does not expose `APEX_API_KEY`.
+expose `APEX_API_KEY`.
 
-The roster comes from `DROPZONE_MOBILE_WIDGET_PLAYERS` when configured:
+By default, the roster comes from `DROPZONE_MOBILE_WIDGET_PLAYERS` when configured:
 
 ```env
 DROPZONE_MOBILE_WIDGET_PLAYERS=PS4:blumoat_onyatta,PC:FriendOne,PS4:FriendTwo
@@ -166,6 +166,17 @@ DROPZONE_MOBILE_WIDGET_PLAYERS=PS4:blumoat_onyatta,PC:FriendOne,PS4:FriendTwo
 
 If that variable is missing, the endpoint uses the default dashboard profile plus any configured
 starter friends. The starter friend list is empty by default so demo friends do not appear.
+
+The Android app can override that roster for one widget refresh by sending the dashboard-tracked
+players in the optional `players` query parameter:
+
+```text
+/api/mobile/rank-pulse-summary?players=PS4:blumoat_onyatta,PC:FriendOne,X1:FriendTwo
+```
+
+The endpoint caps this override to three players and still fetches data server-side, so the phone
+never receives the private Apex API key. This is how the real home-screen widget mirrors the
+tracked players already added inside the app.
 
 Daily RP baselines are stored by the server history layer using `DROPZONE_WIDGET_TIME_ZONE`,
 which defaults to `Africa/Nairobi`. Local development writes `.dropzone-data/rp-history.json`.

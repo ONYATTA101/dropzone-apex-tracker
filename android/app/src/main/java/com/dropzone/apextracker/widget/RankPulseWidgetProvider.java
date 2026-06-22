@@ -3,6 +3,7 @@ package com.dropzone.apextracker.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Updates the native Android Rank Pulse home-screen widget.
@@ -29,7 +31,6 @@ import java.net.URL;
 public class RankPulseWidgetProvider extends AppWidgetProvider {
     private static final String WIDGET_SUMMARY_URL =
         "https://dropzone-apex-tracker.vercel.app/api/mobile/rank-pulse-summary";
-    private static final String WIDGET_PREFS_NAME = "dropzone_rank_pulse_widget";
     private static final String WIDGET_PREFS_SUMMARY_JSON = "latest_summary_json";
     private static final int TREND_THRESHOLD_RP = 150;
     private static final int STRONG_TREND_THRESHOLD_RP = 300;
@@ -42,6 +43,17 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         }
 
         fetchServerSummary(context, appWidgetManager, appWidgetIds);
+    }
+
+    public static void refreshAllWidgets(Context context) {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName widgetComponent = new ComponentName(context, RankPulseWidgetProvider.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(widgetComponent);
+        if (appWidgetIds.length == 0) {
+            return;
+        }
+
+        new RankPulseWidgetProvider().onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
     private static void updateWidget(
@@ -80,10 +92,10 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     ) {
         new Thread(() -> {
             try {
-                String summaryJson = fetchSummaryJson();
+                String summaryJson = fetchSummaryJson(context);
                 RankPulseRow[] rows = parseRows(summaryJson);
                 SharedPreferences prefs = context.getSharedPreferences(
-                    WIDGET_PREFS_NAME,
+                    RankPulseWidgetRosterStore.WIDGET_PREFS_NAME,
                     Context.MODE_PRIVATE
                 );
                 prefs.edit().putString(WIDGET_PREFS_SUMMARY_JSON, summaryJson).apply();
@@ -97,8 +109,13 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
         }).start();
     }
 
-    private static String fetchSummaryJson() throws Exception {
+    private static String fetchSummaryJson(Context context) throws Exception {
+        String rosterQuery = RankPulseWidgetRosterStore.readRosterQuery(context);
         String summaryUrl = WIDGET_SUMMARY_URL + "?refresh=" + System.currentTimeMillis();
+        if (!rosterQuery.isEmpty()) {
+            summaryUrl += "&players=" + URLEncoder.encode(rosterQuery, "UTF-8");
+        }
+
         HttpURLConnection connection = (HttpURLConnection) new URL(summaryUrl).openConnection();
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
@@ -129,7 +146,10 @@ public class RankPulseWidgetProvider extends AppWidgetProvider {
     }
 
     private static RankPulseRow[] readCachedRows(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(WIDGET_PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(
+            RankPulseWidgetRosterStore.WIDGET_PREFS_NAME,
+            Context.MODE_PRIVATE
+        );
         String summaryJson = prefs.getString(WIDGET_PREFS_SUMMARY_JSON, null);
         if (summaryJson == null) {
             return createEmptyRows();
