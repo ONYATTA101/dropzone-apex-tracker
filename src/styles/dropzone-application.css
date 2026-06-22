@@ -181,14 +181,16 @@ button {
 }
 
 .account-menu-trigger:hover,
-.account-menu:focus-within .account-menu-trigger {
+.account-menu:focus-within .account-menu-trigger,
+.account-menu.open .account-menu-trigger {
   border-color: rgba(10, 132, 255, 0.42);
   background: rgba(10, 132, 255, 0.12);
   box-shadow: 0 12px 28px rgba(10, 132, 255, 0.14);
 }
 
 .account-menu:hover .account-trigger-chevron,
-.account-menu:focus-within .account-trigger-chevron {
+.account-menu:focus-within .account-trigger-chevron,
+.account-menu.open .account-trigger-chevron {
   color: #8fc8ff;
   transform: rotate(90deg) translateX(2px);
 }
@@ -216,7 +218,8 @@ button {
 }
 
 .account-menu:hover .account-menu-panel,
-.account-menu:focus-within .account-menu-panel {
+.account-menu:focus-within .account-menu-panel,
+.account-menu.open .account-menu-panel {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1);

@@ -139,6 +139,7 @@ export default function ApexTrackerDashboard() {
   const [showProfile, setShowProfile] = useState(false);
   const [showFriendForm, setShowFriendForm] = useState(false);
   const [showRpHistory, setShowRpHistory] = useState(false);
+  const [openAccountMenu, setOpenAccountMenu] = useState<"sidebar" | "topbar" | null>(null);
   const [toast, setToast] = useState<Toast>(null);
   const [friendQuery, setFriendQuery] = useState("");
   const [darkThemeEnabled, setDarkThemeEnabled] = useState(true);
@@ -411,11 +412,15 @@ export default function ApexTrackerDashboard() {
   const usingDemo = me?.source === "demo" || rankedMap?.source === "demo";
 
   function renderAccountMenu(placement: "sidebar" | "topbar") {
+    const isOpen = openAccountMenu === placement;
+
     return (
-      <div className={`account-menu ${placement === "sidebar" ? "sidebar-account-menu" : "topbar-account-menu"}`}>
+      <div className={`account-menu ${isOpen ? "open" : ""} ${placement === "sidebar" ? "sidebar-account-menu" : "topbar-account-menu"}`}>
         <button
+          aria-expanded={isOpen}
           aria-haspopup="menu"
           className="account-menu-trigger"
+          onClick={() => setOpenAccountMenu((current) => current === placement ? null : placement)}
           type="button"
         >
           <span className="avatar account-menu-avatar">{createPlayerInitials(profile.name)}</span>
@@ -423,19 +428,19 @@ export default function ApexTrackerDashboard() {
           <ChevronRight className="account-trigger-chevron" size={13} />
         </button>
         <div className="account-menu-panel" role="menu">
-          <button onClick={() => setShowProfile(true)} role="menuitem" type="button">
+          <button onClick={() => { setOpenAccountMenu(null); setShowProfile(true); }} role="menuitem" type="button">
             <Settings2 size={15} />
             <span><strong>Account</strong><small>Edit Apex ID</small></span>
           </button>
-          <button onClick={() => setShowRpHistory(true)} role="menuitem" type="button">
+          <button onClick={() => { setOpenAccountMenu(null); setShowRpHistory(true); }} role="menuitem" type="button">
             <History size={15} />
             <span><strong>History</strong><small>RP calendar</small></span>
           </button>
-          <Link href="/widget" role="menuitem">
+          <Link href="/widget" onClick={() => setOpenAccountMenu(null)} role="menuitem">
             <Zap size={15} />
             <span><strong>Widget</strong><small>Phone preview</small></span>
           </Link>
-          <button onClick={toggleThemeFromAccountMenu} role="menuitem" type="button">
+          <button onClick={() => { setOpenAccountMenu(null); toggleThemeFromAccountMenu(); }} role="menuitem" type="button">
             <Moon size={15} />
             <span><strong>Settings</strong><small>{darkThemeEnabled ? "Switch to light" : "Switch to dark"}</small></span>
           </button>
