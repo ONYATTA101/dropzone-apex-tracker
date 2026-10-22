@@ -2,7 +2,7 @@
  * Shows one tracked friend's account details, current rank, and RP progress.
  */
 
-import { Trash2 } from "lucide-react";
+import { CalendarDays, Trash2 } from "lucide-react";
 import { memo } from "react";
 import { createRankLabel } from "@/domain/apex-ranked/rank-calculations/rank-progress-calculator";
 import { PlayerRankStatus } from "@/domain/apex-ranked/types/apex-tracker-types";
@@ -13,12 +13,19 @@ import {
   formatNumber,
 } from "@/features/tracker-dashboard/utilities/dashboard-display-formatters";
 
+function formatSignedRp(value: number) {
+  if (value === 0) return "0 RP";
+  return `${value > 0 ? "+" : ""}${formatNumber(value)} RP`;
+}
+
 function FriendRankCardComponent({
   player,
   onRemove,
+  onViewDailyRp,
 }: {
   player: PlayerRankStatus;
   onRemove: (player: PlayerRankStatus) => void;
+  onViewDailyRp: (player: PlayerRankStatus) => void;
 }) {
   // Change the row markup here if you want friend cards to show more stats later.
   const label = createRankLabel(player.rankName, player.rankDivision);
@@ -52,12 +59,23 @@ function FriendRankCardComponent({
             ? "Top rank"
             : `${formatNumber(player.progress.remaining)} RP to go`}
         </span>
-        <span>{player.legend}</span>
+        <span className={player.rpHistory && player.rpHistory.dailyNetRp !== 0
+          ? (player.rpHistory.dailyNetRp > 0 ? "gain" : "loss")
+          : undefined}
+        >
+          Today {player.rpHistory ? formatSignedRp(player.rpHistory.dailyNetRp) : "0 RP"}
+        </span>
       </div>
-      <button className="friend-remove-button" onClick={() => onRemove(player)} type="button">
-        <Trash2 size={13} />
-        Remove player
-      </button>
+      <div className="friend-card-actions">
+        <button className="friend-stats-button" onClick={() => onViewDailyRp(player)} type="button">
+          <CalendarDays size={13} />
+          Daily RP
+        </button>
+        <button className="friend-remove-button" onClick={() => onRemove(player)} type="button">
+          <Trash2 size={13} />
+          Remove
+        </button>
+      </div>
     </article>
   );
 }

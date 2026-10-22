@@ -139,6 +139,7 @@ export default function ApexTrackerDashboard() {
   const [showProfile, setShowProfile] = useState(false);
   const [showFriendForm, setShowFriendForm] = useState(false);
   const [showStatistics, setShowStatistics] = useState(false);
+  const [statisticsPlayer, setStatisticsPlayer] = useState<TrackedPlayerIdentity | null>(null);
   const [openAccountMenu, setOpenAccountMenu] = useState<"sidebar" | "topbar" | null>(null);
   const [toast, setToast] = useState<Toast>(null);
   const [friendQuery, setFriendQuery] = useState("");
@@ -490,7 +491,7 @@ export default function ApexTrackerDashboard() {
             <Settings2 size={15} />
             <span><strong>Account</strong><small>Edit Apex ID</small></span>
           </button>
-          <button onClick={() => { setOpenAccountMenu(null); setShowStatistics(true); }} role="menuitem" type="button">
+          <button onClick={() => { setOpenAccountMenu(null); setStatisticsPlayer(profile); setShowStatistics(true); }} role="menuitem" type="button">
             <BarChart3 size={15} />
             <span><strong>Statistics</strong><small>History & comparison</small></span>
           </button>
@@ -708,7 +709,17 @@ export default function ApexTrackerDashboard() {
             </div>
           </div>
           <div className="friends-grid">
-            {filteredFriends.map((friend) => <FriendRankCard key={friend.id} player={friend} onRemove={removeFriend} />)}
+            {filteredFriends.map((friend) => (
+              <FriendRankCard
+                key={friend.id}
+                player={friend}
+                onRemove={removeFriend}
+                onViewDailyRp={(player) => {
+                  setStatisticsPlayer({ name: player.name, platform: player.platform });
+                  setShowStatistics(true);
+                }}
+              />
+            ))}
             {!loading && filteredFriends.length === 0 && (
               <button className="empty-friend" onClick={() => setShowFriendForm(true)}><Plus size={22} /><strong>Track a squadmate</strong><span>Add their Apex ID and platform</span></button>
             )}
@@ -783,7 +794,9 @@ export default function ApexTrackerDashboard() {
       )}
 
       <AccountStatisticsModal
+        key={`${showStatistics ? "open" : "closed"}:${trackedIdentityKey(statisticsPlayer ?? profile)}`}
         comparisonPlayers={friendIds}
+        initialPlayer={statisticsPlayer ?? profile}
         isOpen={showStatistics}
         onClose={() => setShowStatistics(false)}
         profile={profile}

@@ -1962,22 +1962,45 @@ a[href],
   margin-top: 7px;
 }
 
+.friend-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.friend-stats-button,
 .friend-remove-button {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  margin-top: 12px;
   padding: 8px 10px;
-  border: 1px solid rgba(255, 69, 58, 0.24);
   border-radius: 8px;
-  background: rgba(255, 69, 58, 0.1);
-  color: #ff9a94;
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.friend-stats-button {
+  border: 1px solid rgba(10, 132, 255, 0.28);
+  background: rgba(10, 132, 255, 0.1);
+  color: #b7dcff;
+}
+
+.friend-stats-button:hover {
+  border-color: rgba(10, 132, 255, 0.5);
+  background: rgba(10, 132, 255, 0.18);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.friend-remove-button {
+  border: 1px solid rgba(255, 69, 58, 0.24);
+  background: rgba(255, 69, 58, 0.1);
+  color: #ff9a94;
 }
 
 .friend-remove-button:hover {
@@ -2308,6 +2331,43 @@ a[href],
 
 .statistics-tab-panel {
   min-height: 0;
+}
+
+.statistics-player-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.statistics-player-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  text-align: left;
+}
+
+.statistics-player-chip strong {
+  font-size: 11px;
+}
+
+.statistics-player-chip small {
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.statistics-player-chip.active {
+  border-color: rgba(10, 132, 255, 0.45);
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(98, 213, 219, 0.08));
 }
 
 .comparison-copy,

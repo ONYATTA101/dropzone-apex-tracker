@@ -21,6 +21,7 @@ import { formatNumber } from "@/features/tracker-dashboard/utilities/dashboard-d
 
 type AccountStatisticsModalProps = {
   comparisonPlayers: TrackedPlayerIdentity[];
+  initialPlayer?: TrackedPlayerIdentity | null;
   isOpen: boolean;
   onClose: () => void;
   profile: TrackedPlayerIdentity;
@@ -99,11 +100,15 @@ function formatDateLabel(dateKey: string) {
 
 export function AccountStatisticsModal({
   comparisonPlayers,
+  initialPlayer,
   isOpen,
   onClose,
   profile,
 }: AccountStatisticsModalProps) {
   const [activeTab, setActiveTab] = useState<StatisticsTab>("history");
+  const [selectedPlayer, setSelectedPlayer] = useState<TrackedPlayerIdentity>(
+    initialPlayer ?? profile,
+  );
   const [calendar, setCalendar] = useState<RpHistoryCalendarResponse | null>(null);
   const [monthKey, setMonthKey] = useState(getCurrentMonthKey);
   const [loading, setLoading] = useState(false);
@@ -112,24 +117,29 @@ export function AccountStatisticsModal({
   const [comparisonLoading, setComparisonLoading] = useState(false);
   const [comparisonError, setComparisonError] = useState<string | null>(null);
 
-  const comparisonRoster = useMemo(
-    () => createUniquePlayers([profile, ...comparisonPlayers]).slice(0, 3),
+  const selectablePlayers = useMemo(
+    () => createUniquePlayers([profile, ...comparisonPlayers]),
     [comparisonPlayers, profile],
   );
 
-  const loadCalendar = useCallback(async (targetMonth: string) => {
+  const comparisonRoster = useMemo(
+    () => selectablePlayers.slice(0, 3),
+    [selectablePlayers],
+  );
+
+  const loadCalendar = useCallback(async (targetMonth: string, player = selectedPlayer) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetchRpHistoryCalendar(profile, targetMonth);
+      const response = await fetchRpHistoryCalendar(player, targetMonth);
       setCalendar(response);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Could not load RP history.");
     } finally {
       setLoading(false);
     }
-  }, [profile]);
+  }, [selectedPlayer]);
 
   const loadComparison = useCallback(async () => {
     setComparisonLoading(true);
@@ -147,9 +157,9 @@ export function AccountStatisticsModal({
 
   useEffect(() => {
     if (!isOpen || activeTab !== "history") return;
-    const timer = window.setTimeout(() => void loadCalendar(monthKey), 0);
+    const timer = window.setTimeout(() => void loadCalendar(monthKey, selectedPlayer), 0);
     return () => window.clearTimeout(timer);
-  }, [activeTab, isOpen, loadCalendar, monthKey]);
+  }, [activeTab, isOpen, loadCalendar, monthKey, selectedPlayer]);
 
   useEffect(() => {
     if (!isOpen || activeTab !== "comparison" || comparisonRoster.length === 0) return;
@@ -221,7 +231,7 @@ export function AccountStatisticsModal({
           <div>
             <span className="eyebrow">Account statistics</span>
             <h2>Rank statistics</h2>
-            <p>History calendar and squad RP comparison for {profile.name}.</p>
+            <p>Pick anyone on your tracked list to see their daily RP. Snapshots are saved even while the app is closed.</p>
           </div>
           <button
             className="history-refresh-button"
@@ -258,12 +268,31 @@ export function AccountStatisticsModal({
 
         {activeTab === "history" ? (
           <div className="statistics-tab-panel" role="tabpanel">
+            <div className="statistics-player-picker" aria-label="Choose whose daily RP to view">
+              {selectablePlayers.map((player) => {
+                const isSelected = getTrackedPlayerKey(player) === getTrackedPlayerKey(selectedPlayer);
+                const isOwner = getTrackedPlayerKey(player) === getTrackedPlayerKey(profile);
+
+                return (
+                  <button
+                    className={`statistics-player-chip ${isSelected ? "active" : ""}`}
+                    key={getTrackedPlayerKey(player)}
+                    onClick={() => setSelectedPlayer(player)}
+                    type="button"
+                  >
+                    <strong>{player.name}</strong>
+                    <small>{isOwner ? "You" : "Friend"}</small>
+                  </button>
+                );
+              })}
+            </div>
+
             <div className={`history-month-summary ${monthlyNetRp > 0 ? "gain" : monthlyNetRp < 0 ? "loss" : "flat"}`}>
               <div>
                 <span>Month net RP</span>
                 <strong>{formatSignedRp(monthlyNetRp)}</strong>
               </div>
-              <small>{monthLabel} | {calendar?.retainedDayLimit ?? 120} day season window</small>
+              <small>{selectedPlayer.name} | {monthLabel} | {calendar?.retainedDayLimit ?? 120} day season window</small>
             </div>
 
             <div className="history-month-controls" aria-label="Calendar month controls">
@@ -310,7 +339,7 @@ export function AccountStatisticsModal({
                 <span className="eyebrow">Squad rate graph</span>
                 <h3>RP gained since tracking started</h3>
               </div>
-              <p>Compares cumulative daily net RP for you and up to two tracked friends.</p>
+              <p>Compares cumulative daily RP for you and your first two tracked friends. Background snapshots keep updating while the app is closed.</p>
             </div>
 
             {comparisonError && <div className="history-calendar-error">{comparisonError}</div>}
