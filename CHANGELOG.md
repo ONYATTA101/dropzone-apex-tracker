@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Gated the dashboard behind Dropzone sign-in: the app now opens on `/login` (Apex ID verification + Dropzone password), already signed-in users skip straight to the dashboard, and signing out returns to `/login`.
 - Made Dropzone sign-in visible in the dashboard topbar with signed-in state and sign-out (previously only hidden in the Account dropdown).
 - Added visible warnings on the dashboard and login page when RP history / accounts use ephemeral `memory` storage, which makes daily RP show 0/nil and accounts disappear after restarts.
 - Changed the Vercel Cron schedule for `/api/cron/refresh-rank-pulse` from daily to every 2 hours (with a documented Hobby-plan fallback).

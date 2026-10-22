@@ -230,7 +230,7 @@ export function DropzoneLoginPanel() {
         {status && <div className="auth-message success">{status}</div>}
 
         <div className="auth-footer">
-          <Link href="/">Back to dashboard</Link>
+          <span>Sign in to open your dashboard</span>
           <Link href="/admin/users">Admin users</Link>
         </div>
       </section>

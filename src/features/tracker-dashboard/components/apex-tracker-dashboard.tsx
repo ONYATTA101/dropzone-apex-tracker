@@ -186,7 +186,8 @@ export default function ApexTrackerDashboard() {
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => null);
     setSessionUser(null);
     setOpenAccountMenu(null);
-    setToast({ message: "Signed out of your Dropzone account.", kind: "success" });
+    // The dashboard is gated, so signing out returns to the login page.
+    window.location.assign("/login");
   }, []);
 
   // The dashboard and widget share the same theme attribute.
