@@ -33,6 +33,7 @@ import {
   ApexPlatform,
   PlayerRankStatus,
   RankedMapRotation,
+  TrackedPlayerHistoryItem,
   TrackedPlayerIdentity,
 } from "@/domain/apex-ranked/types/apex-tracker-types";
 import {
@@ -65,13 +66,6 @@ type Toast = { message: string; kind: "success" | "error" } | null;
 type DropzoneSessionUser = {
   apexName: string;
   platform: ApexPlatform;
-};
-
-type TrackedPlayerHistoryItem = TrackedPlayerIdentity & {
-  removedAt: string;
-  lastRankName?: string;
-  lastRankDivision?: number;
-  lastRankScore?: number;
 };
 
 const TRACKABLE_PLATFORM_OPTIONS: ApexPlatform[] = ["PC", "PS4", "X1"];
@@ -153,6 +147,9 @@ export default function ApexTrackerDashboard() {
   const [sessionUser, setSessionUser] = useState<DropzoneSessionUser | null>(null);
   const [sessionChecked, setSessionChecked] = useState(false);
   const [historyStorageMode, setHistoryStorageMode] = useState<string | null>(null);
+  // Guards account sync so the initial local restore never overwrites the
+  // roster already saved to the account (and vice versa before load finishes).
+  const [accountSyncReady, setAccountSyncReady] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -163,24 +160,69 @@ export default function ApexTrackerDashboard() {
   }, []);
 
   // Surface the Dropzone account in the topbar so sign-in is discoverable,
-  // instead of only hiding it inside the Account dropdown.
+  // instead of only hiding it inside the Account dropdown. When signed in,
+  // also load the roster saved to the account so the same squad appears on
+  // any device. A null account roster means "never synced" — keep local data.
   useEffect(() => {
     let cancelled = false;
     void (async () => {
       try {
         const response = await fetch("/api/auth/session", { cache: "no-store" });
         const data = await response.json();
-        if (!cancelled) setSessionUser(data.user ?? null);
+        if (cancelled) return;
+        setSessionUser(data.user ?? null);
+
+        if (data.user) {
+          const rosterResponse = await fetch("/api/auth/roster", { cache: "no-store" });
+          if (rosterResponse.ok) {
+            const roster = await rosterResponse.json() as {
+              friends: TrackedPlayerIdentity[] | null;
+              trackedHistory: TrackedPlayerHistoryItem[] | null;
+            };
+            if (!cancelled) {
+              if (Array.isArray(roster.friends)) {
+                const cleanedFriends = removeLegacyDemoFriends(roster.friends);
+                setFriendIds(cleanedFriends);
+                window.localStorage.setItem(DASHBOARD_STORAGE_KEYS.friends, JSON.stringify(cleanedFriends));
+              }
+              if (Array.isArray(roster.trackedHistory)) {
+                setTrackedHistory(roster.trackedHistory);
+                window.localStorage.setItem(
+                  DASHBOARD_STORAGE_KEYS.trackedHistory,
+                  JSON.stringify(roster.trackedHistory),
+                );
+              }
+            }
+          }
+        }
       } catch {
         if (!cancelled) setSessionUser(null);
       } finally {
-        if (!cancelled) setSessionChecked(true);
+        if (!cancelled) {
+          setAccountSyncReady(true);
+          setSessionChecked(true);
+        }
       }
     })();
     return () => {
       cancelled = true;
     };
   }, []);
+
+  // Save roster changes back to the account (debounced) so signing in on
+  // another device restores the same friends and previously-tracked players.
+  useEffect(() => {
+    if (!sessionUser || !accountSyncReady) return;
+    const timer = window.setTimeout(() => {
+      void fetch("/api/auth/roster", {
+        method: "PUT",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ friends: friendIds, trackedHistory }),
+      }).catch(() => null);
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [sessionUser, accountSyncReady, friendIds, trackedHistory]);
 
   const signOut = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => null);
