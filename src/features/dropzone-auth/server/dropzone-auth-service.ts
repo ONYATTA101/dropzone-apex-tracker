@@ -10,7 +10,12 @@ import {
   scryptSync,
   timingSafeEqual,
 } from "crypto";
-import { ApexPlatform, PlayerRankStatus, TrackedPlayerIdentity } from "@/domain/apex-ranked/types/apex-tracker-types";
+import {
+  ApexPlatform,
+  PlayerRankStatus,
+  TrackedPlayerHistoryItem,
+  TrackedPlayerIdentity,
+} from "@/domain/apex-ranked/types/apex-tracker-types";
 import {
   getDropzoneAuthStorageMode,
   readDropzoneAuthDocument,
@@ -265,6 +270,90 @@ export async function getSessionUser(session: DropzoneSession | null) {
   const document = await readDropzoneAuthDocument();
   const user = Object.values(document.users).find((candidate) => candidate.id === session.userId);
   return user ? toPublicUser(user) : null;
+}
+
+const MAX_SYNCED_FRIENDS = 24;
+const MAX_SYNCED_HISTORY = 24;
+
+function sanitizeTrackedIdentities(identities: TrackedPlayerIdentity[]): TrackedPlayerIdentity[] {
+  const seen = new Set<string>();
+  const sanitized: TrackedPlayerIdentity[] = [];
+
+  for (const identity of Array.isArray(identities) ? identities : []) {
+    const normalized = normalizeAuthIdentity({
+      name: String(identity?.name ?? ""),
+      platform: identity?.platform,
+    } as TrackedPlayerIdentity);
+    if (!normalized.name) continue;
+    const key = `${normalized.platform}:${normalized.name.toLowerCase()}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    sanitized.push(normalized);
+    if (sanitized.length >= MAX_SYNCED_FRIENDS) break;
+  }
+
+  return sanitized;
+}
+
+export type DropzoneAccountRoster = {
+  friends: TrackedPlayerIdentity[] | null;
+  trackedHistory: TrackedPlayerHistoryItem[] | null;
+};
+
+async function requireSessionUserDocument(session: DropzoneSession | null) {
+  if (!session) {
+    throw new DropzoneAuthError("You must be signed in.", 401);
+  }
+
+  const document = await readDropzoneAuthDocument();
+  const entry = Object.entries(document.users).find(([, candidate]) => candidate.id === session.userId);
+  if (!entry) {
+    throw new DropzoneAuthError("Your Dropzone account could not be found. Please sign in again.", 401);
+  }
+
+  return { document, userKey: entry[0], user: entry[1] };
+}
+
+export async function getDropzoneAccountRoster(
+  session: DropzoneSession | null,
+): Promise<DropzoneAccountRoster> {
+  const { user } = await requireSessionUserDocument(session);
+  return {
+    friends: user.trackedFriends ? sanitizeTrackedIdentities(user.trackedFriends) : null,
+    trackedHistory: user.trackedHistory ? user.trackedHistory.slice(0, MAX_SYNCED_HISTORY) : null,
+  };
+}
+
+export async function updateDropzoneAccountRoster(
+  session: DropzoneSession | null,
+  roster: {
+    friends?: TrackedPlayerIdentity[];
+    trackedHistory?: DropzoneAccountRoster["trackedHistory"];
+  },
+): Promise<DropzoneAccountRoster> {
+  const { document, userKey, user } = await requireSessionUserDocument(session);
+
+  const trackedFriends = roster.friends !== undefined
+    ? sanitizeTrackedIdentities(roster.friends)
+    : user.trackedFriends;
+  const trackedHistory = roster.trackedHistory !== undefined && roster.trackedHistory !== null
+    ? roster.trackedHistory
+        .filter((item) => item?.name && item?.platform && item?.removedAt)
+        .slice(0, MAX_SYNCED_HISTORY)
+    : user.trackedHistory;
+
+  document.users[userKey] = {
+    ...user,
+    trackedFriends,
+    trackedHistory,
+    updatedAt: new Date().toISOString(),
+  };
+  await writeDropzoneAuthDocument(document);
+
+  return {
+    friends: trackedFriends ? sanitizeTrackedIdentities(trackedFriends) : null,
+    trackedHistory: trackedHistory ?? null,
+  };
 }
 
 export async function listAdminUsers(secret: string) {

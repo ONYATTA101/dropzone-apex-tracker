@@ -3,7 +3,7 @@
   "crons": [
     {
       "path": "/api/cron/refresh-rank-pulse",
-      "schedule": "0 21 * * *"
+      "schedule": "17 */2 * * *"
     }
   ]
 }

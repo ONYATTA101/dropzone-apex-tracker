@@ -133,6 +133,15 @@ export type TrackedPlayerIdentity = {
   platform: ApexPlatform;
 };
 
+// A player the user used to track, kept so they can re-track them quickly.
+// Synced to the Dropzone account so it follows the user across devices.
+export type TrackedPlayerHistoryItem = TrackedPlayerIdentity & {
+  removedAt: string;
+  lastRankName?: string;
+  lastRankDivision?: number;
+  lastRankScore?: number;
+};
+
 // Batch requests let the browser ask for the whole roster in one API call.
 export type PlayerRankBatchRequest = TrackedPlayerIdentity & {
   primary?: boolean;

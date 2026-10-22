@@ -5,7 +5,13 @@
 
 import { promises as fs } from "fs";
 import path from "path";
-import { ApexPlatform } from "@/domain/apex-ranked/types/apex-tracker-types";
+import {
+  ApexPlatform,
+  TrackedPlayerHistoryItem,
+  TrackedPlayerIdentity,
+} from "@/domain/apex-ranked/types/apex-tracker-types";
+
+export type StoredTrackedHistoryItem = TrackedPlayerHistoryItem;
 
 export type DropzoneAuthStorageMode = "file" | "memory" | "upstash";
 
@@ -22,6 +28,10 @@ export type StoredDropzoneUser = {
   verifiedRankDivision: number | null;
   verifiedRankName: string | null;
   verifiedRankScore: number | null;
+  // Account-synced roster so the same squad follows the user across devices.
+  // Undefined means "never synced yet" — the client keeps its local roster.
+  trackedFriends?: TrackedPlayerIdentity[];
+  trackedHistory?: StoredTrackedHistoryItem[];
 };
 
 export type DropzoneAuthDocument = {
