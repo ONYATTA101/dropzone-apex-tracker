@@ -10,6 +10,9 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Made Dropzone sign-in visible in the dashboard topbar with signed-in state and sign-out (previously only hidden in the Account dropdown).
+- Added visible warnings on the dashboard and login page when RP history / accounts use ephemeral `memory` storage, which makes daily RP show 0/nil and accounts disappear after restarts.
+- Changed the Vercel Cron schedule for `/api/cron/refresh-rank-pulse` from daily to every 2 hours (with a documented Hobby-plan fallback).
 - Added server-side RP history with file/memory/Upstash storage, scheduled refresh API, daily high/low RP, and dashboard history stats.
 - Added force-refresh rank lookups for manual refresh, return-to-app refresh, and native widget refresh so app-side cache does not hide newer RP.
 - Replaced the old multiline friend entry with a Track a Squadmate popup that uses one Apex ID field and platform choices.

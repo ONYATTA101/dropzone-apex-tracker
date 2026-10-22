@@ -13,6 +13,7 @@ import {
   Crosshair,
   History,
   LogIn,
+  LogOut,
   MapPinned,
   Moon,
   Plus,
@@ -60,6 +61,11 @@ import {
 } from "@/features/tracker-dashboard/utilities/dashboard-display-formatters";
 
 type Toast = { message: string; kind: "success" | "error" } | null;
+
+type DropzoneSessionUser = {
+  apexName: string;
+  platform: ApexPlatform;
+};
 
 type TrackedPlayerHistoryItem = TrackedPlayerIdentity & {
   removedAt: string;
@@ -144,6 +150,9 @@ export default function ApexTrackerDashboard() {
   const [friendQuery, setFriendQuery] = useState("");
   const [darkThemeEnabled, setDarkThemeEnabled] = useState(true);
   const [themeLoaded, setThemeLoaded] = useState(false);
+  const [sessionUser, setSessionUser] = useState<DropzoneSessionUser | null>(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const [historyStorageMode, setHistoryStorageMode] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -151,6 +160,33 @@ export default function ApexTrackerDashboard() {
       setThemeLoaded(true);
     }, 0);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  // Surface the Dropzone account in the topbar so sign-in is discoverable,
+  // instead of only hiding it inside the Account dropdown.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const response = await fetch("/api/auth/session", { cache: "no-store" });
+        const data = await response.json();
+        if (!cancelled) setSessionUser(data.user ?? null);
+      } catch {
+        if (!cancelled) setSessionUser(null);
+      } finally {
+        if (!cancelled) setSessionChecked(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const signOut = useCallback(async () => {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => null);
+    setSessionUser(null);
+    setOpenAccountMenu(null);
+    setToast({ message: "Signed out of your Dropzone account.", kind: "success" });
   }, []);
 
   // The dashboard and widget share the same theme attribute.
@@ -216,6 +252,7 @@ export default function ApexTrackerDashboard() {
           .map((result) => result.player),
       );
       setRankedMap(mapResponse);
+      setHistoryStorageMode(rosterResponse.history?.storageMode ?? null);
       if (rosterResponse.errors.length > 0) {
         setToast({
           message: `${rosterResponse.errors.length} player${rosterResponse.errors.length === 1 ? "" : "s"} could not be loaded.`,
@@ -418,10 +455,17 @@ export default function ApexTrackerDashboard() {
             <Zap size={15} />
             <span><strong>Widget</strong><small>Phone preview</small></span>
           </Link>
-          <Link href="/login" onClick={() => setOpenAccountMenu(null)} role="menuitem">
-            <LogIn size={15} />
-            <span><strong>Login</strong><small>Dropzone account</small></span>
-          </Link>
+          {sessionUser ? (
+            <button onClick={() => void signOut()} role="menuitem" type="button">
+              <LogOut size={15} />
+              <span><strong>Sign out</strong><small>{sessionUser.apexName}</small></span>
+            </button>
+          ) : (
+            <Link href="/login" onClick={() => setOpenAccountMenu(null)} role="menuitem">
+              <LogIn size={15} />
+              <span><strong>Login</strong><small>Dropzone account</small></span>
+            </Link>
+          )}
           <button onClick={() => { setOpenAccountMenu(null); toggleThemeFromAccountMenu(); }} role="menuitem" type="button">
             <Moon size={15} />
             <span><strong>Settings</strong><small>{darkThemeEnabled ? "Switch to light" : "Switch to dark"}</small></span>
@@ -481,6 +525,24 @@ export default function ApexTrackerDashboard() {
             <button className="icon-button" onClick={() => void loadData(profile, friendIds, true, true, true)} aria-label="Refresh" disabled={loading}>
               <RefreshCw size={18} className={loading ? "spin" : ""} />
             </button>
+            {sessionChecked && (sessionUser ? (
+              <div className="auth-session-chip" title={`Signed in as ${sessionUser.apexName}`}>
+                <span className="avatar auth-session-avatar">{createPlayerInitials(sessionUser.apexName)}</span>
+                <span className="auth-session-label">
+                  <strong>{sessionUser.apexName}</strong>
+                  <small>Signed in</small>
+                </span>
+                <button className="auth-sign-out" onClick={() => void signOut()} type="button">
+                  <LogOut size={13} />
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <Link className="auth-cta-button" href="/login">
+                <LogIn size={15} />
+                Sign in
+              </Link>
+            ))}
             {renderAccountMenu("topbar")}
           </div>
         </header>
@@ -491,6 +553,19 @@ export default function ApexTrackerDashboard() {
             <Zap size={16} />
             <span>Demo mode is active. Add <code>APEX_API_KEY</code> to <code>.env.local</code> for live ranks and maps.</span>
             <button onClick={() => setShowProfile(true)}>Set your Apex ID</button>
+          </div>
+        )}
+
+        {/* RP history only persists in production when durable storage (Upstash/KV) is configured.
+            In "memory" mode every server restart resets today's baseline, so gains look like 0/nil. */}
+        {historyStorageMode === "memory" && (
+          <div className="storage-warning-banner" role="alert">
+            <History size={16} />
+            <span>
+              RP history is <strong>not being saved permanently</strong> (server storage: memory).
+              Today&apos;s gain may show 0 and past days won&apos;t appear. Add Upstash Redis
+              (<code>UPSTASH_REDIS_REST_URL</code> / <code>UPSTASH_REDIS_REST_TOKEN</code>) in Vercel to fix tracking.
+            </span>
           </div>
         )}
 

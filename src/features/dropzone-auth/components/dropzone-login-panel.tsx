@@ -43,6 +43,7 @@ export function DropzoneLoginPanel() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [sessionUser, setSessionUser] = useState<PublicUser | null>(null);
+  const [authStorageMode, setAuthStorageMode] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(async () => {
@@ -79,6 +80,7 @@ export function DropzoneLoginPanel() {
       if (!response.ok) throw new Error(data.error ?? "Could not check Apex ID.");
 
       setPlayer(data.player);
+      setAuthStorageMode(data.storageMode ?? null);
       setStep(data.accountExists ? "login" : "register");
       setStatus(data.accountExists
         ? "Dropzone account found. Enter your password."
@@ -214,6 +216,14 @@ export function DropzoneLoginPanel() {
               Use another Apex ID
             </button>
           </form>
+        )}
+
+        {authStorageMode === "memory" && (
+          <div className="auth-message error">
+            Accounts are currently stored in temporary server memory, so a sign-up may
+            disappear after the server restarts. Configure Upstash Redis in Vercel for
+            permanent Dropzone accounts.
+          </div>
         )}
 
         {error && <div className="auth-message error">{error}</div>}

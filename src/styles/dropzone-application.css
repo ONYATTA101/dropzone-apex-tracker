@@ -769,6 +769,103 @@ a[href],
   font-weight: 700;
 }
 
+/* Prominent topbar sign-in / signed-in state (previously login was only in the Account dropdown). */
+.auth-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 105, 118, 0.55);
+  border-radius: 6px;
+  background: linear-gradient(135deg, #e23d4c, #ba2735);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.auth-cta-button:hover {
+  background: linear-gradient(135deg, #f34b5a, #c92d3b);
+}
+
+.auth-session-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  white-space: nowrap;
+}
+
+.auth-session-avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 11px;
+}
+
+.auth-session-label strong,
+.auth-session-label small {
+  display: block;
+}
+
+.auth-session-label strong {
+  max-width: 110px;
+  overflow: hidden;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-session-label small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.auth-sign-out {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-sign-out:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Shown when RP history storage is ephemeral ("memory") so 0/nil daily RP is explained, not silent. */
+.storage-warning-banner {
+  margin-top: 18px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255, 105, 118, 0.35);
+  border-radius: 7px;
+  background: rgba(255, 82, 97, 0.08);
+  color: #c7cbd3;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.storage-warning-banner svg {
+  flex: 0 0 auto;
+  color: #ff5261;
+}
+
+.storage-warning-banner code {
+  color: #ffb3ba;
+}
+
 /* Compact Rank Pulse phone-widget preview. Edit this block to tune the mobile widget look. */
 .widget-preview-section {
   margin-top: 18px;

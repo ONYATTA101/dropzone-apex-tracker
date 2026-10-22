@@ -191,9 +191,19 @@ The response also includes `historyStorageMode` so you can see whether the deplo
 
 Refreshes the configured Rank Pulse roster and writes RP history without the dashboard being open.
 GitHub Actions calls this route every 2 hours through `.github/workflows/refresh-rank-pulse.yml`
-when Actions is enabled for the repository. Vercel Cron also calls it daily as a fallback.
-If GitHub Actions is locked or disabled, use any external HTTP scheduler with the same endpoint
-and bearer token.
+when Actions is enabled for the repository. Vercel Cron is also configured for every 2 hours in
+`vercel.json` (`17 */2 * * *`).
+
+> **Vercel plan note:** the Hobby plan only allows cron jobs that run once per day. If a
+> deployment fails with a cron-frequency error, either upgrade to Pro, change the schedule
+> back to daily (`0 21 * * *`), or keep Vercel daily and use GitHub Actions / an external
+> HTTP scheduler (for example cron-job.org) every 2 hours with the bearer token below.
+
+> **Durable storage is required:** without `UPSTASH_REDIS_REST_URL` /
+> `UPSTASH_REDIS_REST_TOKEN` (or Vercel KV equivalents) in production, both RP history and
+> Dropzone accounts fall back to ephemeral `memory` storage. Every server restart then resets
+> today's RP baseline — daily gain shows `0`/nil and past days and accounts disappear. The
+> dashboard and login page now show a visible warning whenever `memory` mode is detected.
 
 Security:
 
