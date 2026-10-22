@@ -10,6 +10,7 @@ This project follows semantic versioning:
 
 ## Unreleased
 
+- Background RP refresh now includes signed-in Dropzone accounts and their synced friends, and a new day's baseline carries forward the last known RP so daily gain still shows when the app stayed closed.
 - Synced the tracked squad to the Dropzone account (`GET`/`PUT /api/auth/roster`): friends and previously-tracked players now follow the user across devices, with the browser copy kept as a local fallback.
 - Gated the dashboard behind Dropzone sign-in: the app now opens on `/login` (Apex ID verification + Dropzone password), already signed-in users skip straight to the dashboard, and signing out returns to `/login`.
 - Made Dropzone sign-in visible in the dashboard topbar with signed-in state and sign-out (previously only hidden in the Account dropdown).

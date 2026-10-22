@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getRankPulseRoster } from "@/features/rp-history/server/rank-pulse-roster";
+import { getBackgroundRefreshRoster } from "@/features/rp-history/server/rank-pulse-roster";
 import { updateAndApplyRpHistory } from "@/features/rp-history/server/rp-history-service";
 import { getPlayerRankStatus } from "@/integrations/apex-legends-status/player-rank-service";
 
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const roster = getRankPulseRoster();
+  const roster = await getBackgroundRefreshRoster();
   const settled = await Promise.allSettled(
     roster.players.map((player, index) => getPlayerRankStatus(player, index === 0, { forceRefresh: true })),
   );

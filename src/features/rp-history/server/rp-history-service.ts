@@ -61,24 +61,47 @@ function getTrend(delta: number): PlayerRpHistoryTrend {
   return "flat";
 }
 
-function createFreshDay(player: PlayerRankStatus, now: string, dateKey: string): StoredRpHistoryDay {
+function getPreviousStoredDay(history: StoredRpPlayerHistory, dateKey: string) {
+  const previousKey = Object.keys(history.days)
+    .filter((key) => key < dateKey)
+    .sort()
+    .at(-1);
+
+  return previousKey ? history.days[previousKey] : undefined;
+}
+
+function createFreshDay(
+  player: PlayerRankStatus,
+  now: string,
+  dateKey: string,
+  previousDay?: StoredRpHistoryDay,
+): StoredRpHistoryDay {
+  // Carry the last known RP into today so a single daily snapshot still shows
+  // the points earned since yesterday, even if the app was never opened.
+  const baselineRp = previousDay?.currentRp ?? player.rankScore;
+  const lastDeltaRp = player.rankScore - baselineRp;
+  const rankChanged = previousDay
+    ? previousDay.currentRankName !== player.rankName
+      || previousDay.currentRankDivision !== player.rankDivision
+    : false;
+
   return {
-    baselineRankDivision: player.rankDivision,
-    baselineRankName: player.rankName,
-    baselineRp: player.rankScore,
+    baselineRankDivision: previousDay?.currentRankDivision ?? player.rankDivision,
+    baselineRankName: previousDay?.currentRankName ?? player.rankName,
+    baselineRp,
     currentRankDivision: player.rankDivision,
     currentRankName: player.rankName,
     currentRp: player.rankScore,
     dateKey,
     firstSeenAt: now,
     heatStreakCount: 0,
-    highestRp: player.rankScore,
-    lastDeltaRp: 0,
+    highestRp: Math.max(baselineRp, player.rankScore),
+    lastDeltaRp,
     lastSeenAt: now,
-    lowestRp: player.rankScore,
-    previousRp: player.rankScore,
-    rankChanged: false,
-    rankDirection: "flat",
+    lowestRp: Math.min(baselineRp, player.rankScore),
+    previousRp: baselineRp,
+    rankChanged,
+    rankDirection: rankChanged ? getTrend(lastDeltaRp) : "flat",
     updateCount: 1,
   };
 }
@@ -193,7 +216,7 @@ export async function updateRpHistoryForPlayers(players: PlayerRankStatus[]): Pr
     const existingDay = currentHistory.days[dateKey];
     const nextDay = existingDay
       ? updateExistingDay(existingDay, player, now)
-      : createFreshDay(player, now, dateKey);
+      : createFreshDay(player, now, dateKey, getPreviousStoredDay(currentHistory, dateKey));
 
     currentHistory.name = player.name;
     currentHistory.platform = player.platform;

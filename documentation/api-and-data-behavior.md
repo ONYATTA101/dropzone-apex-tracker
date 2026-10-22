@@ -199,6 +199,16 @@ when Actions is enabled for the repository. Vercel Cron is also configured for e
 > back to daily (`0 21 * * *`), or keep Vercel daily and use GitHub Actions / an external
 > HTTP scheduler (for example cron-job.org) every 2 hours with the bearer token below.
 
+The public Apex stats API only returns **current RP**, not this week's matches. Dropzone
+therefore has to take its own snapshots. Daily gain is `current RP - last saved RP`. If no
+snapshot exists from an earlier day, opening the app today shows `0`/nil even if you played.
+
+The background job now:
+
+- Includes every signed-in Dropzone account plus their synced friends (up to 12 players).
+- Carries yesterday's last RP into today, so one daily snapshot can still show the points
+  earned while the app was closed.
+
 > **Durable storage is required:** without `UPSTASH_REDIS_REST_URL` /
 > `UPSTASH_REDIS_REST_TOKEN` (or Vercel KV equivalents) in production, both RP history and
 > Dropzone accounts fall back to ephemeral `memory` storage. Every server restart then resets
